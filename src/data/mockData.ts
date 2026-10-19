@@ -1037,10 +1037,15 @@ export const INITIAL_PROPERTIES: Property[] = [
       'Delivered Fully Furnished with King Bed & AC'
     ],
     images: [
-      'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=85',
-      'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=85'
+  'https://www.genspark.ai/api/files/s/IEOFqhM7', // Lakeside Curved Glass Capsule Pod
+  'https://www.genspark.ai/api/files/s/W2Z5zFao', // V2124 Double-Decker Capsule Villa
+  'https://www.genspark.ai/api/files/s/JycQaAWz'  // Q3 Pitched-Roof Modular Capsule
     ],
+//    images: [
+ //     'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=1200&q=85',
+ //     'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=85',
+ //     'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=85'
+ //   ],
     watermark: true,
     agencyId: 'agency-1',
     agentName: 'Ri8Click Modular Specialist',
@@ -1084,11 +1089,17 @@ export const INITIAL_PROPERTIES: Property[] = [
       'Ready-to-Use Designer Wet/Dry Luxury Restroom',
       '15-Day Delivery & Rapid Crane Mount Deployment'
     ],
-    images: [
+    /*images: [
       'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=85'
+    ],*/
+    images: [
+  'https://www.genspark.ai/api/files/s/xBNmbfCQ', // Hex-LED Smart Container Studio
+  'https://www.genspark.ai/api/files/s/IEOFqhM7', // Lakeside Curved Glass Capsule
+  'https://www.genspark.ai/api/files/s/JycQaAWz'  // Q3 Forest Capsule Pod
     ],
+
     watermark: true,
     agencyId: 'agency-1',
     agentName: 'Ri8Click Modular Specialist',
@@ -1131,10 +1142,15 @@ export const INITIAL_PROPERTIES: Property[] = [
       'Smart Keyless Touchpad & Mobile App Entry',
       'Solar Panel Hookup & Smart Energy Storage Ready'
     ],
-    images: [
+    /*images: [
       'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?auto=format&fit=crop&w=1200&q=85',
       'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=85'
+    ],*/
+    images: [
+  'https://www.genspark.ai/api/files/s/Iswmh2Gk', // Rooftop Deck Shipping Container Villa
+  'https://www.genspark.ai/api/files/s/JycQaAWz', // Q3 Alpine Capsule House
+  'https://www.genspark.ai/api/files/s/W2Z5zFao'  // V2124 Double-Decker Capsule
     ],
     watermark: true,
     agencyId: 'agency-1',
@@ -1179,10 +1195,15 @@ export const INITIAL_PROPERTIES: Property[] = [
       'Fire-Proof & Earthquake Resistant Grade 9',
       '50+ Year Structural Durability Guarantee'
     ],
-    images: [
+    /*images: [
       'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=80',
       'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80'
+    ],*/
+    images: [
+  'https://www.genspark.ai/api/files/s/W2Z5zFao', // V2124 Double-Decker Stacked Capsule
+  'https://www.genspark.ai/api/files/s/Iswmh2Gk', // 2-Story Rooftop Deck Container Villa
+  'https://www.genspark.ai/api/files/s/xBNmbfCQ'  // Hex-LED Smart Container House
     ],
     watermark: true,
     agencyId: 'agency-1',
