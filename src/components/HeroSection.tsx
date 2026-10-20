@@ -1,1704 +1,1736 @@
-import { 
-  Property, 
-  ProvinceCityData, 
-  AgencyAccount, 
-  ConsortiumDivision,
-  HeroSlide,
-  BlogPost,
-  SiteSectionPortion
-} from '../types';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Compass,
+  PhoneCall,
+  Sparkles,
+  MapPin,
+  ArrowRight,
+  ShieldCheck,
+  Play,
+  Pause,
+  Video,
+  Camera,
+  Maximize2,
+  Minimize2,
+  Eye,
+  Volume2,
+  VolumeX,
+  SlidersHorizontal,
+  Box,
+  Home,
+  Building2,
+  Layers,
+  HardHat,
+  CheckCircle2,
+  ChevronUp,
+  ChevronDown,
+  Info
+} from 'lucide-react';
+import { HeroSlide, PropertyCategory } from '../types';
 
-export const INITIAL_PROVINCE_CITIES: ProvinceCityData[] = [
+interface HeroSectionProps {
+  slides: HeroSlide[];
+  onExploreClick: () => void;
+  onContactAgentClick: () => void;
+  onSelectCategoryFilter: (category: PropertyCategory) => void;
+  onOpen3DTour: (sample: any) => void;
+}
+
+export type TourDeckCategory =
+  | 'all_showroom'
+  | 'properties_plots_villas'
+  | 'commercial_plazas'
+  | 'capsule_containers'
+  | 'upvc_construction';
+
+interface ArchitecturalSpec {
+  id: string;
+  title: string;
+  spec: string;
+}
+
+interface CameraWaypoint {
+  id: string;
+  tourCategory: TourDeckCategory;
+  propertyCategory: PropertyCategory;
+  divisionTag: string;
+  code: string;
+  label: string;
+  subLabel: string;
+  headline: string;
+  description: string;
+  valuation: string;
+  locationBadge: string;
+  focalLength: string;
+  altitude: string;
+  fov: string;
+  imageUrl: string;
+  secondaryImageUrl?: string;
+  fallbackUrl: string;
+  galleryImages?: string[];
+  videoUrl: string;
+  motionOrigin: string;
+  panX: [string, string];
+  panY: [string, string];
+  scaleRange: [number, number];
+  specs: ArchitecturalSpec[];
+}
+
+// ============================================================================
+// 1. VERIFIED DOMESTIC COMMERCIAL TOWERS (TOWERS.PK/ISLAMABAD + ATTACHED ASSETS)
+// ============================================================================
+
+export const ISLAMABAD_DOMESTIC_TOWERS_GALLERY = {
+  // Attached Reference Images: Citadel 7 (Blue Area, Jinnah Avenue, Islamabad)
+  citadel7_nightElevation: 'https://www.genspark.ai/api/files/s/5pSqZ7Q4',
+  citadel7_podiumLookup: 'https://www.genspark.ai/api/files/s/J81GM3Ue',
+  citadel7_daylightTower: 'https://www.genspark.ai/api/files/s/xME9HQHe',
+  citadel7_realSiteDrone: 'https://www.genspark.ai/api/files/s/lEF4t1rs',
+
+  // Attached Reference Images: J7 Emporium (Sector B-17 Multi Gardens, Islamabad)
+  j7Emporium_boulevardView: 'https://www.genspark.ai/api/files/s/oJkK6Tiq',
+  j7Emporium_skybridgeElevation: 'https://www.genspark.ai/api/files/s/q82Lhceq',
+  j7Emporium_cornerPerspective: 'https://www.genspark.ai/api/files/s/dy5c0Eqs',
+
+  // Attached Reference Image: Executive Glass Podium & Corporate Office Tower
+  executiveCommercialTower: 'https://www.genspark.ai/api/files/s/KOmaR4pY',
+
+  // Verified Towers.pk/Islamabad Domestic High-Rise Assets
+  towersPk_citadel7: 'https://towers.pk/wp-content/uploads/2023/11/citadel-7.webp',
+  towersPk_emporium: 'https://towers.pk/wp-content/uploads/2024/02/2021-06-18-02-02-33-5655-1623981753_960x718.5_91.webp',
+  towersPk_centaurus: 'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
+  towersPk_mallOfIslamabad: 'https://towers.pk/wp-content/uploads/2025/09/Mall-of-Islamabad-1.jpg',
+  towersPk_gigaMall: 'https://towers.pk/wp-content/uploads/2025/04/giga-mall-islamabad.jpg',
+  towersPk_skyparkOne: 'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
+  towersPk_ufoneTower: 'https://towers.pk/wp-content/uploads/2025/01/ufone-tower-islamabad-scaled.jpeg',
+  towersPk_iseTower: 'https://towers.pk/wp-content/uploads/2023/08/ise-tower-islamabad.jpg',
+  towersPk_navalAnchorage: 'https://towers.pk/wp-content/uploads/2026/07/Naval-anchorage-phase2-islamabad.png'
+};
+
+export const MODULAR_CAPSULE_GALLERY = {
+  cap1_lakesidePanoramaPod:
+    'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=2400&q=95',
+  cap2_doubleDeckerV2124Pod:
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2400&q=95',
+  cap3_forestCabinPod:
+    'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=2400&q=95'
+};
+
+export const CONSTRUCTED_HOUSES_GALLERY = {
+  house1_whiteSupercarVilla: 'https://www.genspark.ai/api/files/s/YZr3409c',
+  house2_charcoalGarageVilla: 'https://www.genspark.ai/api/files/s/7QO0W212',
+  house3_stoneGlassMansion: 'https://www.genspark.ai/api/files/s/G0HfpG8n',
+  house4_whitePillaredEstate: 'https://www.genspark.ai/api/files/s/oARmbiwI'
+};
+
+export const UPVC_AND_INTERIOR_GALLERY = {
+  upvc1_glassRoofConservatory:
+    'https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=2400&q=95',
+  upvc2_woodSlatTvPartition:
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2400&q=95'
+};
+
+const UHD_ARCHITECTURAL_BACKUPS = {
+  commercialCitadel: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower,
+  commercialEmporium: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_boulevardView,
+  commercialExecutive: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.executiveCommercialTower,
+  commercialCentaurus: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_centaurus,
+  villaWhite:
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2400&q=95',
+  villaModern:
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=95',
+  villaTwilight:
+    'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2400&q=95',
+  capsuleLakeside: MODULAR_CAPSULE_GALLERY.cap1_lakesidePanoramaPod,
+  capsuleDoubleDecker: MODULAR_CAPSULE_GALLERY.cap2_doubleDeckerV2124Pod,
+  upvcCurtainWall: UPVC_AND_INTERIOR_GALLERY.upvc1_glassRoofConservatory
+};
+
+const SHOWROOM_VIDEOS = {
+  architecturalFlyover:
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+  luxuryInteriorWalk:
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+  villaDroneOrbit:
+    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+};
+
+// ============================================================================
+// 2. MASTER WAYPOINTS COVERING ALL RI8CLICK CONSORTIUM PILLARS
+// ============================================================================
+
+const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
+  // ---------------- PILLAR 1: COMMERCIAL PLAZAS (REAL DOMESTIC ISLAMABAD TOWERS) ----------------
   {
-    province: 'Punjab',
-    cities: [
+    id: 'comm-citadel-7-isb',
+    tourCategory: 'commercial_plazas',
+    propertyCategory: 'commercial',
+    divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD COMMERCIAL PLAZAS & TOWERS',
+    code: 'ISB 01 // CITADEL 7 BLUE AREA ISLAMABAD',
+    label: 'Citadel 7 Blue Area',
+    subLabel: '20-Storey CDA Approved Corporate & Retail Tower on Jinnah Avenue, Islamabad',
+    headline: 'Citadel 7 Corporate & Retail Tower — Blue Area, Islamabad',
+    description:
+      'Featured on Towers.pk/Islamabad: Citadel 7 by Chakor Ventures rises 20 storeys (345,000 Sq. Ft.) on Main Jinnah Avenue, Blue Area, Islamabad. Comprising 4 basement parking levels, a 5-floor luxury retail mall, and 14 floors of Margalla-facing corporate office suites.',
+    valuation: 'PKR 1.85 Crore – 14.5 Crore',
+    locationBadge: 'Plot 7, Jinnah Avenue, Blue Area, Islamabad',
+    focalLength: '24MM ARCHITECTURAL',
+    altitude: '272 FT SKYLINE',
+    fov: '85° WIDE',
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_nightElevation,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_citadel7,
+    galleryImages: [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_nightElevation,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_podiumLookup,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_realSiteDrone
+    ],
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.8%', '0.8%'],
+    panY: ['0%', '-0.8%'],
+    scaleRange: [1.01, 1.06],
+    specs: [
       {
-        name: 'Taxila',
-        societies: [
-          'Faisal Hills',
-          'Faisal Hills Block A',
-          'Faisal Hills Block B',
-          'Faisal Hills Block C',
-          'Faisal Hills Executive Block',
-          'Faisal Hills Commercial Broadway',
-          'Kohistan Enclave',
-          'Margalla View Society',
-          'Museum Road Estates',
-          'Heavy Mechanical Complex (HMC) Area',
-          'New City Phase 1 & 2',
-          'University Road Enclave',
-          'Taxila Cantt',
-          'Wah Cantonment Officers Colony',
-          'GT Road Commercial Belt'
-        ]
+        id: 'c7-spec-1',
+        title: '5-Storey Retail Mall & 14 Corporate Floors',
+        spec: '345,000 Sq. Ft. CDA-approved commercial skyscraper with double-glazed thermal facade.'
       },
       {
-        name: 'Rawalpindi',
-        societies: [
-          'Bahria Town Phase 1-8',
-          'DHA Phase 1-4',
-          'Top City-1',
-          'Mumtaz City',
-          'Faisal Town (F-18)',
-          'Chaklala Scheme 3',
-          'Askari 14 & 15',
-          'Satellite Town',
-          'Westridge'
-        ]
-      },
-      {
-        name: 'Lahore',
-        societies: [
-          'DHA Phase 1-9 & Prism 9',
-          'Bahria Town Lahore',
-          'Lake City',
-          'Gulberg Corporate Center',
-          'LDA City',
-          'Etihad Town',
-          'Park View City Lahore'
-        ]
-      },
-      {
-        name: 'Multan',
-        societies: [
-          'DHA Multan',
-          'Citi Housing Multan',
-          'Royal Orchard',
-          'Wapda Town'
-        ]
+        id: 'c7-spec-2',
+        title: 'Live On-Ground Construction Progress',
+        spec: 'Structural grey-frame and curtain-wall glazing actively progressing on Main Jinnah Avenue.'
       }
     ]
   },
   {
-    province: 'Islamabad Capital Territory',
-    cities: [
+    id: 'comm-citadel-7-site-isb',
+    tourCategory: 'commercial_plazas',
+    propertyCategory: 'commercial',
+    divisionTag: 'RI8CLICK CONSORTIUM // VERIFIED DOMESTIC SITE PROGRESS',
+    code: 'ISB 02 // CITADEL 7 DRONE & PODIUM VIEW',
+    label: 'Citadel 7 Real Site & Podium',
+    subLabel: 'On-Ground Curtain Wall Glazing & Podium Retail Frontage on Jinnah Avenue',
+    headline: 'Real Domestic High-Rise Development — Jinnah Avenue Blue Area',
+    description:
+      'Authentic domestic commercial development in Islamabad with zero virtual placeholders. Direct frontage along the Metro Bus corridor and Jinnah Avenue, offering high-yield retail outlets, corporate floor plates, and 4-level underground parking.',
+    valuation: 'Shops from PKR 3.15 Cr • Offices from 2.45 Cr',
+    locationBadge: 'G-7 / F-7 Blue Area, Islamabad (Towers.pk Verified)',
+    focalLength: '28MM DRONE',
+    altitude: '20 STOREYS',
+    fov: '80° STANDARD',
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_realSiteDrone,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_podiumLookup,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower,
+    galleryImages: [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_realSiteDrone,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_podiumLookup,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower
+    ],
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.8%', '-0.8%'],
+    panY: ['-0.5%', '0.5%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
       {
-        name: 'Islamabad',
-        societies: [
-          'Multi Gardens (B-17)',
-          'DHA Phase 2 & 5',
-          'Bahria Enclave',
-          'CDA Sectors (E-7, F-6, F-7, F-8, F-10, F-11, G-11, I-8)',
-          'Blue Area Corporate Zone',
-          'Eighteen Islamabad',
-          'Park View City',
-          'Gulberg Greens & Residencia',
-          'Faisal Town Phase 2'
-        ]
-      }
-    ]
-  },
-  {
-    province: 'Khyber Pakhtunkhwa (KPK)',
-    cities: [
-      {
-        name: 'Peshawar',
-        societies: [
-          'DHA Peshawar',
-          'Hayatabad',
-          'Regi Model Town'
-        ]
+        id: 'c7s-spec-1',
+        title: 'Real Domestic Structure & Glazing',
+        spec: 'Full-height structural glass facade overlooking Margalla Hills and Blue Area.'
       },
       {
-        name: 'Abbottabad',
-        societies: [
-          'Ayubia & Nathia Gali Resorts',
-          'Jinnahabad',
-          'PMA Road Enclave'
-        ]
+        id: 'c7s-spec-2',
+        title: 'High Rental Yield Corporate Hub',
+        spec: 'Positioned beside ISE Tower, Ufone Tower, and The Centaurus on Jinnah Avenue.'
       }
     ]
   },
   {
-    province: 'Sindh',
-    cities: [
+    id: 'comm-j7-emporium-isb',
+    tourCategory: 'commercial_plazas',
+    propertyCategory: 'commercial',
+    divisionTag: 'RI8CLICK CONSORTIUM // MULTI GARDENS B-17 & GT ROAD CORRIDOR',
+    code: 'ISB 03 // J7 EMPORIUM MALL & RESIDENCIA',
+    label: 'J7 Emporium Islamabad',
+    subLabel: '30-Storey Iconic Mega Mall, Skybridge Suites & Corporate Tower in Sector B-17',
+    headline: 'J7 Emporium Commercial Mall & High-Rise Tower — Islamabad',
+    description:
+      'Listed on Towers.pk/Islamabad: J7 Emporium in Sector B-17 Multi Gardens (adjacent to GT Road & M-1 C-18 Interchange) spans 46 Kanals with a sculpted commercial podium mall, skybridge corporate offices, and luxury serviced hotel suites.',
+    valuation: 'Commercial Shops & Suites from PKR 85 Lakh',
+    locationBadge: 'Sector B-17 Multi Gardens, Islamabad / Taxila Link',
+    focalLength: '20MM WIDE',
+    altitude: '30 STOREYS / 361 FT',
+    fov: '90° ARCHITECTURAL',
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_boulevardView,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_cornerPerspective,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_emporium,
+    galleryImages: [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_boulevardView,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_skybridgeElevation,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_cornerPerspective
+    ],
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.8%', '0.8%'],
+    panY: ['0%', '-0.5%'],
+    scaleRange: [1.01, 1.06],
+    specs: [
       {
-        name: 'Karachi',
-        societies: [
-          'DHA Karachi Phase 1-8',
-          'Bahria Town Karachi',
-          'Clifton Block 1-9',
-          'Emaar Crescent Bay'
-        ]
+        id: 'j7-spec-1',
+        title: 'Cantilevered Skybridge & Multi-Story Atrium',
+        spec: 'Distinctive angular podium mall hosting national retail brands, multiplex, and food court.'
+      },
+      {
+        id: 'j7-spec-2',
+        title: 'Strategic Islamabad–Taxila Gateway',
+        spec: 'Direct connectivity to Faisal Hills, Taxila GT Road, and M-1 Motorway.'
+      }
+    ]
+  },
+  {
+    id: 'comm-islamabad-skyline-plazas',
+    tourCategory: 'commercial_plazas',
+    propertyCategory: 'commercial',
+    divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD & FAISAL HILLS COMMERCIAL HUB',
+    code: 'ISB 04 // SKYPARK ONE, GIGA MALL & BLUE AREA PLAZAS',
+    label: 'Executive Commercial Tower',
+    subLabel: 'High-Footfall Retail Plazas, Corporate Suites & Towers.pk Verified Landmarks',
+    headline: 'Executive Commercial Plazas — Blue Area, Gulberg & Faisal Hills',
+    description:
+      'Ri8click Consortium markets and constructs high-ROI domestic commercial plazas across Islamabad (Blue Area, Gulberg Greens Skypark One, DHA Giga Mall corridor) and Faisal Hills Commercial Broadway—engineered with acoustic UPVC facades and capsule elevators.',
+    valuation: 'Plazas & Retail Units from PKR 1.50 Crore',
+    locationBadge: 'Islamabad Blue Area, Gulberg Greens & Faisal Hills',
+    focalLength: '24MM PRIME',
+    altitude: 'COMMERCIAL PODIUM',
+    fov: '84° WIDE',
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.executiveCommercialTower,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_skyparkOne,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_centaurus,
+    galleryImages: [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.executiveCommercialTower,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_skyparkOne,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_gigaMall,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_mallOfIslamabad
+    ],
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.6%', '-0.6%'],
+    panY: ['0%', '-0.5%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'isp-spec-1',
+        title: 'Towers.pk Islamabad Verified Portfolio',
+        spec: 'Includes Skypark One (Gulberg Greens), Mall of Islamabad (Blue Area), and Giga Mall (DHA).'
+      },
+      {
+        id: 'isp-spec-2',
+        title: 'Ri8click Consortium Turnkey Engineering',
+        spec: 'German UPVC double-glazed curtain walls, HVAC climate control, and dedicated basement parking.'
+      }
+    ]
+  },
+
+  // ---------------- PILLAR 2: PROPERTIES (PLOTS & CONSTRUCTED HOUSES) ----------------
+  {
+    id: 'prop-wp-1',
+    tourCategory: 'properties_plots_villas',
+    propertyCategory: 'residential',
+    divisionTag: 'RI8CLICK CONSORTIUM // PLOTS & CONSTRUCTED HOUSES',
+    code: 'PROP 01 // CONSTRUCTED VILLA & PLOTS',
+    label: 'Cantilevered Designer Villa',
+    subLabel: '1-Kanal Constructed House & Possession Plots in Faisal Hills',
+    headline: 'Constructed Signature Villas & Prime Residential Plots',
+    description:
+      'Ri8click Consortium offers 100% watermark-verified Residential & Commercial Plots (5 Marla, 10 Marla, 1 & 2 Kanal) alongside architect-constructed luxury houses in Faisal Hills, Kohistan Enclave, Multi Gardens B-17, and DHA Islamabad.',
+    valuation: 'Plots from PKR 45L • Villas 6.85 Cr+',
+    locationBadge: 'Faisal Hills Executive, Taxila & Islamabad',
+    focalLength: '24MM PRIME',
+    altitude: 'ELEVATION +4.2M',
+    fov: '84° WIDE',
+    imageUrl: CONSTRUCTED_HOUSES_GALLERY.house1_whiteSupercarVilla,
+    secondaryImageUrl: CONSTRUCTED_HOUSES_GALLERY.house3_stoneGlassMansion,
+    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.villaWhite,
+    videoUrl: SHOWROOM_VIDEOS.villaDroneOrbit,
+    motionOrigin: 'center center',
+    panX: ['0%', '-1.2%'],
+    panY: ['0%', '-0.8%'],
+    scaleRange: [1.01, 1.06],
+    specs: [
+      {
+        id: 'p1-1',
+        title: 'Turnkey Constructed Residence',
+        spec: 'A+ grade seismic RCC structure with cantilevered sky terraces.'
+      },
+      {
+        id: 'p1-2',
+        title: 'Ri8click Consortium UPVC Glazing',
+        spec: 'Double-glazed German profile UPVC windows & sliding doors.'
+      }
+    ]
+  },
+  {
+    id: 'prop-wp-2',
+    tourCategory: 'properties_plots_villas',
+    propertyCategory: 'residential',
+    divisionTag: 'RI8CLICK CONSORTIUM // PLOTS & CONSTRUCTED HOUSES',
+    code: 'PROP 02 // MARGALLA RIDGE ESTATE',
+    label: 'Hillside Stone & Glass Manor',
+    subLabel: 'Constructed Luxury House & Developed Ridge Plots',
+    headline: 'Margalla View Constructed Houses & Estate Plots',
+    description:
+      'Commanding panoramic Margalla foothill views, our constructed residences and developed plots combine natural stacked-stone facades, warm timber soffits, floating staircases, and full underground utilities.',
+    valuation: 'PKR 5.90 Crore – 7.40 Crore',
+    locationBadge: 'Kohistan Enclave, B-17 & Faisal Hills',
+    focalLength: '20MM WIDE',
+    altitude: 'TERRACE +6.0M',
+    fov: '90° WIDE',
+    imageUrl: CONSTRUCTED_HOUSES_GALLERY.house3_stoneGlassMansion,
+    secondaryImageUrl: CONSTRUCTED_HOUSES_GALLERY.house2_charcoalGarageVilla,
+    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.villaTwilight,
+    videoUrl: SHOWROOM_VIDEOS.villaDroneOrbit,
+    motionOrigin: 'left center',
+    panX: ['-1.0%', '1.0%'],
+    panY: ['0.4%', '-0.5%'],
+    scaleRange: [1.05, 1.01],
+    specs: [
+      {
+        id: 'p2-1',
+        title: '24-Foot Corner Glass Atrium',
+        spec: 'Seamless structural UPVC & silicone glazing overlooking Margalla Hills.'
+      },
+      {
+        id: 'p2-2',
+        title: 'Subterranean 3-Car Parking',
+        spec: 'Climate-controlled lower-ground parking & servant quarters.'
+      }
+    ]
+  },
+
+  // ---------------- PILLAR 3: CONTAINER & CAPSULE SMART HOUSES ----------------
+  {
+    id: 'capsule-wp-1',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES',
+    code: 'CAPSULE 01 // LAKESIDE CURVED GLASS POD',
+    label: 'Lakeside Panorama Capsule',
+    subLabel: '270° Curved Thermal Glass, UPVC Seals & Timber Patio Deck',
+    headline: 'Panoramic Curved-Glass Container Capsule House',
+    description:
+      'Engineered by Ri8click Consortium: aerodynamic space capsule house featuring 270-degree curved tempered Low-E observation glass, fluorocarbon aviation aluminum shell, smart IoT climate automation, and rapid crane installation.',
+    valuation: 'PKR 58 Lakh – 98 Lakh',
+    locationBadge: 'Turnkey Nationwide Delivery (Farms, Lakes & Hills)',
+    focalLength: '18MM ULTRA-WIDE',
+    altitude: 'WATERFRONT DECK',
+    fov: '96° EXPANSIVE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap1_lakesidePanoramaPod,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap2_doubleDeckerV2124Pod,
+    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.capsuleLakeside,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-1.0%', '1.0%'],
+    panY: ['0%', '-0.6%'],
+    scaleRange: [1.01, 1.06],
+    specs: [
+      {
+        id: 'c1-1',
+        title: '270° Curved Low-E Observation Glass',
+        spec: 'Double-glazed thermal & acoustic curved glass with zero condensation.'
+      },
+      {
+        id: 'c1-2',
+        title: 'Smart Biometric Entry & UPVC Seal',
+        spec: 'Weatherproof marine-grade gasket sealing with keyless smart lock.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-wp-2',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES',
+    code: 'CAPSULE 02 // V2124 DOUBLE-DECKER VILLA',
+    label: 'V2124 Double-Decker Pod',
+    subLabel: '2-Story Stacked Curved Glass Capsule Villa with Sky Suite',
+    headline: 'V2124 Double-Decker Stacked Capsule Villa',
+    description:
+      'Two-story stacked modular capsule architecture offering an expansive ground-floor living and dining pavilion with full-height sliding glass walls and an upper-deck panoramic master suite.',
+    valuation: 'PKR 1.35 Crore – 1.85 Crore',
+    locationBadge: 'Luxury Farmhouses, Resorts & Urban Rooftops',
+    focalLength: '20MM ARCHITECTURAL',
+    altitude: '2-STORY DUPLEX',
+    fov: '92° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap2_doubleDeckerV2124Pod,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap3_forestCabinPod,
+    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.capsuleDoubleDecker,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.8%', '0.8%'],
+    panY: ['0.4%', '-0.4%'],
+    scaleRange: [1.01, 1.06],
+    specs: [
+      {
+        id: 'c2-1',
+        title: 'Upper-Deck V2124 Sky Suite',
+        spec: 'Second-story curved glass master bedroom with warm cove lighting.'
+      },
+      {
+        id: 'c2-2',
+        title: 'Open-Plan Ground Lounge & Kitchen',
+        spec: 'Full-span sliding UPVC/aluminum thermal glass doors opening to timber deck.'
+      }
+    ]
+  },
+
+  // ---------------- PILLAR 4: UPVC DOORS, WINDOWS, PARTITIONS & CONSTRUCTION ----------------
+  {
+    id: 'upvc-wp-1',
+    tourCategory: 'upvc_construction',
+    propertyCategory: 'projects',
+    divisionTag: 'RI8CLICK CONSORTIUM // UPVC DOORS, WINDOWS & CONSTRUCTION',
+    code: 'UPVC 01 // DOORS, WINDOWS & GLASS CONSERVATORY',
+    label: 'UPVC Windows & Glass Systems',
+    subLabel: 'German-Standard UPVC Doors, Windows, Skylights & Facades',
+    headline: 'Ri8click Consortium UPVC Doors, Windows, Partitions & Panels',
+    description:
+      'Manufactured by Ri8click Consortium: heavy-duty acoustic double/triple-glazed UPVC casement & sliding windows, patio doors, office glass partitions, and weatherproof architectural wall panels.',
+    valuation: '10-Year Factory Warranty • Custom Fabrication',
+    locationBadge: 'Ri8click Consortium UPVC Plant & Turnkey Division',
+    focalLength: '18MM ULTRA-WIDE',
+    altitude: 'CONSERVATORY',
+    fov: '96° EXPANSIVE',
+    imageUrl: UPVC_AND_INTERIOR_GALLERY.upvc1_glassRoofConservatory,
+    secondaryImageUrl: UPVC_AND_INTERIOR_GALLERY.upvc2_woodSlatTvPartition,
+    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.upvcCurtainWall,
+    videoUrl: SHOWROOM_VIDEOS.luxuryInteriorWalk,
+    motionOrigin: 'center center',
+    panX: ['0%', '-1.0%'],
+    panY: ['-0.5%', '0.5%'],
+    scaleRange: [1.01, 1.06],
+    specs: [
+      {
+        id: 'u1-1',
+        title: 'Thermal-Break Glazed Roof & Skylights',
+        spec: 'Argon-filled Low-E laminated glass blocking 96% UV radiation.'
+      },
+      {
+        id: 'u1-2',
+        title: 'Acoustic UPVC Sliding & Casement Windows',
+        spec: 'Multi-chamber steel-reinforced UPVC profiles with 42dB sound reduction.'
       }
     ]
   }
 ];
 
-export const INITIAL_AGENCIES: AgencyAccount[] = [
-  {
-    id: 'agency-1',
-    name: 'Malik Zeeshan',
-    companyName: 'Al-Mairaj Real Estate & Builders',
-    role: 'agency',
-    email: 'zeeshan@almairajbuilders.pk',
-    phone: '+92 336-5666727',
-    whatsapp: '923365666727',
-    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    verified: true,
-    rating: 4.9,
-    totalPosts: 38,
-    postLimit: 50,
-    activeListings: 38,
-    city: 'Taxila / Islamabad',
-    primarySociety: 'Faisal Hills & B-17',
-    memberSince: 'Jan 2023',
-    status: 'active',
-    address: 'Office #12, Executive Commercial Hub, Main Boulevard, Faisal Hills, Taxila',
-    bio: 'Authorized platinum dealer for Faisal Hills, Multi Gardens B-17, and ri8click Turnkey Villas.'
-  },
-  {
-    id: 'agency-2',
-    name: 'Chaudhry Bilal',
-    companyName: 'Faisal Hills Property Advisors',
-    role: 'agency',
-    email: 'bilal@fhpropertyadvisors.pk',
-    phone: '+92 336-5666727',
-    whatsapp: '923365666727',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    verified: true,
-    rating: 4.85,
-    totalPosts: 24,
-    postLimit: 40,
-    activeListings: 24,
-    city: 'Taxila',
-    primarySociety: 'Faisal Hills Executive & Block A/B/C',
-    memberSince: 'Mar 2023',
-    status: 'active',
-    address: 'Plaza #45, Commercial Broadway, Faisal Hills, Taxila',
-    bio: 'Specializing in verified residential & commercial plots, possession files, and high-ROI Broadway shops.'
-  },
-  {
-    id: 'agency-3',
-    name: 'Engr. Haris Farooq',
-    companyName: 'Beacon Prime Commercial Estates',
-    role: 'agency',
-    email: 'haris@beaconprime.pk',
-    phone: '+92 336-5666727',
-    whatsapp: '923365666727',
-    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    verified: true,
-    rating: 4.95,
-    totalPosts: 19,
-    postLimit: 50,
-    activeListings: 19,
-    city: 'Islamabad',
-    primarySociety: 'Blue Area & Eighteen',
-    memberSince: 'Nov 2022',
-    status: 'active',
-    address: '9th Floor, Ufone / ISE Corporate Enclave, Blue Area, Islamabad',
-    bio: 'Corporate towers, high-rise commercial plazas, and institutional real estate advisory in Islamabad.'
-  },
-  {
-    id: 'agency-4',
-    name: 'Haji Aslam Khan',
-    companyName: 'Taxila City Realtors & Consultants',
-    role: 'agency',
-    email: 'aslam@taxilarealtors.pk',
-    phone: '+92 336-5666727',
-    whatsapp: '923365666727',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
-    verified: true,
-    rating: 4.75,
-    totalPosts: 15,
-    postLimit: 30,
-    activeListings: 15,
-    city: 'Taxila / Wah Cantt',
-    primarySociety: 'Kohistan Enclave & New City Phase 2',
-    memberSince: 'Jun 2023',
-    status: 'active',
-    address: 'Main GT Road Commercial Center, Wah Cantt / Taxila',
-    bio: 'Trusted property dealers for Kohistan Enclave, New City Phase 2, and Wah Cantt residential estates.'
-  },
-  {
-    id: 'agency-sapphire',
-    name: 'Sapphire Properties Advisory',
-    companyName: 'Sapphire Properties & Athar Associates',
-    role: 'agency',
-    email: 'info@sapphireproperties.com.pk',
-    phone: '+92 336-5666727',
-    whatsapp: '923365666727',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    verified: true,
-    rating: 4.98,
-    totalPosts: 12,
-    postLimit: 60,
-    activeListings: 12,
-    city: 'Lahore',
-    primarySociety: 'Bahria Town Lahore',
-    memberSince: 'Jan 2022',
-    status: 'active',
-    address: 'Main Boulevard, Bahria Town Ring Road SL3 Interchange, Lahore, Punjab',
-    bio: 'Authorized sales and marketing partner for Icon Mall & Towers Lahore and premier landmark mixed-use towers.'
-  }
-];
+type AtmosphereGrade = 'crystal_daylight' | 'solar_vivid' | 'showroom_hdr';
 
-export const INITIAL_PROPERTIES: Property[] = [
-  // ==================== 1. COMMERCIAL PROPERTIES (DOMESTIC TOWERS.PK IMAGES) ====================
-  {
-    id: 'prop-icon-mall-comm-lahore',
-    title: 'Icon Mall & Towers - Prime Commercial Retail Shops & Food Court',
-    tagline: '22-Kanal Twin Tower Mega Shopping Mall & High-Rise Corporate Hub',
-    description: 'Icon Mall & Towers is a prestigious 22-Kanal mixed-use development by Athar Associates and marketed by Sapphire Properties, strategically situated at the Bahria Town Interchange on Ring Road (SL3). This 17-storey twin-tower landmark features 4 expansive commercial floors with 150+ international and national retail brands, anchor supermarkets, and a modern food court.',
-    category: 'commercial',
-    type: 'Retail Shop',
-    purpose: 'for_sale',
-    price: 3500000,
-    priceFormatted: 'PKR 35 Lakh (Booking from 5 Lakh)',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Lahore',
-      society: 'Bahria Town Lahore',
-      block: 'Ring Road SL3 Interchange / Sector C',
-      address: 'Main Boulevard, Bahria Town Ring Road SL3 Interchange, Lahore, Punjab, Pakistan',
-      latitude: 31.3650,
-      longitude: 74.1850,
-      mapZoom: 16,
-      nearbyLandmarks: [
-        'Bahria Town Ring Road SL3 Interchange',
-        'Grand Jamia Mosque Bahria Town',
-        'Eiffel Tower Bahria Town Lahore',
-        'Beaconhouse National University (BNU)',
-        'Safari Zoo Lahore',
-        'Lake City Interchange'
-      ]
-    },
-    area: 220,
-    areaUnit: 'Sq Ft',
-    floors: 17,
-    features: [
-      '22-Kanal 17-Storey Twin Tower Landmark',
-      'Pakistan Largest 12.5-Kanal Central Open Courtyard',
-      '4 Floors Dedicated to Mega Shopping Mall (150+ Outlets)',
-      '12 High-Speed Elevators & 10 Escalators',
-      '450+ Secure Underground Basement Car Parking',
-      'Direct Access to Ring Road SL3 Interchange',
-      'Royal Swiss International 5-Star Hotel in Tower 2',
-      '24/7 Smart Biometric Security & CCTV Surveillance',
-      'Continuous 100% Power Backup with Standby Generators',
-      'Central HVAC Air Conditioning & Modern Food Court',
-      'Pre-Launch Rates with Easy 5-Year Installments (1% Monthly)'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2024/01/image-4-34-1024x640-1-e1704435577931.jpg',
-      'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
-      'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
-      'https://towers.pk/wp-content/uploads/2023/08/ise-tower-islamabad.jpg'
-    ],
-    watermark: true,
-    agencyId: 'agency-sapphire',
-    agentName: 'Sapphire Properties Advisory',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Sapphire Properties & Athar Associates',
-    agentRating: 4.98,
-    isFeatured: true,
-    isHotCommercial: true,
-    viewsCount: 2340,
-    savesCount: 156,
-    createdAt: '2026-09-01',
-    status: 'active',
-    virtualTourVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    virtualTourVideoTitle: 'Icon Mall & Towers Commercial Atrium & Courtyard 3D Tour',
-    hasVirtualTour: true
-  },
-  {
-    id: 'prop-comm-1',
-    title: 'Ri8Click Executive Commercial Plaza & Corporate Tower',
-    tagline: 'Prime Multi-Story Commercial Plaza on Main Boulevard',
-    description: 'Ultra-modern corporate commercial plaza located on the prestigious Main Commercial Boulevard of Faisal Hills Taxila / Islamabad corridor. Features high-visibility frontage, basement parking, high-speed capsule elevators, double-glazed UPVC thermal glass facade by Ri8Click UPVC, backup solar generators, and guaranteed high rental ROI of 9.2% annually.',
-    category: 'commercial',
-    type: 'Commercial Plaza',
-    purpose: 'for_sale',
-    price: 95000000,
-    priceFormatted: 'PKR 9.5 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      block: 'Faisal Hills Commercial Broadway',
-      address: 'Plot #14-15, Main Commercial Boulevard, Faisal Hills, Taxila / Rawalpindi'
-    },
-    area: 8,
-    areaUnit: 'Marla',
-    floors: 5,
-    features: [
-      'Double Glazed UPVC Facade',
-      'Dual Capsule Elevators',
-      'Underground Dedicated Parking',
-      'CCTV 24/7 Security Command',
-      'Fire Fighting System Installed',
-      'High Rental Yield (9.2%+)',
-      'Solar Backup 50kVA',
-      'Approved RDA/TMA NOC'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
-      'https://towers.pk/wp-content/uploads/2023/08/ise-tower-islamabad.jpg',
-      'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp'
-    ],
-    watermark: true,
-    agencyId: 'agency-1',
-    agentName: 'Malik Zeeshan',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Al-Mairaj Real Estate & Builders',
-    agentRating: 4.9,
-    isFeatured: true,
-    isHotCommercial: true,
-    viewsCount: 1420,
-    savesCount: 89,
-    createdAt: '2026-08-20',
-    status: 'active',
-    virtualTourVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    virtualTourVideoTitle: 'Executive Commercial Plaza 3D Tour & Facade Walkthrough (15s)',
-    hasVirtualTour: true
-  },
-  {
-    id: 'prop-comm-2',
-    title: 'Multi-Story Corporate High-Rise Tower - Islamabad & GT Road',
-    tagline: 'State-of-the-Art Commercial Business Centre & Corporate Suites',
-    description: 'Signature high-rise commercial tower serving the Islamabad Blue Area and Main Grand Trunk (GT) Road Taxila corridor near the Margalla Hills junction. Ideal for multinational regional offices, telecom headquarters, banks, and corporate franchises. Built with Ri8Click turnkey civil engineering standards.',
-    category: 'commercial',
-    type: 'Commercial Plaza',
-    purpose: 'for_sale',
-    price: 185000000,
-    priceFormatted: 'PKR 18.5 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'GT Road Commercial Belt',
-      address: 'Main GT Road Junction, Taxila Gateway / Islamabad Link, Punjab'
-    },
-    area: 1.5,
-    areaUnit: 'Kanal',
-    floors: 12,
-    features: [
-      'Multi-Story Approved Commercial High-Rise',
-      'Dedicated Basement for 60+ Cars',
-      'Reinforced Earthquake Resistant Structure',
-      'Central VRF Climate Control',
-      'Panoramic Margalla Mountain Views',
-      '3 Phase Industrial Electric Connection',
-      'UPVC Architectural Double Glaze'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2023/06/Jinnah-Avenue-Islamabad.jpg',
-      'https://towers.pk/wp-content/uploads/2023/08/44649726-800x600-transformed-e1691749295923.jpeg',
-      'https://towers.pk/wp-content/uploads/2024/04/Ogdclofficeislamabad.jpg'
-    ],
-    watermark: true,
-    agencyId: 'agency-3',
-    agentName: 'Engr. Haris Farooq',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Beacon Prime Commercial Estates',
-    agentRating: 4.95,
-    isFeatured: true,
-    isHotCommercial: true,
-    viewsCount: 980,
-    savesCount: 65,
-    createdAt: '2026-08-18',
-    status: 'active'
-  },
-  {
-    id: 'prop-comm-3',
-    title: 'Corporate Office Floor in ISE / Ufone Enclave - Blue Area Islamabad',
-    tagline: 'Furnished Executive High-Rise Office Floor with Margalla Skyline View',
-    description: 'Fully furnished 3,800 Sq Ft corporate office space in Islamabad Blue Area business hub (Jinnah Avenue). Includes executive boardrooms, open workstation halls, acoustic UPVC partitions, server room, and executive kitchenette.',
-    category: 'commercial',
-    type: 'Corporate Office',
-    purpose: 'for_rent',
-    price: 650000,
-    priceFormatted: 'PKR 6.5 Lakh / mo',
-    currency: 'PKR',
-    location: {
-      province: 'Islamabad Capital Territory',
-      city: 'Islamabad',
-      society: 'Blue Area Corporate Zone',
-      address: '7th Floor, Jinnah Avenue Corporate Tower, Blue Area, Islamabad'
-    },
-    area: 3800,
-    areaUnit: 'Sq Ft',
-    features: [
-      'Fully Furnished Executive Interior & UPVC Partitions',
-      'High Speed Fiber Internet Infrastructure',
-      'Biometric Access & Smart Keyless Entry',
-      '12 Reserved Underground Parking Slots',
-      'Executive Dining & Pantry',
-      '24/7 Power Backup (Tier-3)'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2023/08/ise-tower-islamabad.jpg',
-      'https://towers.pk/wp-content/uploads/2023/06/Jinnah-Avenue-Islamabad.jpg',
-      'https://towers.pk/wp-content/uploads/2024/01/saudi-pak-tower-building-e1706706739861.jpg'
-    ],
-    watermark: true,
-    agencyId: 'agency-3',
-    agentName: 'Engr. Haris Farooq',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Beacon Prime Commercial Estates',
-    agentRating: 4.95,
-    isFeatured: false,
-    isHotCommercial: true,
-    viewsCount: 750,
-    savesCount: 42,
-    createdAt: '2026-08-25',
-    status: 'active'
-  },
-  {
-    id: 'prop-comm-4',
-    title: 'Corner Commercial Plaza Retail Shop in Faisal Hills Broadway',
-    tagline: 'Double-Height Ground Floor Commercial Retail Unit',
-    description: 'High-footfall ground floor corner shop on Faisal Hills Commercial Broadway. Ideal for top pharmacy chains, gourmet cafes, supermarkets, or fashion boutiques. Immediate possession available.',
-    category: 'commercial',
-    type: 'Retail Shop',
-    purpose: 'for_sale',
-    price: 32000000,
-    priceFormatted: 'PKR 3.2 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      block: 'Faisal Hills Commercial Broadway',
-      address: 'Shop #G-02, Broadway Square, Faisal Hills, Taxila'
-    },
-    area: 4,
-    areaUnit: 'Marla',
-    features: [
-      'Double Height Ceiling (18 ft)',
-      'Direct Frontage on 150ft Boulevard',
-      'High Pedestrian & Vehicle Traffic',
-      'Dedicated Customer Parking Front',
-      'Water, Gas & 3-Phase Meter Installed',
-      'Rental Value: PKR 1.8 Lakh/month'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2024/01/image-4-34-1024x640-1-e1704435577931.jpg',
-      'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg'
-    ],
-    watermark: true,
-    agencyId: 'agency-2',
-    agentName: 'Chaudhry Bilal',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Faisal Hills Property Advisors',
-    agentRating: 4.85,
-    isFeatured: true,
-    isHotCommercial: true,
-    viewsCount: 1120,
-    savesCount: 54,
-    createdAt: '2026-08-22',
-    status: 'active'
-  },
+const WAYPOINT_DURATION_MS = 6000;
 
-  // ==================== 2. RESIDENTIAL PROPERTIES ====================
-  {
-    id: 'prop-icon-mall-res-lahore',
-    title: 'Icon Mall & Towers - Luxury High-Rise Apartments & Suites',
-    tagline: '10 Residential Floors of High-Rise Living with 5-Star Hotel Amenities',
-    description: 'Discover 5-star high-rise luxury living spanning from the 5th to the 17th floors of the iconic twin towers. These fully furnished luxury designer apartments and hotel-serviced executive suites offer breathtaking skyline and 12.5-Kanal courtyard views.',
-    category: 'residential',
-    type: 'Luxury Apartment',
-    purpose: 'for_sale',
-    price: 8480000,
-    priceFormatted: 'PKR 84.8 Lakh (Booking from 5 Lakh)',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Lahore',
-      society: 'Bahria Town Lahore',
-      block: 'Ring Road SL3 Interchange / Sector C',
-      address: 'Towers 1 & 2, Bahria Town Ring Road SL3 Interchange, Lahore, Punjab, Pakistan',
-      latitude: 31.3650,
-      longitude: 74.1850,
-      mapZoom: 16,
-      nearbyLandmarks: [
-        'Bahria Town Ring Road SL3 Interchange',
-        'Grand Jamia Mosque Bahria Town',
-        'Eiffel Tower Bahria Town Lahore',
-        'Beaconhouse National University (BNU)',
-        'Safari Zoo Lahore',
-        'Lake City Interchange'
-      ]
-    },
-    area: 550,
-    areaUnit: 'Sq Ft',
-    bedrooms: 1,
-    bathrooms: 1,
-    floors: 17,
-    parking: 1,
-    features: [
-      'Fully Furnished Designer Interior by Royal Swiss Standards',
-      'Rooftop Infinity Swimming Pool with Skyline Views',
-      'Exclusive Resident Health Club, Gym & Luxury Spa',
-      'Private High-Speed Residential Elevators & Access Cards',
-      '12.5-Kanal Central Courtyard Views & Balconies',
-      'Rooftop Open-Air BBQ & Social Lounge',
-      '24/7 Concierge, Valet & Room Service',
-      'Underground Reserved Residential Parking',
-      '24/7 Smart Biometric Security & Continuous Power Backup',
-      'Flexible 5-Year Installment Plan with 1% Monthly Installment'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2023/11/6ByJSAN.jpg',
-      'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
-      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=1200&q=80'
-    ],
-    watermark: true,
-    agencyId: 'agency-sapphire',
-    agentName: 'Sapphire Properties Advisory',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Sapphire Properties & Athar Associates',
-    agentRating: 4.98,
-    isFeatured: true,
-    isHotCommercial: false,
-    viewsCount: 2890,
-    savesCount: 182,
-    createdAt: '2026-09-01',
-    status: 'active',
-    virtualTourVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-    virtualTourVideoTitle: 'Icon Mall & Towers Luxury Apartment & Penthouse 3D Tour',
-    hasVirtualTour: true
-  },
-  {
-    id: 'prop-res-1',
-    title: 'Modern Architectural Constructed Villa in Faisal Hills',
-    tagline: 'Designer 5-Bedroom Luxury Villa with Margalla View & UPVC Glazing',
-    description: 'Breathtaking 1-Kanal modern contemporary villa in Faisal Hills Block B, Taxila. Crafted with imported Spanish tiles, solid ash wood doors, premium Ri8Click German UPVC double glazed windows for optimal thermal insulation, imported Italian kitchen fittings, lush landscaped lawn, and rooftop stargazing patio.',
-    category: 'residential',
-    type: 'Villa',
-    purpose: 'for_sale',
-    price: 68500000,
-    priceFormatted: 'PKR 6.85 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      block: 'Faisal Hills Block B',
-      address: 'Street 18, Block B, Faisal Hills, Taxila / Rawalpindi'
-    },
-    area: 1,
-    areaUnit: 'Kanal',
-    bedrooms: 5,
-    bathrooms: 6,
-    parking: 3,
-    features: [
-      '5 Master Bedrooms with Attached Baths',
-      'Ri8Click Double Glazed UPVC Windows & Doors',
-      'Imported Italian Dirty & Show Kitchens',
-      'Smart Home Automation (Lights, AC, Security)',
-      '10kW Hybrid On-Grid Solar System',
-      'Servant Quarters with Separate Entry',
-      'Rooftop BBQ & Margalla View Terrace',
-      'Approved Completion Certificate'
-    ],
-    images: [
-      'https://www.genspark.ai/api/files/s/YZr3409c',
-      'https://www.genspark.ai/api/files/s/G0HfpG8n',
-      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'
-    ],
-    watermark: true,
-    agencyId: 'agency-1',
-    agentName: 'Malik Zeeshan',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Al-Mairaj Real Estate & Builders',
-    agentRating: 4.9,
-    isFeatured: true,
-    viewsCount: 2890,
-    savesCount: 198,
-    createdAt: '2026-08-27',
-    status: 'active',
-    virtualTourVideoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
-    virtualTourVideoTitle: 'Faisal Hills Luxury Villa Walkthrough & Rooftop Margalla View (15s)',
-    hasVirtualTour: true
-  },
-  {
-    id: 'prop-res-2',
-    title: 'Luxury Constructed Family Residence in Multi Gardens B-17',
-    tagline: 'Brand New 10-Marla Modern Constructed House',
-    description: 'Exquisitely designed 10-Marla corner house in Multi Gardens B-17 Islamabad, offering seamless connectivity to Islamabad Motorway M-1 and Taxila GT Road. Features 4 master bedrooms, double height lobby, solar backup, and imported fittings.',
-    category: 'residential',
-    type: 'Villa',
-    purpose: 'for_sale',
-    price: 42500000,
-    priceFormatted: 'PKR 4.25 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Islamabad Capital Territory',
-      city: 'Islamabad',
-      society: 'Multi Gardens (B-17)',
-      block: 'Block C',
-      address: 'Main Boulevard, Block C, B-17 Multi Gardens, Islamabad'
-    },
-    area: 10,
-    areaUnit: 'Marla',
-    bedrooms: 4,
-    bathrooms: 5,
-    parking: 2,
-    features: [
-      '4 Luxury En-suite Bedrooms',
-      'Double Height Ceiling Drawing Room',
-      'Ri8Click Thermal Insulated UPVC Glass',
-      'Solid Teak & Ash Woodwork',
-      'Landscaped Green Lawn',
-      'Gated Community with 24/7 Security'
-    ],
-    images: [
-      'https://www.genspark.ai/api/files/s/7QO0W212',
-      'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80'
-    ],
-    watermark: true,
-    agencyId: 'agency-2',
-    agentName: 'Chaudhry Bilal',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Faisal Hills Property Advisors',
-    agentRating: 4.85,
-    isFeatured: true,
-    viewsCount: 1640,
-    savesCount: 112,
-    createdAt: '2026-08-24',
-    status: 'active'
-  },
-  {
-    id: 'prop-res-3',
-    title: 'Margalla Hillside Executive Villa - Kohistan Enclave',
-    tagline: 'Custom Built 1-Kanal Luxury Estate in Taxila',
-    description: 'Palatial 1-Kanal residence in Kohistan Enclave Taxila, surrounded by green Margalla foothills. Designed with high ceilings, private mini cinema, basement recreational zone, imported UPVC soundproof framing, and double garage.',
-    category: 'residential',
-    type: 'Villa',
-    purpose: 'for_sale',
-    price: 59000000,
-    priceFormatted: 'PKR 5.9 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Kohistan Enclave',
-      address: 'Lane 4, Hillview Sector, Kohistan Enclave, Taxila, Punjab'
-    },
-    area: 1,
-    areaUnit: 'Kanal',
-    bedrooms: 5,
-    bathrooms: 6,
-    parking: 3,
-    features: [
-      '5 En-suite Bedrooms + Powder Room',
-      'Basement Home Theater / Gym Room',
-      'Lush Hilltop Scenic Views',
-      'Ri8Click Acoustic UPVC Windows',
-      'Commercial Grade Solar Inverter System',
-      'Water Filtration & Underground Tank'
-    ],
-    images: [
-      'https://www.genspark.ai/api/files/s/G0HfpG8n',
-      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80'
-    ],
-    watermark: true,
-    agencyId: 'agency-4',
-    agentName: 'Haji Aslam Khan',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Taxila City Realtors & Consultants',
-    agentRating: 4.75,
-    isFeatured: true,
-    viewsCount: 1890,
-    savesCount: 97,
-    createdAt: '2026-08-21',
-    status: 'active'
-  },
-  {
-    id: 'prop-res-4',
-    title: 'High-Rise Penthouse Apartment in One Constitution Ave / Eighteen',
-    tagline: 'Panoramic Margalla & Golf Course Luxury High-Rise Living',
-    description: 'Ultra-luxurious 4-Bedroom duplex high-rise penthouse in Islamabad featuring private infinity pool, dedicated high-speed elevator, floor-to-ceiling soundproof UPVC glazing, and 24/7 concierge service.',
-    category: 'residential',
-    type: 'Penthouse',
-    purpose: 'for_sale',
-    price: 145000000,
-    priceFormatted: 'PKR 14.5 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Islamabad Capital Territory',
-      city: 'Islamabad',
-      society: 'Eighteen Islamabad',
-      address: 'The Heights / Constitution Ave High-Rise Enclave, Islamabad'
-    },
-    area: 4500,
-    areaUnit: 'Sq Ft',
-    bedrooms: 4,
-    bathrooms: 5,
-    parking: 3,
-    features: [
-      'Private Terrace Infinity Plunge Pool',
-      'Panoramic Margalla Hills & Skyline View',
-      'Floor to Ceiling Soundproof UPVC Glass',
-      'Smart Climate & Lighting Control',
-      'Private Lift Access & 24/7 Butler Service'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2023/11/6ByJSAN.jpg',
-      'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp'
-    ],
-    watermark: true,
-    agencyId: 'agency-3',
-    agentName: 'Engr. Haris Farooq',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Beacon Prime Commercial Estates',
-    agentRating: 4.95,
-    isFeatured: true,
-    viewsCount: 3100,
-    savesCount: 240,
-    createdAt: '2026-08-15',
-    status: 'active'
-  },
-  {
-    id: 'prop-res-5',
-    title: 'Furnished Executive 3-Bed Villa in Faisal Hills',
-    tagline: 'Modern Designer House Available For Monthly Rent',
-    description: 'Fully furnished 7-Marla luxury villa in Faisal Hills Block A, ideal for expatriates, multinational executives, and corporate consultants. Includes imported furniture, inverter air conditioning in all rooms, and equipped kitchen.',
-    category: 'residential',
-    type: 'Villa',
-    purpose: 'for_rent',
-    price: 185000,
-    priceFormatted: 'PKR 1.85 Lakh / mo',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      block: 'Faisal Hills Block A',
-      address: 'Street 9, Block A, Faisal Hills, Taxila'
-    },
-    area: 7,
-    areaUnit: 'Marla',
-    bedrooms: 3,
-    bathrooms: 4,
-    parking: 2,
-    features: [
-      'Fully Furnished Interior',
-      'Inverter ACs in All Rooms',
-      'Solar Backup System',
-      'Gated Community 24/7 Security',
-      'High Speed Fiber WiFi',
-      'Maintenance Support Included'
-    ],
-    images: [
-      'https://www.genspark.ai/api/files/s/oARmbiwI',
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'
-    ],
-    watermark: true,
-    agencyId: 'agency-1',
-    agentName: 'Malik Zeeshan',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Al-Mairaj Real Estate & Builders',
-    agentRating: 4.9,
-    isFeatured: false,
-    viewsCount: 940,
-    savesCount: 52,
-    createdAt: '2026-08-26',
-    status: 'active'
-  },
+export const HeroSection: React.FC<HeroSectionProps> = ({
+  slides,
+  onExploreClick,
+  onContactAgentClick,
+  onSelectCategoryFilter,
+  onOpen3DTour
+}) => {
+  const activeSlides = useMemo(
+    () => slides.filter(s => s.isActive).sort((a, b) => a.order - b.order),
+    [slides]
+  );
 
-  // ==================== 3. PLOTS & LAND PROPERTIES ====================
-  {
-    id: 'prop-plot-1',
-    title: '5-Marla Possession Ready Plot - Faisal Hills Block C',
-    tagline: 'Ideal Residential Plot with Immediate Construction Rights',
-    description: 'Prime 5-Marla residential plot in Faisal Hills Block C Taxila. Situated on a 40-ft wide road with all underground utilities installed (Electricity, Sui Gas, Water, Sewerage). Approved NOC and instant registry/intiqal available.',
-    category: 'residential',
-    type: 'Residential Plot',
-    purpose: 'for_sale',
-    price: 4800000,
-    priceFormatted: 'PKR 48 Lakh',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      block: 'Faisal Hills Block C',
-      address: 'Plot #342, Street 14, Block C, Faisal Hills, Taxila'
-    },
-    area: 5,
-    areaUnit: 'Marla',
-    features: [
-      'Immediate Possession & Construction Rights',
-      '40-Feet Wide Carpeted Street',
-      'Underground Utilities Connected',
-      'Near Commercial Market & Grand Mosque',
-      '100% Clear Title & Verified File'
-    ],
-    images: [
-      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1524813686514-a57563d77d66?auto=format&fit=crop&w=1000&q=80'
-    ],
-    watermark: true,
-    agencyId: 'agency-2',
-    agentName: 'Chaudhry Bilal',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Faisal Hills Property Advisors',
-    agentRating: 4.85,
-    isFeatured: true,
-    viewsCount: 1720,
-    savesCount: 145,
-    createdAt: '2026-08-25',
-    status: 'active'
-  },
-  {
-    id: 'prop-plot-2',
-    title: '10-Marla Hill-Facing Plot - Faisal Hills Executive Block',
-    tagline: 'Scenic Elevated Location in Executive Zone',
-    description: 'Exceptional 10-Marla plot with panoramic Margalla mountain backdrop in Faisal Hills Executive Block. Adjacent to central park, executive club, and international school.',
-    category: 'residential',
-    type: 'Residential Plot',
-    purpose: 'for_sale',
-    price: 9200000,
-    priceFormatted: 'PKR 92 Lakh',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      block: 'Faisal Hills Executive Block',
-      address: 'Plot #89, Executive Avenue, Faisal Hills, Taxila'
-    },
-    area: 10,
-    areaUnit: 'Marla',
-    features: [
-      'Margalla Hills Direct View',
-      'Park-Facing Elevation',
-      'Executive Sector Security Checkpost',
-      'High Appreciation Investment Potential',
-      'Verified RDA Approved Society'
-    ],
-    images: [
-      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80'
-    ],
-    watermark: true,
-    agencyId: 'agency-1',
-    agentName: 'Malik Zeeshan',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Al-Mairaj Real Estate & Builders',
-    agentRating: 4.9,
-    isFeatured: true,
-    viewsCount: 2150,
-    savesCount: 180,
-    createdAt: '2026-08-23',
-    status: 'active'
-  },
-  {
-    id: 'prop-plot-3',
-    title: '8-Marla Commercial Broadway Plot - Faisal Hills',
-    tagline: 'High-Yield Commercial Land for High-Rise Plaza Construction',
-    description: 'Direct main boulevard commercial plot on 150-ft Faisal Hills Commercial Broadway. Permitted for Ground + 5 Story commercial plaza construction. Top tier ROI opportunity.',
-    category: 'commercial',
-    type: 'Commercial Plot',
-    purpose: 'for_sale',
-    price: 45000000,
-    priceFormatted: 'PKR 4.5 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      block: 'Faisal Hills Commercial Broadway',
-      address: 'Commercial Plot #21, Main Broadway, Faisal Hills, Taxila'
-    },
-    area: 8,
-    areaUnit: 'Marla',
-    features: [
-      'G+5 Story Commercial Building Permission',
-      'Frontage on 150-Feet Main Boulevard',
-      'Surrounded by Active Commercial Plazas',
-      'Bank & Corporate Office Hub',
-      'NOC & Demarcation Cleared'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
-      'https://towers.pk/wp-content/uploads/2023/08/44649726-800x600-transformed-e1691749295923.jpeg'
-    ],
-    watermark: true,
-    agencyId: 'agency-3',
-    agentName: 'Engr. Haris Farooq',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Beacon Prime Commercial Estates',
-    agentRating: 4.95,
-    isFeatured: true,
-    isHotCommercial: true,
-    viewsCount: 1980,
-    savesCount: 135,
-    createdAt: '2026-08-20',
-    status: 'active'
-  },
+  // Main category filter aligned with Navbar & Ri8click Consortium divisions
+  const [tourCategory, setTourCategory] = useState<TourDeckCategory>('all_showroom');
+  const [waypointIdx, setWaypointIdx] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isVideoTourActive, setIsVideoTourActive] = useState(false);
+  const [isCinemaTheaterMode, setIsCinemaTheaterMode] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
-  // ==================== 4. MODULAR & CAPSULE SMART HOUSES (VERIFIED CAPSULE IMAGES) ====================
-  {
-    id: 'prop-mod-1',
-    title: 'Ri8Click Space Capsule Smart Pod (Model X-100)',
-    tagline: 'Futuristic Prefabricated Luxury Living Capsule with 270° Curved Glass',
-    description: 'Engineered by the Ri8Click Modular Housing division. A high-tech aerospace grade aluminum & galvanized steel space capsule home with distinct curved container architecture. Comes 100% turnkey ready with integrated smart home IoT, curved 270° panoramic glass balcony, intelligent climate control, luxury bathroom with dry/wet separation, and quick 7-day on-site deployment anywhere in Pakistan.',
-    category: 'modular',
-    type: 'Capsule Smart House',
-    purpose: 'for_sale',
-    price: 8500000,
-    priceFormatted: 'PKR 85 Lakh',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      address: 'Ri8Click Prefab Showcase Hub, Taxila Bypass, Punjab'
-    },
-    area: 420,
-    areaUnit: 'Sq Ft',
-    bedrooms: 1,
-    bathrooms: 1,
-    features: [
-      'Aerodynamic Curved Aluminum Container Outer Shell',
-      'Curved 270-Degree Panoramic Tempered Glass Balcony',
-      'Complete Smart Voice & App Home Automation',
-      'Plug & Play Water, Electricity & Sewage Setup',
-      'Ri8Click Thermal Insulation (-20°C to +55°C)',
-      '100% Transportable & Relocatable',
-      'Delivered Fully Furnished with King Bed & AC'
-    ],
-    images: [
-      'https://www.genspark.ai/api/files/s/IEOFqhM7',
-      'https://www.genspark.ai/api/files/s/W2Z5zFao',
-      'https://www.genspark.ai/api/files/s/JycQaAWz'
-    ],
-    watermark: true,
-    agencyId: 'agency-1',
-    agentName: 'Ri8Click Modular Specialist',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Ri8Click Prefab & Modular Consortium',
-    agentRating: 5.0,
-    isFeatured: true,
-    viewsCount: 4200,
-    savesCount: 380,
-    createdAt: '2026-08-28',
-    status: 'active'
-  },
-  {
-    id: 'prop-mod-3',
-    title: 'Ri8Click Hex-LED Smart Container Capsule Studio (Model E-70)',
-    tagline: 'Streamlined Curved & Chamfered Glass Container Living',
-    description: 'Sleek aerodynamic container pod engineered with aviation aluminum, seamless wraparound panoramic glass facade, intelligent IoT ambient perimeter lighting, luxury skylight master suite, and custom front timber viewing deck. Ideal for scenic spots, glamping resorts, and private farmhouses.',
-    category: 'modular',
-    type: 'Capsule Smart House',
-    purpose: 'for_sale',
-    price: 9800000,
-    priceFormatted: 'PKR 98 Lakh',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Margalla Ridge Resort Hub',
-      address: 'Ri8Click Modular Experience Yard, Taxila / Khanpur Road'
-    },
-    area: 550,
-    areaUnit: 'Sq Ft',
-    bedrooms: 1,
-    bathrooms: 1,
-    features: [
-      'Seamless Wraparound Container Glass Frontage',
-      'Aviation Grade Alloy Body with Fluorocarbon Finish',
-      'Smart Voice Control Curtains, HVAC & Audio System',
-      'Panoramic Stargazing Skylight Roof',
-      'Ready-to-Use Designer Wet/Dry Luxury Restroom',
-      '15-Day Delivery & Rapid Crane Mount Deployment'
-    ],
-    images: [
-      'https://www.genspark.ai/api/files/s/xBNmbfCQ',
-      'https://www.genspark.ai/api/files/s/IEOFqhM7',
-      'https://www.genspark.ai/api/files/s/JycQaAWz'
-    ],
-    watermark: true,
-    agencyId: 'agency-1',
-    agentName: 'Ri8Click Modular Specialist',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Ri8Click Prefab & Modular Consortium',
-    agentRating: 5.0,
-    isFeatured: true,
-    viewsCount: 3950,
-    savesCount: 345,
-    createdAt: '2026-08-29',
-    status: 'active'
-  },
-  {
-    id: 'prop-mod-4',
-    title: 'Ri8Click Rooftop-Deck Container Villa & Q3 Pod (Model C-40)',
-    tagline: 'Marine-Grade Prefab Container Villa with Upper Sky-Deck',
-    description: 'Modern containerized architectural villa featuring an upper rooftop lounge deck, floor-to-ceiling thermally isolated UPVC sliding glass frontage, integrated smart bathroom, chef kitchen, and rapid 7-day installation.',
-    category: 'modular',
-    type: 'Capsule Smart House',
-    purpose: 'for_sale',
-    price: 7200000,
-    priceFormatted: 'PKR 72 Lakh',
-    currency: 'PKR',
-    location: {
-      province: 'Islamabad Capital Territory',
-      city: 'Islamabad',
-      society: 'Chak Shahzad Farmhouses',
-      address: 'Ri8Click Demonstration Unit, Park Road, Islamabad'
-    },
-    area: 580,
-    areaUnit: 'Sq Ft',
-    bedrooms: 1,
-    bathrooms: 1,
-    features: [
-      'Marine-Grade Corten Steel & Alloy Construction',
-      'Floor-to-Ceiling Double-Glazed UPVC Thermal Glass',
-      'Upper Rooftop Lounge Terrace & Wrap-Around Timber Deck',
-      'Smart Keyless Touchpad & Mobile App Entry',
-      'Solar Panel Hookup & Smart Energy Storage Ready'
-    ],
-    images: [
-      'https://www.genspark.ai/api/files/s/Iswmh2Gk',
-      'https://www.genspark.ai/api/files/s/JycQaAWz',
-      'https://www.genspark.ai/api/files/s/W2Z5zFao'
-    ],
-    watermark: true,
-    agencyId: 'agency-1',
-    agentName: 'Ri8Click Modular Specialist',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Ri8Click Prefab & Modular Consortium',
-    agentRating: 4.9,
-    isFeatured: false,
-    viewsCount: 2800,
-    savesCount: 230,
-    createdAt: '2026-08-27',
-    status: 'active'
-  },
-  {
-    id: 'prop-mod-2',
-    title: 'Ri8Click V2124 Double-Decker 2-Bed Luxury Capsule Villa',
-    tagline: 'Stacked 2-Story Curved Glass Eco Smart House (Installed in 30 Days)',
-    description: 'Double-decker stacked luxury modular capsule residence manufactured in a precision factory setting and assembled on your plot in 30 days. Includes 2 spacious bedrooms, designer ground lounge, American kitchen, front wooden deck, and UPVC double glazed facade.',
-    category: 'modular',
-    type: 'Capsule Smart House',
-    purpose: 'for_sale',
-    price: 14800000,
-    priceFormatted: 'PKR 1.48 Crore',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Margalla View Society',
-      address: 'Ri8Click Eco-Living Demonstration Yard, Margalla View, Taxila'
-    },
-    area: 950,
-    areaUnit: 'Sq Ft',
-    bedrooms: 2,
-    bathrooms: 2,
-    features: [
-      'Factory Built in 3 Weeks / Assembled in 7 Days',
-      '2-Story V2124 Stacked Panoramic Glass Design',
-      'Integrated Solar Roof System Ready',
-      'German UPVC Soundproof Windows & Sliding Doors',
-      'Fire-Proof & Earthquake Resistant Grade 9',
-      '50+ Year Structural Durability Guarantee'
-    ],
-    images: [
-      'https://www.genspark.ai/api/files/s/W2Z5zFao',
-      'https://www.genspark.ai/api/files/s/Iswmh2Gk',
-      'https://www.genspark.ai/api/files/s/xBNmbfCQ'
-    ],
-    watermark: true,
-    agencyId: 'agency-1',
-    agentName: 'Ri8Click Modular Specialist',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Ri8Click Prefab & Modular Consortium',
-    agentRating: 5.0,
-    isFeatured: true,
-    viewsCount: 3600,
-    savesCount: 310,
-    createdAt: '2026-08-27',
-    status: 'active'
-  },
+  // Optical clarity grade
+  const [atmosphere, setAtmosphere] = useState<AtmosphereGrade>('crystal_daylight');
+  const [isUltraSharp, setIsUltraSharp] = useState(true);
 
-  // ==================== 5. NEW SOCIETY PROJECTS ====================
-  {
-    id: 'prop-proj-1',
-    title: 'Faisal Hills Commercial Broadway High-Rise Heights',
-    tagline: 'Iconic Mega Shopping, Corporate Office & Luxury Apartment Complex',
-    description: 'Premier off-plan master development on Faisal Hills Commercial Broadway. Offering commercial shops, food court units, corporate offices, and 1-2 bedroom luxury apartments on a flexible 3-year installment plan.',
-    category: 'projects',
-    type: 'Commercial Plaza',
-    purpose: 'for_sale',
-    price: 4500000,
-    priceFormatted: 'From PKR 45 Lakh',
-    currency: 'PKR',
-    location: {
-      province: 'Punjab',
-      city: 'Taxila',
-      society: 'Faisal Hills',
-      block: 'Faisal Hills Commercial Broadway',
-      address: 'Main Broadway High-Rise Site, Faisal Hills, Taxila'
-    },
-    area: 350,
-    areaUnit: 'Sq Ft',
-    features: [
-      '3-Year Easy Installment Plan',
-      'Guaranteed Rental Returns on Possession',
-      'Central Air Conditioning & Atrium',
-      'High Speed Lifts & Backup Power',
-      'Underground 3-Level Dedicated Parking'
-    ],
-    images: [
-      'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
-      'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
-      'https://towers.pk/wp-content/uploads/2024/01/image-4-34-1024x640-1-e1704435577931.jpg'
-    ],
-    watermark: true,
-    agencyId: 'agency-2',
-    agentName: 'Chaudhry Bilal',
-    agentPhone: '+92 336-5666727',
-    agentWhatsApp: '923365666727',
-    agentAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    agentCompany: 'Faisal Hills Property Advisors',
-    agentRating: 4.85,
-    isFeatured: true,
-    viewsCount: 2980,
-    savesCount: 215,
-    createdAt: '2026-08-27',
-    status: 'active'
-  }
-];
+  // Bars & Ribbons HIDDEN BY DEFAULT as requested ("Remove by default display of Bars All Consortium portfolio and 3D showroom tour")
+  const [showCategoryBar, setShowCategoryBar] = useState(false);
+  const [showConsortiumRibbon, setShowConsortiumRibbon] = useState(false);
+  const [showShowroomTourBar, setShowShowroomTourBar] = useState(false);
+  const [showDirectorDeck, setShowDirectorDeck] = useState(true);
+  const [showSpecCards, setShowSpecCards] = useState(true);
+  const [isHudMenuOpen, setIsHudMenuOpen] = useState(false);
 
-export const CONSORTIUM_DIVISIONS: ConsortiumDivision[] = [
-  {
-    id: 'div-realty',
-    title: 'Ri8Click Real Estate & Multi-Agent Network',
-    shortName: 'Real Estate & Properties',
-    tagline: 'Pakistan’s verified property network connecting elite agencies, buyers, and investors.',
-    description: 'Empowering multi-agent collaboration with transparent property verification, watermark authentication, digital escrow coordination, and verified listings across Punjab (Taxila, Rawalpindi, Lahore) and Islamabad Capital Territory.',
-    badge: 'Core Division (95% Focus)',
-    iconName: 'Building2',
-    image: 'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
-    capabilities: [
-      'Multi-Agent Verified MLS Listings',
-      'Commercial & Corporate High-Rise Advisory',
-      'Faisal Hills & Taxila Land Acquisition',
-      'Property Valuation & ROI Analytics',
-      'Watermark Verification System'
-    ],
-    stats: [
-      { label: 'Active Listings', value: '4,500+' },
-      { label: 'Verified Agencies', value: '120+' },
-      { label: 'Transaction Volume', value: 'PKR 15B+' }
-    ],
-    contactPerson: 'Director Real Estate Operations',
-    contactPhone: '+92 336-5666727',
-    contactWhatsApp: '923365666727'
-  },
-  {
-    id: 'div-modular',
-    title: 'Ri8Click Readymade Capsule & Modular Prefab Smart Houses',
-    shortName: 'Modular Capsule Smart Houses',
-    tagline: 'Futuristic luxury living capsules and containerized homes deployed in days.',
-    description: 'Transforming housing with factory-engineered smart space capsules and modular container villas. Aerospace-grade durability, complete IoT smart controls, and turnkey installation on plots, farmhouses, and tourist resorts.',
-    badge: 'Innovation Showcase',
-    iconName: 'Home',
-    image: 'https://www.genspark.ai/api/files/s/IEOFqhM7',
-    capabilities: [
-      'Space Capsule Smart Pods (K5, Q3 & V2124 Series)',
-      'Prefab Luxury 2-Story Container Villas',
-      'Eco-Glamping Pods for Tourism & Resorts',
-      'Rapid 7 to 30 Day Complete On-Site Deployment',
-      '100% Relocatable & Transportable Housing'
-    ],
-    stats: [
-      { label: 'Deploy Time', value: '7-30 Days' },
-      { label: 'Earthquake Grade', value: 'Grade 9' },
-      { label: 'Smart IoT', value: '100% Integrated' }
-    ],
-    contactPerson: 'Director Modular Living',
-    contactPhone: '+92 336-5666727',
-    contactWhatsApp: '923365666727'
-  },
-  {
-    id: 'div-construction',
-    title: 'Ri8Click Turnkey Construction & Civil Works',
-    shortName: 'Construction & Civil Engineering',
-    tagline: 'Engineering excellence for commercial plazas, high-rise towers, and luxury villas.',
-    description: 'Delivering end-to-end grey structure and turnkey luxury finishing for commercial complexes, corporate towers, and residential villas in Taxila, Faisal Hills, and Islamabad with strict international structural codes.',
-    badge: 'Consortium Company',
-    iconName: 'HardHat',
-    image: 'https://towers.pk/wp-content/uploads/2023/06/Jinnah-Avenue-Islamabad.jpg',
-    capabilities: [
-      'Turnkey Commercial & Residential Contracting',
-      'Grey Structure & Structural RCC Engineering',
-      'Architectural 3D CAD & BIM Modeling',
-      'Soil Testing & Earthquake Resistant Design',
-      'Fixed Price & Milestone-Based Delivery'
-    ],
-    stats: [
-      { label: 'Projects Completed', value: '85+' },
-      { label: 'Sq Ft Constructed', value: '1.2M+' },
-      { label: 'On-Time Delivery', value: '98.8%' }
-    ],
-    contactPerson: 'Chief Engineer Construction',
-    contactPhone: '+92 336-5666727',
-    contactWhatsApp: '923365666727'
-  },
-  {
-    id: 'div-upvc',
-    title: 'Ri8Click UPVC Doors, Windows, Partitions & Panels',
-    shortName: 'UPVC Windows, Doors & Panels',
-    tagline: 'High-performance thermal double-glazed UPVC doors, windows, partitions & wall panels.',
-    description: 'Manufacturing German-standard UPVC window profiles, acoustic double/triple glazed glass, sliding patio doors, office glass partitions, and architectural wall panels designed for severe weather durability.',
-    badge: 'Manufacturing Unit',
-    iconName: 'Layers',
-    image: 'https://www.genspark.ai/api/files/s/ymhFeOsA',
-    capabilities: [
-      'Acoustic & Thermal Double Glazed UPVC Doors & Windows',
-      'Office Glass Partitions & WPC Fluted Wall Panels',
-      'UV-Resistant High Impact German Profiles',
-      'Custom Sliding, Casement & Tilt-Turn Windows',
-      '10-Year Factory Color & Seal Warranty'
-    ],
-    stats: [
-      { label: 'Units Manufactured', value: '50,000+' },
-      { label: 'Energy Savings', value: 'Up to 40%' },
-      { label: 'Warranty Years', value: '10 Years' }
-    ],
-    contactPerson: 'Head of UPVC Manufacturing',
-    contactPhone: '+92 336-5666727',
-    contactWhatsApp: '923365666727'
-  },
-  {
-    id: 'div-tech',
-    title: 'Ri8Click Technology Services & AI Solutions',
-    shortName: 'PropTech & AI Solutions',
-    tagline: 'Next-generation PropTech ERP, multi-agent management, and AI matching.',
-    description: 'Pioneering intelligent software systems for modern real estate brokerages, including real-time listing feeds, multi-agent quota controls, digital lead routing, 3D digital twins, and conversational AI chatbots.',
-    badge: 'Technology Branch',
-    iconName: 'Cpu',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-    capabilities: [
-      'Multi-Agent Quota & Limits Engine',
-      'AI-Powered Property Matching',
-      'Automated Watermark Stamping Pipeline',
-      'Real Estate Brokerage Cloud ERP',
-      'WhatsApp Multi-Agent Lead Router'
-    ],
-    stats: [
-      { label: 'Platform Uptime', value: '99.98%' },
-      { label: 'AI Queries Handled', value: '250K+' },
-      { label: 'Agency Integrations', value: '100+' }
-    ],
-    contactPerson: 'Chief Technology Officer',
-    contactPhone: '+92 336-5666727',
-    contactWhatsApp: '923365666727'
-  }
-];
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [failedUrls, setFailedUrls] = useState<Record<string, boolean>>({});
 
-export const INITIAL_HERO_SLIDES: HeroSlide[] = [
-  {
-    id: 'slide-1',
-    categoryTag: 'Faisal Hills Executive Luxury',
-    badgeColor: 'bg-blue-600 text-white',
-    title: 'Modern 1-Kanal Designer Villa in Faisal Hills',
-    subtitle: 'Executive Margalla View Living with Ri8Click UPVC & Smart Automation',
-    description: 'Experience bespoke luxury in Faisal Hills Executive Block (Taxila / Margalla Ridge). Features 5 master bedrooms, German UPVC acoustic double-glazing by Ri8Click, Italian show kitchen, 10kW solar system, and rooftop Margalla view terrace.',
-    price: 'PKR 6.85 Crore',
-    location: 'Taxila / Rawalpindi',
-    society: 'Faisal Hills (Executive Block)',
-    imageUrl: 'https://www.genspark.ai/api/files/s/YZr3409c',
-    tourRoomsCount: 4,
-    isActive: true,
-    order: 1,
-    features: ['5 En-suite Bedrooms', 'Ri8Click UPVC Windows', '10kW Solar Backup', 'Margalla View Terrace'],
-    samplePropertyData: {
-      title: 'Modern Architectural Villa in Faisal Hills',
-      category: 'residential',
-      location: { city: 'Taxila', society: 'Faisal Hills', province: 'Punjab' }
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Sanitize any legacy "Group of Companies" text from CMS slides into "Ri8click Consortium"
+  const sanitizeConsortiumText = (text?: string) => {
+    if (!text) return '';
+    return text
+      .replace(/ri8click\s+Group\s+of\s+Companies\s+Consortium/gi, 'Ri8click Consortium')
+      .replace(/ri8click\s+Real\s+Estate\s+Consortium\s+Group/gi, 'Ri8click Consortium')
+      .replace(/ri8click\s+Group\s+of\s+Companies/gi, 'Ri8click Consortium')
+      .replace(/Group\s+of\s+Companies/gi, 'Ri8click Consortium')
+      .replace(/Consortium\s+Group/gi, 'Ri8click Consortium');
+  };
+
+  // Convert CMS commercial slides into domestic Islamabad waypoints with multi-tier fallback protection
+  const cmsCommercialWaypoints: CameraWaypoint[] = useMemo(() => {
+    const domesticFallbacks = [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_nightElevation,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_boulevardView,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_centaurus,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_skyparkOne
+    ];
+
+    return activeSlides
+      .filter(s => s.samplePropertyData?.category === 'commercial')
+      .map((s, idx) => {
+        const fallbackImg = domesticFallbacks[idx % domesticFallbacks.length];
+        // Replace any broken or virtual/foreign URLs with verified domestic Islamabad tower images
+        const cleanPrimaryImg =
+          s.imageUrl && !s.imageUrl.includes('unsplash.com')
+            ? s.imageUrl
+            : fallbackImg;
+
+        return {
+          id: `cms-wp-${s.id}`,
+          tourCategory: 'commercial_plazas' as TourDeckCategory,
+          propertyCategory: 'commercial' as PropertyCategory,
+          divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD COMMERCIAL PLAZAS',
+          code: `ISB 0${idx + 5} // ${sanitizeConsortiumText(s.categoryTag || 'COMMERCIAL PLAZA').toUpperCase()}`,
+          label: sanitizeConsortiumText(s.title).split(' ').slice(0, 3).join(' '),
+          subLabel: sanitizeConsortiumText(
+            s.subtitle || 'High-Rise Commercial Plaza, Retail Shops & Corporate Suites'
+          ),
+          headline: sanitizeConsortiumText(s.title),
+          description: sanitizeConsortiumText(s.description || s.subtitle),
+          valuation: s.price || 'PKR 3.5 Crore+',
+          locationBadge: s.society || s.location || 'Blue Area & Faisal Hills, Islamabad',
+          focalLength: '24MM ARCHITECTURAL',
+          altitude: 'SKYLINE +18M',
+          fov: '86° WIDE',
+          imageUrl: cleanPrimaryImg,
+          secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_centaurus,
+          fallbackUrl: fallbackImg,
+          videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+          motionOrigin: 'center center',
+          panX: ['-0.8%', '0.8%'] as [string, string],
+          panY: ['0%', '-0.6%'] as [string, string],
+          scaleRange: [1.01, 1.06] as [number, number],
+          specs: [
+            {
+              id: `cms-spec-${idx}-1`,
+              title: s.features?.[0] || 'Double-Glazed UPVC Curtain Wall',
+              spec: 'High-visibility domestic commercial frontage with capsule elevators and basement parking.'
+            },
+            {
+              id: `cms-spec-${idx}-2`,
+              title: s.features?.[1] || 'High-Yield Commercial Shops & Suites',
+              spec: `Located in ${s.society || 'Islamabad prime commercial corridor'} with verified NOC & Ri8click Consortium management.`
+            }
+          ]
+        };
+      });
+  }, [activeSlides]);
+
+  // Filter waypoints based on selected category
+  const cameraWaypoints: CameraWaypoint[] = useMemo(() => {
+    const combined = [...MASTER_VIRTUAL_TOUR_WAYPOINTS, ...cmsCommercialWaypoints];
+    if (tourCategory === 'all_showroom') {
+      const commList = combined.filter(w => w.tourCategory === 'commercial_plazas');
+      const propsList = combined.filter(w => w.tourCategory === 'properties_plots_villas');
+      const capList = combined.filter(w => w.tourCategory === 'capsule_containers');
+      const upvcList = combined.filter(w => w.tourCategory === 'upvc_construction');
+
+      const interleaved: CameraWaypoint[] = [];
+      const maxLen = Math.max(commList.length, propsList.length, capList.length, upvcList.length);
+      for (let i = 0; i < maxLen; i++) {
+        if (commList[i]) interleaved.push(commList[i]);
+        if (propsList[i]) interleaved.push(propsList[i]);
+        if (capList[i]) interleaved.push(capList[i]);
+        if (upvcList[i]) interleaved.push(upvcList[i]);
+      }
+      return interleaved;
     }
-  },
-  {
-    id: 'slide-2',
-    categoryTag: 'Islamabad Prime High-Rise',
-    badgeColor: 'bg-emerald-600 text-white',
-    title: 'Blue Area & Centaurus Corporate High-Rise Towers',
-    subtitle: 'High-Visibility Glass Facade Towers on Jinnah Avenue Skyline',
-    description: 'Premier institutional commercial high-rises in Islamabad Blue Area near The Centaurus, Ufone Tower, and ISE Tower. Open-plan corporate suites, retail mall outlets, luxury serviced apartments, and double-glazed acoustic UPVC facades.',
-    price: 'PKR 24.5 Crore',
-    location: 'Islamabad',
-    society: 'Blue Area Corporate Zone',
-    imageUrl: 'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
-    tourRoomsCount: 4,
-    isActive: true,
-    order: 2,
-    features: ['Islamabad High-Rise Tower', 'High Speed Lifts', 'Centaurus Skyline View', '10.5% Annual ROI'],
-    samplePropertyData: {
-      title: 'Blue Area Corporate Financial Tower',
-      category: 'commercial',
-      location: { city: 'Islamabad', society: 'Blue Area Corporate Zone', province: 'Islamabad Capital Territory' }
+    const filtered = combined.filter(wp => wp.tourCategory === tourCategory);
+    return filtered.length > 0 ? filtered : MASTER_VIRTUAL_TOUR_WAYPOINTS;
+  }, [tourCategory, cmsCommercialWaypoints]);
+
+  const activeWaypoint = cameraWaypoints[waypointIdx] || cameraWaypoints[0];
+
+  // Resolve broken or missing image links automatically through 3 tiers
+  const resolveImageWithFallback = (wp: CameraWaypoint): string => {
+    if (!failedUrls[wp.imageUrl]) return wp.imageUrl;
+    if (wp.secondaryImageUrl && !failedUrls[wp.secondaryImageUrl]) return wp.secondaryImageUrl;
+    return wp.fallbackUrl;
+  };
+
+  const resolvedImageUrl = resolveImageWithFallback(activeWaypoint);
+
+  const handleImageError = (urlThatFailed: string) => {
+    setFailedUrls(prev => {
+      if (prev[urlThatFailed]) return prev;
+      return { ...prev, [urlThatFailed]: true };
+    });
+  };
+
+  // Preload current and upcoming waypoint images for zero-flicker transitions
+  useEffect(() => {
+    if (cameraWaypoints.length === 0) return;
+    const indicesToPreload = [
+      waypointIdx,
+      (waypointIdx + 1) % cameraWaypoints.length,
+      (waypointIdx + 2) % cameraWaypoints.length
+    ];
+    indicesToPreload.forEach(i => {
+      const wp = cameraWaypoints[i];
+      if (!wp) return;
+      const img = new Image();
+      img.src = resolveImageWithFallback(wp);
+    });
+  }, [waypointIdx, cameraWaypoints, failedUrls]);
+
+  useEffect(() => {
+    setWaypointIdx(0);
+    setVideoFailed(false);
+  }, [tourCategory]);
+
+  // Auto-cycle camera waypoints
+  useEffect(() => {
+    if (isPaused || isVideoTourActive) return;
+    const wpTimer = setInterval(() => {
+      setWaypointIdx(prev => (prev + 1) % cameraWaypoints.length);
+    }, WAYPOINT_DURATION_MS);
+    return () => clearInterval(wpTimer);
+  }, [isPaused, isVideoTourActive, cameraWaypoints.length]);
+
+  const handlePrev = () => {
+    setWaypointIdx(prev => (prev - 1 + cameraWaypoints.length) % cameraWaypoints.length);
+  };
+
+  const handleNext = () => {
+    setWaypointIdx(prev => (prev + 1) % cameraWaypoints.length);
+  };
+
+  // Ri8click Consortium Categories
+  const tourCategories: {
+    id: TourDeckCategory;
+    label: string;
+    shortLabel: string;
+    count: number;
+    filterCategory: PropertyCategory;
+    icon: React.ReactNode;
+  }[] = [
+    {
+      id: 'all_showroom',
+      label: 'Ri8click Consortium Portfolio',
+      shortLabel: 'Consortium Portfolio',
+      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.length + cmsCommercialWaypoints.length,
+      filterCategory: 'all',
+      icon: <Compass className="w-3.5 h-3.5" />
+    },
+    {
+      id: 'commercial_plazas',
+      label: 'Commercial Plazas (Islamabad)',
+      shortLabel: 'Commercial Plazas',
+      count:
+        MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'commercial_plazas').length +
+        cmsCommercialWaypoints.length,
+      filterCategory: 'commercial',
+      icon: <Building2 className="w-3.5 h-3.5" />
+    },
+    {
+      id: 'properties_plots_villas',
+      label: 'Properties (Plots & Houses)',
+      shortLabel: 'Plots & Houses',
+      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'properties_plots_villas')
+        .length,
+      filterCategory: 'residential',
+      icon: <Home className="w-3.5 h-3.5" />
+    },
+    {
+      id: 'capsule_containers',
+      label: 'Container & Capsule Houses',
+      shortLabel: 'Capsule Houses',
+      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'capsule_containers')
+        .length,
+      filterCategory: 'modular',
+      icon: <Box className="w-3.5 h-3.5" />
+    },
+    {
+      id: 'upvc_construction',
+      label: 'Ri8click Consortium & UPVC',
+      shortLabel: 'UPVC & Construction',
+      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'upvc_construction')
+        .length,
+      filterCategory: 'projects',
+      icon: <Layers className="w-3.5 h-3.5" />
     }
-  },
-  {
-    id: 'slide-3',
-    categoryTag: 'Turnkey Modular Innovation',
-    badgeColor: 'bg-indigo-600 text-white',
-    title: 'Ri8Click Curved Space Capsule & Container Home',
-    subtitle: 'Curved Panoramic Glass Capsule Living Deployed in 7 Days',
-    description: 'Factory-engineered with aerodynamic curved aluminum alloy shell, 270° panoramic curved stargazing glass, IoT voice automation, and military-grade thermal insulation. 100% turnkey relocatable for farmhouses, plots, and tourist resorts.',
-    price: 'PKR 85 Lakh',
-    location: 'Taxila & Nationwide Deployment',
-    society: 'Ri8Click Modular Experience Yard',
-    imageUrl: 'https://www.genspark.ai/api/files/s/IEOFqhM7',
-    tourRoomsCount: 3,
-    isActive: true,
-    order: 3,
-    features: ['Aerospace Curved Shell', '270° Curved Glass Balcony', 'IoT Voice Controls', 'Deployed in 7 Days'],
-    samplePropertyData: {
-      title: 'Ri8Click Space Capsule Smart Pod (Model X-100)',
-      category: 'modular',
-      location: { city: 'Taxila', society: 'Faisal Hills', province: 'Punjab' }
+  ];
+
+  // Ri8click Consortium Business Pillars
+  const consortiumPillars = [
+    {
+      id: 'commercial_plazas' as TourDeckCategory,
+      category: 'commercial' as PropertyCategory,
+      title: 'Islamabad Commercial Plazas',
+      detail: 'Citadel 7, J7 Emporium, Skypark One & Blue Area Towers',
+      icon: Building2,
+      accent: 'text-emerald-300 border-emerald-400/30 bg-emerald-500/10'
+    },
+    {
+      id: 'properties_plots_villas' as TourDeckCategory,
+      category: 'residential' as PropertyCategory,
+      title: 'Properties: Plots & Houses',
+      detail: '5M, 10M, 1-2 Kanal Plots & Constructed Villas',
+      icon: Home,
+      accent: 'text-sky-300 border-sky-400/30 bg-sky-500/10'
+    },
+    {
+      id: 'capsule_containers' as TourDeckCategory,
+      category: 'modular' as PropertyCategory,
+      title: 'Container Capsule Houses',
+      detail: 'Curved Glass Pods & Rooftop Container Villas',
+      icon: Box,
+      accent: 'text-amber-300 border-amber-400/30 bg-amber-500/10'
+    },
+    {
+      id: 'upvc_construction' as TourDeckCategory,
+      category: 'projects' as PropertyCategory,
+      title: 'Construction & UPVC Systems',
+      detail: 'UPVC Doors, Windows, Partitions, Panels & Civil Works',
+      icon: HardHat,
+      accent: 'text-purple-300 border-purple-400/30 bg-purple-500/10'
     }
-  },
-  {
-    id: 'slide-4',
-    categoryTag: 'Giga Mall & Skypark One Landmark',
-    badgeColor: 'bg-purple-600 text-white',
-    title: 'Giga Mall & Skypark One Commercial Plazas & Flats',
-    subtitle: 'High Footfall Retail Shops, Corporate Suites & Luxury Apartments',
-    description: 'Prestigious high-rise commercial towers and plazas serving DHA Islamabad, GT Road, and Faisal Hills Broadway. Multi-floor retail outlets, corporate offices, and serviced apartments with double basement parking.',
-    price: 'PKR 18.0 Crore',
-    location: 'Islamabad / Rawalpindi',
-    society: 'DHA & GT Road Corridor',
-    imageUrl: 'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
-    tourRoomsCount: 3,
-    isActive: true,
-    order: 4,
-    features: ['Main Boulevard Frontage', 'Double Basement Parking', 'High Footfall Hub', 'Ready Tenancy'],
-    samplePropertyData: {
-      title: 'Giga Mall & Skypark Commercial Plaza',
-      category: 'commercial',
-      location: { city: 'Islamabad', society: 'DHA Phase 2 & 5', province: 'Islamabad Capital Territory' }
-    }
-  },
-  {
-    id: 'slide-5',
-    categoryTag: 'Multi Gardens B-17 & Faisal Town',
-    badgeColor: 'bg-teal-600 text-white',
-    title: 'Multi Gardens B-17 Margalla View Luxury Residence',
-    subtitle: 'Sector G Architect-Designed Villa Near C-18 Interchange',
-    description: 'Spectacular 1-Kanal modern villa in Multi Gardens B-17 Sector G Islamabad. Featuring direct Margalla views, double-height lobby, landscaped lawn, imported Spanish tiles, and soundproof UPVC fixtures.',
-    price: 'PKR 5.25 Crore',
-    location: 'Islamabad',
-    society: 'Multi Gardens (B-17)',
-    imageUrl: 'https://www.genspark.ai/api/files/s/G0HfpG8n',
-    tourRoomsCount: 4,
-    isActive: true,
-    order: 5,
-    features: ['Direct Margalla Hills View', 'C-18 Interchange Access', 'Imported Spanish Tiles', '3D Walkthrough'],
-    samplePropertyData: {
-      title: 'Modern Villa in Multi Gardens B-17',
-      category: 'residential',
-      location: { city: 'Islamabad', society: 'Multi Gardens (B-17)', province: 'Islamabad Capital Territory' }
-    }
-  }
-];
+  ];
 
-export const INITIAL_BLOGS: BlogPost[] = [
-  {
-    id: 'blog-1',
-    title: 'Faisal Hills Taxila 2026 Price Trends & Development Update: Executive Block & Broadway Breakdown',
-    slug: 'faisal-hills-taxila-2026-price-trends-executive-block-development',
-    category: 'Market Trends',
-    excerpt: 'Comprehensive real estate breakdown of Faisal Hills Taxila across Executive Block, Block A, B, C, and Commercial Broadway with current market rates and future ROI outlook.',
-    content: `### Executive Overview: Why Faisal Hills Taxila is Leading North Punjab Real Estate
+  // Clean professional optical grades (no gaming glow)
+  const atmosphereStyle: React.CSSProperties = useMemo(() => {
+    const baseFilter =
+      atmosphere === 'crystal_daylight'
+        ? 'brightness(1.06) contrast(1.08) saturate(1.08)'
+        : atmosphere === 'solar_vivid'
+        ? 'brightness(1.10) contrast(1.10) saturate(1.14)'
+        : 'brightness(1.04) contrast(1.12) saturate(1.10)';
 
-Faisal Hills Taxila has emerged as one of the most resilient and rapid-growth master-planned communities in the twin cities (Islamabad-Rawalpindi) and Taxila corridor. With direct access from the N-5 Grand Trunk (GT) Road and dedicated connections towards the Margalla Avenue extension, the society provides seamless access to central Islamabad in under 20 minutes.
+    return {
+      filter: baseFilter
+    };
+  }, [atmosphere, isUltraSharp]);
 
-#### 1. Executive Block: The Premium Residence Zone
-- **Price Performance**: 1-Kanal residential plots in Executive Block have appreciated by **18.4%** over the past 12 months, driven by possession handovers and construction boom.
-- **Top Amenities**: Underground electrification, landscaped civic parks, sports complex, and unobstructed views of the Margalla Hills.
-- **Construction Trends**: Over 450+ designer villas are currently under construction, with high demand for German UPVC double-glazed thermal windows to minimize energy costs.
+  const ToggleSwitch = ({
+    label,
+    description,
+    checked,
+    onChange
+  }: {
+    label: string;
+    description?: string;
+    checked: boolean;
+    onChange: () => void;
+  }) => (
+    <button
+      type="button"
+      onClick={onChange}
+      className="w-full flex items-center justify-between gap-3 py-2 px-2.5 rounded-xl hover:bg-white/10 transition-colors text-left cursor-pointer"
+    >
+      <div>
+        <div className="text-xs font-bold text-white leading-tight">{label}</div>
+        {description && <div className="text-[10px] text-slate-300">{description}</div>}
+      </div>
+      <div
+        className={`relative w-10 h-5 rounded-full transition-colors duration-200 shrink-0 ${
+          checked ? 'bg-amber-400' : 'bg-white/20'
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-slate-950 shadow-md transform transition-transform duration-200 ${
+            checked ? 'translate-x-5' : 'translate-x-0'
+          }`}
+        />
+      </div>
+    </button>
+  );
 
-#### 2. Commercial Broadway: High Rental Yield Opportunities
-The Commercial Broadway in Faisal Hills is envisioned as the commercial spine of the region:
-- **Plot Dimensions**: 4 Marla, 5.5 Marla, and 8 Marla commercial plots.
-- **Rental Projections**: Ground floor retail spaces are yielding between **8.5% to 9.8% annual ROI**, heavily sought after by national retail brands and banking chains.
+  return (
+    <section className="relative w-full overflow-hidden bg-slate-950 text-white select-none border-b border-slate-800">
+      {/* =====================================================================
+          1. PROFESSIONAL ARCHITECTURAL STAGE & IMAGE / VIDEO CANVAS
+             (Removed gaming glow circles, crosshair radar pins & neon blooms)
+         ===================================================================== */}
+      <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
+        {/* Subtle Static Underlay so transitions never flash dark */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-35 blur-md scale-105 transition-all duration-700"
+          style={{ backgroundImage: `url(${resolvedImageUrl})` }}
+        />
 
-#### 3. Investment Verdict for Overseas Pakistanis
-If you are planning long-term capital gain (2 to 5 years), Faisal Hills Executive Block and Main Boulevard commercial plazas offer unmatched stability with complete RDA approvals.`,
-    coverImage: 'https://www.genspark.ai/api/files/s/YZr3409c',
-    authorName: 'Malik Zeeshan',
-    authorAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    authorRole: 'Senior Property Analyst & Broker',
-    publishedAt: '2026-08-28',
-    readingTime: '5 min read',
-    tags: ['Faisal Hills', 'Taxila', 'Executive Block', 'Property Rates', 'Real Estate Investment'],
-    viewsCount: 3420,
-    isFeatured: true,
-    status: 'published'
-  },
-  {
-    id: 'blog-2',
-    title: 'Islamabad High-Rise Towers vs. DHA Plazas: Where Should Overseas Pakistanis Invest for Maximum Rental Yield?',
-    slug: 'dha-lahore-vs-dha-islamabad-overseas-pakistanis-rental-yield',
-    category: 'Investment Guides',
-    excerpt: 'Detailed comparison of Islamabad high-rise commercial & residential towers (Centaurus, Blue Area, Giga Mall, Skypark One) and DHA plazas analyzing capital growth and rental yields.',
-    content: `### Comparing Pakistan’s Top High-Rise & Defence Commercial Hubs
+        <AnimatePresence initial={false} mode="sync">
+          {isVideoTourActive && !videoFailed ? (
+            <motion.div
+              key={`video-reel-${activeWaypoint.id}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7 }}
+              className="absolute inset-0 w-full h-full"
+            >
+              <video
+                ref={videoRef}
+                src={activeWaypoint.videoUrl}
+                poster={resolvedImageUrl}
+                autoPlay
+                loop
+                muted={isMuted}
+                playsInline
+                onError={() => setVideoFailed(true)}
+                style={atmosphereStyle}
+                className="w-full h-full object-cover object-center"
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`${activeWaypoint.id}-${resolvedImageUrl}`}
+              initial={{
+                opacity: 0,
+                scale: activeWaypoint.scaleRange[0]
+              }}
+              animate={{
+                opacity: 1,
+                scale: activeWaypoint.scaleRange[1],
+                x: activeWaypoint.panX,
+                y: activeWaypoint.panY
+              }}
+              exit={{
+                opacity: 0
+              }}
+              transition={{
+                opacity: { duration: 0.65, ease: 'easeOut' },
+                scale: { duration: WAYPOINT_DURATION_MS / 1000 + 1.0, ease: 'linear' },
+                x: { duration: WAYPOINT_DURATION_MS / 1000 + 1.0, ease: 'linear' },
+                y: { duration: WAYPOINT_DURATION_MS / 1000 + 1.0, ease: 'linear' }
+              }}
+              style={{
+                transformOrigin: activeWaypoint.motionOrigin
+              }}
+              className="absolute inset-0 w-full h-full"
+            >
+              <img
+                src={resolvedImageUrl}
+                alt={`${activeWaypoint.headline} - ${activeWaypoint.label}`}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                onError={() => handleImageError(resolvedImageUrl)}
+                style={{
+                  ...atmosphereStyle,
+                  imageRendering: 'high-quality' as any
+                }}
+                className="w-full h-full object-cover object-center"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-Islamabad's Blue Area, DHA Phase 2 (Giga Mall / World Trade Center belt), and Lahore's DHA represent the gold standard of institutional trust, security, and high-rise commercial infrastructure in Pakistan.
+        {/* Clean Executive Gradient Scrims for Typography Legibility (No Neon Glow Circles) */}
+        <div
+          className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${
+            isCinemaTheaterMode
+              ? 'bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/25'
+              : 'bg-gradient-to-r from-slate-950/85 via-slate-950/45 to-slate-950/15'
+          }`}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30 pointer-events-none" />
+      </div>
 
-#### Islamabad High-Rise Towers Key Strengths:
-1. **Blue Area & Jinnah Avenue Corporate Demand**: Iconic towers such as The Centaurus, Ufone Tower, and ISE Tower command top multinational corporate rents.
-2. **High-End Mixed-Use Towers**: Projects like Giga Mall Tower and Skypark One integrate retail outlets, corporate offices, and luxury serviced apartments.
-3. **Margalla-Facing High-Rises**: Rising demand for high-floor apartments offering panoramic views of the Margalla Hills.`,
-    coverImage: 'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
-    authorName: 'Engr. Haris Farooq',
-    authorAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    authorRole: 'Commercial Portfolio Manager',
-    publishedAt: '2026-08-25',
-    readingTime: '6 min read',
-    tags: ['Islamabad Towers', 'DHA Islamabad', 'Overseas Pakistanis', 'Rental Yield', 'Commercial Plazas'],
-    viewsCount: 2890,
-    isFeatured: true,
-    status: 'published'
-  },
-  {
-    id: 'blog-3',
-    title: 'Multi Gardens B-17 (MPCHS) Sector G & C-18 Interchange Connectivity: Complete Real Estate Review',
-    slug: 'multi-gardens-b17-mpchs-sector-g-c18-interchange-connectivity',
-    category: 'Project Updates',
-    excerpt: 'How the direct M-1 Motorway C-18 Interchange and Margalla Avenue connectivity have transformed Multi Gardens B-17 into a prime residential haven.',
-    content: `### Multi Gardens B-17: The Crown Jewel of MPCHS
+      {/* =====================================================================
+          2. OPTIONAL CATEGORY BAR (HIDDEN BY DEFAULT)
+         ===================================================================== */}
+      <AnimatePresence>
+        {showCategoryBar && !isCinemaTheaterMode && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="relative z-30 border-b border-white/15 bg-slate-950/80 backdrop-blur-md"
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                {tourCategories.map(cat => {
+                  const isSelected = tourCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => {
+                        setTourCategory(cat.id);
+                        onSelectCategoryFilter(cat.filterCategory);
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all shrink-0 cursor-pointer border ${
+                        isSelected
+                          ? 'bg-amber-400 text-slate-950 border-amber-300'
+                          : 'bg-white/5 text-white border-white/15 hover:bg-white/15'
+                      }`}
+                    >
+                      {cat.icon}
+                      <span className="hidden xl:inline">{cat.label}</span>
+                      <span className="xl:hidden">{cat.shortLabel}</span>
+                      <span
+                        className={`ml-0.5 px-1.5 py-0.2 rounded text-[9px] font-black ${
+                          isSelected ? 'bg-slate-950 text-amber-300' : 'bg-white/15 text-white'
+                        }`}
+                      >
+                        {cat.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-Multi Gardens Sector B-17 in Islamabad has witnessed unprecedented residential habitation over the past two years. With the operational C-18 Motorway Interchange and rapid work on the Margalla Avenue link, B-17 has become one of the most accessible sectors in Islamabad.
+              <button
+                type="button"
+                onClick={() => setShowCategoryBar(false)}
+                className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[10px] font-bold text-slate-200 flex items-center gap-1 cursor-pointer"
+              >
+                <span>Hide Bar</span>
+                <ChevronUp className="w-3 h-3" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-#### Sector G Highlights
-- Located directly at the entrance from the Motorway connector.
-- Modern sewerage, wide 80ft to 120ft boulevards, and dedicated commercial centers.
-- Fast construction of schools, hospitals, and hypermarkets.
+      {/* =====================================================================
+          3. OPTIONAL "3D SHOWROOM TOUR" BAR (HIDDEN BY DEFAULT)
+         ===================================================================== */}
+      <AnimatePresence>
+        {showShowroomTourBar && !isCinemaTheaterMode && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.22 }}
+            className="relative z-20 border-b border-white/15 bg-slate-900/80 backdrop-blur-md"
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                <button
+                  type="button"
+                  onClick={() => setIsVideoTourActive(prev => !prev)}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shrink-0 border ${
+                    isVideoTourActive
+                      ? 'bg-amber-400 text-slate-950 border-amber-300'
+                      : 'bg-white/10 hover:bg-white/15 text-amber-200 border-white/20'
+                  }`}
+                >
+                  <Video className="w-3 h-3" />
+                  <span>{isVideoTourActive ? 'Video Active' : 'Play Video'}</span>
+                </button>
 
-#### Construction Quality Standards
-Modern home builders in B-17 are increasingly adopting soundproof acoustic UPVC double glazing to eliminate highway noise while providing thermal efficiency during Islamabad’s extreme summer heat.`,
-    coverImage: 'https://www.genspark.ai/api/files/s/G0HfpG8n',
-    authorName: 'Chaudhry Bilal',
-    authorAvatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    authorRole: 'Regional Property Specialist',
-    publishedAt: '2026-08-20',
-    readingTime: '4 min read',
-    tags: ['Multi Gardens B-17', 'MPCHS', 'Islamabad Real Estate', 'Sector G', 'Margalla Avenue'],
-    viewsCount: 2150,
-    isFeatured: false,
-    status: 'published'
-  },
-  {
-    id: 'blog-4',
-    title: 'The Rise of Curved Container Capsule Smart Houses in Pakistan: Costs, Approvals & Turnkey Setup',
-    slug: 'curved-container-capsule-smart-houses-pakistan-costs-setup',
-    category: 'Modular Housing',
-    excerpt: 'Everything you need to know about purchasing and deploying aerospace-grade curved glass capsule pods and modular container villas in Pakistan.',
-    content: `### Revolutionizing Residential & Glamping Architecture
+                <div className="h-4 w-[1px] bg-white/20 mx-0.5 shrink-0" />
 
-Prefabricated modular living has arrived in Pakistan. Pioneered by Ri8Click Modular Housing, space capsule homes and curved container pods offer a high-tech alternative to traditional 12-month brick-and-mortar construction.
+                {cameraWaypoints.map((wp, idx) => {
+                  const isSelected = !isVideoTourActive && waypointIdx === idx;
+                  return (
+                    <button
+                      key={wp.id}
+                      type="button"
+                      onClick={() => {
+                        setIsVideoTourActive(false);
+                        setWaypointIdx(idx);
+                      }}
+                      className={`px-2.5 py-1 rounded-lg text-left transition-all cursor-pointer shrink-0 flex items-center gap-1.5 border ${
+                        isSelected
+                          ? 'bg-white text-slate-950 border-white font-bold'
+                          : 'bg-white/5 text-white/90 border-white/15 hover:bg-white/15'
+                      }`}
+                    >
+                      <Camera
+                        className={`w-3 h-3 ${isSelected ? 'text-amber-600' : 'text-amber-300'}`}
+                      />
+                      <span className="text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">
+                        {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}. {wp.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-#### Key Advantages of Ri8Click Smart Capsules:
-1. **7-Day Deployment**: Ready-to-live units built in factory conditions and crane-mounted on your plot or farmhouse.
-2. **Aerospace Curved Alloy Body**: 270-degree wraparound curved panoramic glass, stargazing skylight, and thermal insulation from -20°C to +55°C.
-3. **Turnkey Luxury**: Equipped with complete IoT voice automation, designer wet/dry bathroom, climate control, and king-size bedroom suite.
+              <button
+                type="button"
+                onClick={() => setShowShowroomTourBar(false)}
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-slate-200 hover:text-white transition-all cursor-pointer shrink-0"
+                title="Hide Tour Bar"
+              >
+                <ChevronUp className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-#### Best Use Cases:
-- Private farmhouses in Chak Shahzad, Taxila, and Bedian Road Lahore.
-- Tourism & glamping resorts in Murree, Hunza, Skardu, and Khanpur Dam.
-- Rooftop penthouse suites and guest annexes.`,
-    coverImage: 'https://www.genspark.ai/api/files/s/IEOFqhM7',
-    authorName: 'Engr. Haris Farooq',
-    authorAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80',
-    authorRole: 'Prefab & Modular Systems Lead',
-    publishedAt: '2026-08-15',
-    readingTime: '5 min read',
-    tags: ['Modular Houses', 'Space Capsule', 'Curved Containers', 'Glamping Pods', 'Taxila'],
-    viewsCount: 4120,
-    isFeatured: true,
-    status: 'published'
-  },
-  {
-    id: 'blog-5',
-    title: 'Faisal Town Phase 2 vs. Faisal Town (F-18): Long-Term Capital Appreciation Guide',
-    slug: 'faisal-town-phase-2-vs-faisal-town-f18-investment-guide',
-    category: 'Investment Guides',
-    excerpt: 'Detailed comparison of Zedem International projects: Faisal Town F-18 on G.T. Road versus the upcoming mega development of Faisal Town Phase 2 near Thalian Interchange.',
-    content: `### Evaluating Zedem International’s Flagship Projects
+      {/* =====================================================================
+          4. MAIN FOREGROUND STAGE & EXECUTIVE SHOWCASE DECK
+         ===================================================================== */}
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-12 min-h-[540px] sm:min-h-[610px] flex flex-col justify-between">
+        {/* Top Executive Header Utility Row */}
+        <div className="flex flex-wrap items-center justify-between gap-2 pb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-900/80 border border-white/15 text-xs font-semibold text-slate-200">
+            <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>Ri8click Consortium • Verified Domestic Portfolio</span>
+          </div>
 
-Chaudhry Abdul Majeed and Zedem International have maintained an exceptional reputation for timely delivery and high investor returns. Let's compare Faisal Town F-18 and Faisal Town Phase 2.
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Video Tour Toggle */}
+            <button
+              type="button"
+              onClick={() => setIsVideoTourActive(prev => !prev)}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 border transition-all cursor-pointer ${
+                isVideoTourActive
+                  ? 'bg-amber-400 text-slate-950 border-amber-300'
+                  : 'bg-slate-900/75 text-slate-200 border-white/20 hover:bg-slate-800'
+              }`}
+            >
+              <Video className="w-3.5 h-3.5" />
+              <span>{isVideoTourActive ? 'Video: ON' : 'Video Walkthrough'}</span>
+            </button>
 
-#### Faisal Town F-18: Fully Developed & Inhabited
-- **Current Status**: 100% developed with thousands of families residing.
-- **Commercial Hotspots**: High rental returns on plaza offices and shopping outlets.
-- **Ideal For**: Immediate house construction and steady rental income.
+            {isVideoTourActive && (
+              <button
+                type="button"
+                onClick={() => setIsMuted(prev => !prev)}
+                className="p-1.5 rounded-lg bg-slate-900/75 hover:bg-slate-800 border border-white/20 text-white transition-colors cursor-pointer"
+                title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+              >
+                {isMuted ? (
+                  <VolumeX className="w-3.5 h-3.5" />
+                ) : (
+                  <Volume2 className="w-3.5 h-3.5 text-amber-300" />
+                )}
+              </button>
+            )}
 
-#### Faisal Town Phase 2: High Growth Frontier
-- **Location**: Adjacent to M-2 Motorway near Thalian Interchange and Chakri Road connector.
-- **Scale**: Massive master project spanning tens of thousands of Kanals.
-- **Ideal For**: Long-term capital multiplication over 3 to 7 years with affordable installment structures.`,
-    coverImage: 'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
-    authorName: 'Malik Zeeshan',
-    authorAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-    authorRole: 'Senior Property Analyst',
-    publishedAt: '2026-08-10',
-    readingTime: '4 min read',
-    tags: ['Faisal Town', 'F-18', 'Faisal Town Phase 2', 'Zedem International', 'Islamabad'],
-    viewsCount: 1980,
-    isFeatured: false,
-    status: 'published'
-  }
-];
+            {/* View Controls Popover */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsHudMenuOpen(prev => !prev)}
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all flex items-center gap-1.5 cursor-pointer ${
+                  isHudMenuOpen
+                    ? 'bg-amber-400 text-slate-950 border-amber-300'
+                    : 'bg-slate-900/75 border-white/20 text-white hover:bg-slate-800'
+                }`}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">View Controls</span>
+              </button>
 
-export const INITIAL_SITE_PORTIONS: SiteSectionPortion[] = [
-  {
-    id: 'portion-top-bar',
-    key: 'top_announcement_bar',
-    name: 'Top Verification & Announcement Bar',
-    title: 'Official ri8click Portal Notice',
-    subtitle: 'Verified Brokerage • Official Consortium Network',
-    isEnabled: true,
-    order: 1,
-    description: 'Header notification bar with live phone, WhatsApp, and watermark status.'
-  },
-  {
-    id: 'portion-hero-slider',
-    key: 'hero_slider',
-    name: 'Top "Scrollytelling" Full-Screen Banner',
-    title: 'Immersive Scrollytelling Property Showcase',
-    subtitle: 'High-Impact Verified Hero Slider with 3D Walkthrough Integrations',
-    isEnabled: true,
-    order: 2,
-    badge: 'Core Feature',
-    description: 'Full-screen cinematic slides highlighting top commercial, villa, and capsule homes.'
-  },
-  {
-    id: 'portion-search-bar',
-    key: 'search_bar',
-    name: 'Multi-Filter Search Bar',
-    title: 'Precision Property Search Engine',
-    subtitle: 'Filter by Province, City (Taxila, Islamabad, Lahore), Society, Type, Price, Beds',
-    isEnabled: true,
-    order: 3,
-    description: 'Elevated multi-parameter search console with real-time result counting.'
-  },
-  {
-    id: 'portion-properties-grid',
-    key: 'properties_grid',
-    name: 'Main Verified Properties Grid',
-    title: 'Featured Verified Portfolios (95% Core Focus)',
-    subtitle: '100% Watermarked listings with agent direct WhatsApp and live view counters.',
-    isEnabled: true,
-    order: 4,
-    badge: '95% Primary Space',
-    description: 'Primary residential and commercial listings catalog.'
-  },
-  {
-    id: 'portion-commercial-showcase',
-    key: 'commercial_showcase',
-    name: 'Commercial Plazas & Corporate Hub',
-    title: 'Commercial Plazas, High-Rise Towers & Retail Shops',
-    subtitle: 'Institutional investment opportunities in Taxila, Faisal Hills, and Islamabad.',
-    isEnabled: true,
-    order: 5,
-    description: 'Dedicated commercial portfolio section with ROI yields.'
-  },
-  {
-    id: 'portion-modular-showcase',
-    key: 'modular_showcase',
-    name: 'Readymade Capsule & Modular Smart Houses',
-    title: 'Curved Container Pods & Aerospace Space Capsules',
-    subtitle: 'Turnkey prefab smart homes deployed in 7 to 30 days across Pakistan.',
-    isEnabled: true,
-    order: 6,
-    badge: 'PropTech Innovation',
-    description: 'Dedicated prefab capsule smart homes showcase.'
-  },
-  {
-    id: 'portion-news-blogs',
-    key: 'news_blogs_section',
-    name: 'Real Estate News, Market Trends & Blogs',
-    title: 'Latest Real Estate Insights & Project News',
-    subtitle: 'Faisal Hills, DHA, Multi Gardens B-17, and Pakistan property analysis.',
-    isEnabled: true,
-    order: 7,
-    description: 'Editorial insights, NOC updates, and investment advisory articles.'
-  },
-  {
-    id: 'portion-agencies-network',
-    key: 'agencies_network',
-    name: 'Multi-Agent & Certified Brokerage Network',
-    title: 'Certified Real Estate Agencies & Partners',
-    subtitle: 'Browse listings by certified brokerages with quota tracking.',
-    isEnabled: true,
-    order: 8,
-    description: 'Directory of registered brokerages and realtors.'
-  },
-  {
-    id: 'portion-consortium-showcase',
-    key: 'consortium_showcase',
-    name: 'Consortium Corporate Group Showcase',
-    title: 'Ri8Click Real Estate Consortium Group',
-    subtitle: 'Turnkey Construction, UPVC Manufacturing, Modular Living & PropTech.',
-    isEnabled: true,
-    order: 9,
-    description: 'Professional group divisions backing all developments.'
-  },
-  {
-    id: 'portion-cta-banner',
-    key: 'cta_banner',
-    name: 'Custom Order & Direct WhatsApp CTA',
-    title: 'Have Land in Taxila, Islamabad, or Lahore?',
-    subtitle: 'Connect directly with our senior property advisors on WhatsApp.',
-    isEnabled: true,
-    order: 10,
-    description: 'High-converting call to action block.'
-  }
-];
+              <AnimatePresence>
+                {isHudMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute right-0 mt-2 w-80 rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-white/25 p-4 shadow-2xl z-50 space-y-2.5"
+                  >
+                    <div className="flex items-center justify-between pb-2 border-b border-white/15">
+                      <span className="text-[11px] font-black uppercase tracking-wider text-amber-300">
+                        Banner Display Controls
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setIsHudMenuOpen(false)}
+                        className="text-[10px] text-slate-300 hover:text-white cursor-pointer"
+                      >
+                        Done
+                      </button>
+                    </div>
 
-export const initialProperties = INITIAL_PROPERTIES;
-export const initialAgencies = INITIAL_AGENCIES;
-export const initialProvinceCityData = INITIAL_PROVINCE_CITIES;
-export const initialConsortiumDivisions = CONSORTIUM_DIVISIONS;
-export const initialHeroSlides = INITIAL_HERO_SLIDES;
-export const initialBlogPosts = INITIAL_BLOGS;
-export const initialSitePortions = INITIAL_SITE_PORTIONS;
+                    <div className="py-1">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Daylight Grade
+                      </div>
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {(
+                          [
+                            { id: 'crystal_daylight', label: 'Natural' },
+                            { id: 'solar_vivid', label: 'Vivid' },
+                            { id: 'showroom_hdr', label: 'Crisp HDR' }
+                          ] as { id: AtmosphereGrade; label: string }[]
+                        ).map(grade => (
+                          <button
+                            key={grade.id}
+                            type="button"
+                            onClick={() => setAtmosphere(grade.id)}
+                            className={`px-2 py-1.5 rounded-lg text-[10px] font-bold text-center border transition-all cursor-pointer ${
+                              atmosphere === grade.id
+                                ? 'bg-amber-400 text-slate-950 border-amber-300 font-black'
+                                : 'bg-white/10 text-slate-200 border-white/15 hover:bg-white/20'
+                            }`}
+                          >
+                            {grade.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="border-t border-white/15 pt-1.5 space-y-1">
+                      <ToggleSwitch
+                        label="Portfolio Selector Panel"
+                        description="Right-hand project thumbnail navigator"
+                        checked={showDirectorDeck}
+                        onChange={() => setShowDirectorDeck(prev => !prev)}
+                      />
+                      <ToggleSwitch
+                        label="Architectural Spec Badges"
+                        description="Key engineering & project highlights"
+                        checked={showSpecCards}
+                        onChange={() => setShowSpecCards(prev => !prev)}
+                      />
+                      <ToggleSwitch
+                        label="Ri8click Consortium Pillars Bar"
+                        description="Show 4 business pillars ribbon"
+                        checked={showConsortiumRibbon}
+                        onChange={() => setShowConsortiumRibbon(prev => !prev)}
+                      />
+                      <ToggleSwitch
+                        label="Category Filter Bar"
+                        description="Show top category filter buttons"
+                        checked={showCategoryBar}
+                        onChange={() => setShowCategoryBar(prev => !prev)}
+                      />
+                      <ToggleSwitch
+                        label="Camera Waypoints Bar"
+                        description="Show top camera waypoint switcher"
+                        checked={showShowroomTourBar}
+                        onChange={() => setShowShowroomTourBar(prev => !prev)}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Clean View Toggle */}
+            <button
+              type="button"
+              onClick={() => setIsCinemaTheaterMode(prev => !prev)}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all flex items-center gap-1.5 cursor-pointer ${
+                isCinemaTheaterMode
+                  ? 'bg-white text-slate-950 border-white'
+                  : 'bg-slate-900/75 border-white/20 text-white hover:bg-slate-800'
+              }`}
+              title="Toggle Clean Architectural View"
+            >
+              {isCinemaTheaterMode ? (
+                <Minimize2 className="w-3.5 h-3.5" />
+              ) : (
+                <Maximize2 className="w-3.5 h-3.5" />
+              )}
+              <span className="hidden md:inline">
+                {isCinemaTheaterMode ? 'Standard View' : 'Clean View'}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* OPTIONAL RI8CLICK CONSORTIUM PILLARS RIBBON (HIDDEN BY DEFAULT) */}
+        <AnimatePresence>
+          {showConsortiumRibbon && !isCinemaTheaterMode && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="mb-4"
+            >
+              <div className="p-3 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-white/20 shadow-xl">
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-2 border-b border-white/15">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-md bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-wider">
+                      Ri8click Consortium
+                    </span>
+                    <span className="text-[11px] sm:text-xs font-semibold text-white/95">
+                      Integrated Real Estate, Commercial Plazas, Turnkey Construction, Container Capsule Homes &amp; German UPVC
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowConsortiumRibbon(false)}
+                    className="text-[10px] font-bold text-slate-300 hover:text-white flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Hide Pillars</span>
+                    <ChevronUp className="w-3 h-3" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                  {consortiumPillars.map(pillar => {
+                    const Icon = pillar.icon;
+                    const isActivePillar = tourCategory === pillar.id;
+                    return (
+                      <button
+                        key={pillar.id}
+                        type="button"
+                        onClick={() => {
+                          setTourCategory(pillar.id);
+                          onSelectCategoryFilter(pillar.category);
+                        }}
+                        className={`group p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-2.5 ${
+                          isActivePillar
+                            ? 'bg-white/15 border-amber-300'
+                            : 'bg-white/5 border-white/15 hover:bg-white/10'
+                        }`}
+                      >
+                        <div className={`p-2 rounded-lg border shrink-0 ${pillar.accent}`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-extrabold text-white group-hover:text-amber-300 transition-colors truncate">
+                            {pillar.title}
+                          </div>
+                          <div className="text-[10.5px] text-slate-200/90 leading-snug line-clamp-1 mt-0.5">
+                            {pillar.detail}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Center Main Content & Executive Portfolio Navigator */}
+        <AnimatePresence mode="wait">
+          {!isCinemaTheaterMode ? (
+            <motion.div
+              key="foreground-content"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto py-3"
+            >
+              {/* Left Column: Architectural Narrative & Actions */}
+              <div className={showDirectorDeck ? 'lg:col-span-7' : 'lg:col-span-11'}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeWaypoint.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.35 }}
+                    className="space-y-3.5"
+                  >
+                    {/* Division & Location Badges */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-black tracking-wider uppercase bg-amber-400 text-slate-950 shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5 fill-current" />
+                        <span>{activeWaypoint.divisionTag}</span>
+                      </span>
+
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold bg-slate-900/80 backdrop-blur-md text-white border border-white/20">
+                        <MapPin className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                        <span>{activeWaypoint.locationBadge}</span>
+                      </div>
+
+                      <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-emerald-950/80 text-emerald-200 border border-emerald-400/40">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
+                        <span>Watermark Verified</span>
+                      </div>
+                    </div>
+
+                    {/* Headline */}
+                    <h1 className="text-3xl sm:text-5xl lg:text-[46px] font-black tracking-tight text-white leading-[1.1] font-serif">
+                      {activeWaypoint.headline}
+                    </h1>
+
+                    {/* Description */}
+                    <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-medium">
+                      {activeWaypoint.description}
+                    </p>
+
+                    {/* Clean Architectural Specification Cards (Replaces Gaming Glow Hotspots) */}
+                    {showSpecCards && activeWaypoint.specs.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 max-w-2xl">
+                        {activeWaypoint.specs.map(item => (
+                          <div
+                            key={item.id}
+                            className="p-3 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/15 flex items-start gap-2.5"
+                          >
+                            <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                            <div>
+                              <div className="text-xs font-bold text-white">{item.title}</div>
+                              <div className="text-[11px] text-slate-300 leading-snug mt-0.5">
+                                {item.spec}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Valuation Pill & Multi-Angle Sub-Gallery (if available) */}
+                    <div className="flex flex-wrap items-center gap-3 pt-1">
+                      <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-slate-900/85 backdrop-blur-md border border-amber-400/50">
+                        <span className="text-[11px] uppercase tracking-wider text-amber-300 font-bold">
+                          Valuation / Price
+                        </span>
+                        <span className="text-base sm:text-lg font-black text-white">
+                          {activeWaypoint.valuation}
+                        </span>
+                      </div>
+
+                      {activeWaypoint.galleryImages && activeWaypoint.galleryImages.length > 1 && (
+                        <div className="flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-white/15">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300 px-1.5">
+                            Views:
+                          </span>
+                          {activeWaypoint.galleryImages.map((imgUrl, gIdx) => {
+                            if (failedUrls[imgUrl]) return null;
+                            return (
+                              <button
+                                key={gIdx}
+                                type="button"
+                                onClick={() => {
+                                  activeWaypoint.imageUrl = imgUrl;
+                                  setFailedUrls(prev => ({ ...prev }));
+                                }}
+                                className="w-9 h-7 rounded-md overflow-hidden border border-white/30 hover:border-amber-400 transition-all cursor-pointer shrink-0"
+                                title={`Switch to Tower View ${gIdx + 1}`}
+                              >
+                                <img
+                                  src={imgUrl}
+                                  alt={`View ${gIdx + 1}`}
+                                  onError={() => handleImageError(imgUrl)}
+                                  className="w-full h-full object-cover"
+                                />
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Primary Call-To-Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onOpen3DTour({
+                            id: activeWaypoint.id,
+                            title: activeWaypoint.headline,
+                            category: activeWaypoint.propertyCategory,
+                            priceFormatted: activeWaypoint.valuation,
+                            location: {
+                              city: 'Islamabad / Taxila',
+                              society: activeWaypoint.locationBadge,
+                              province: 'Islamabad Capital Territory'
+                            },
+                            images: activeWaypoint.galleryImages || [resolvedImageUrl],
+                            virtualTourVideoUrl: activeWaypoint.videoUrl,
+                            virtualTourVideoTitle: `${activeWaypoint.headline} - Ri8click Consortium Walkthrough`
+                          })
+                        }
+                        className="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all cursor-pointer"
+                      >
+                        <Compass className="w-4 h-4" />
+                        <span>Launch 360° Virtual Walkthrough</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={onExploreClick}
+                        className="px-5 py-3 rounded-xl bg-slate-900/80 hover:bg-white hover:text-slate-950 text-white border border-white/30 font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 backdrop-blur-md transition-all cursor-pointer"
+                      >
+                        <Eye className="w-4 h-4 text-amber-300" />
+                        <span>Explore Listings</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={onContactAgentClick}
+                        className="px-4 py-3 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-400/50 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer"
+                      >
+                        <PhoneCall className="w-4 h-4" />
+                        <span>Ri8click Consortium Inquiry</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Right Column: EXECUTIVE PORTFOLIO NAVIGATOR */}
+              {showDirectorDeck && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="lg:col-span-5 bg-slate-950/85 backdrop-blur-xl rounded-2xl border border-white/20 p-4 sm:p-5 shadow-2xl space-y-3.5"
+                >
+                  {/* Panel Header */}
+                  <div className="flex items-center justify-between gap-2 border-b border-white/15 pb-3">
+                    <div>
+                      <div className="text-xs font-black uppercase tracking-wider text-white">
+                        Ri8click Consortium Showcase
+                      </div>
+                      <div className="text-[10px] text-amber-300 font-semibold">
+                        Islamabad Plazas • Plots &amp; Villas • Capsule Pods • UPVC
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setIsVideoTourActive(prev => !prev)}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider cursor-pointer transition-all border ${
+                          isVideoTourActive
+                            ? 'bg-amber-400 text-slate-950 border-amber-300'
+                            : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                        }`}
+                      >
+                        {isVideoTourActive ? 'Show Photos' : 'Video Reel'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowDirectorDeck(false)}
+                        className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-[10px] font-bold text-slate-200 hover:text-white cursor-pointer"
+                        title="Minimize Panel"
+                      >
+                        Hide
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Category Tabs */}
+                  <div className="grid grid-cols-5 gap-1 bg-slate-900 p-1 rounded-xl border border-white/15">
+                    {(
+                      [
+                        { id: 'all_showroom', label: 'All' },
+                        { id: 'commercial_plazas', label: 'Plazas' },
+                        { id: 'properties_plots_villas', label: 'Plots/Villas' },
+                        { id: 'capsule_containers', label: 'Capsules' },
+                        { id: 'upvc_construction', label: 'UPVC' }
+                      ] as { id: TourDeckCategory; label: string }[]
+                    ).map(tab => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setTourCategory(tab.id)}
+                        className={`py-1.5 px-1.5 rounded-lg text-[9.5px] font-extrabold uppercase tracking-wider transition-all cursor-pointer truncate ${
+                          tourCategory === tab.id
+                            ? 'bg-amber-400 text-slate-950 shadow-sm'
+                            : 'text-slate-200 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Interactive Thumbnail Matrix */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[240px] overflow-y-auto pr-1 scrollbar-thin">
+                    {cameraWaypoints.map((wp, idx) => {
+                      const active = waypointIdx === idx;
+                      const thumbSrc = resolveImageWithFallback(wp);
+                      return (
+                        <button
+                          key={wp.id}
+                          type="button"
+                          onClick={() => {
+                            setIsVideoTourActive(false);
+                            setWaypointIdx(idx);
+                          }}
+                          className={`group relative rounded-xl overflow-hidden border text-left transition-all cursor-pointer h-20 ${
+                            active
+                              ? 'border-amber-400 ring-2 ring-amber-400/50'
+                              : 'border-white/20 opacity-85 hover:opacity-100 hover:border-white/50'
+                          }`}
+                        >
+                          <img
+                            src={thumbSrc}
+                            alt={wp.label}
+                            loading="lazy"
+                            onError={() => handleImageError(thumbSrc)}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
+                          <div className="absolute top-1 left-1.5 px-1.5 py-0.2 rounded bg-slate-950/80 text-[8px] font-mono font-bold text-amber-300 border border-white/15">
+                            0{idx + 1}
+                          </div>
+                          <div className="absolute bottom-1 left-1.5 right-1.5">
+                            <div className="text-[10px] font-extrabold text-white truncate leading-tight">
+                              {wp.label}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Panel Footer */}
+                  <div className="flex items-center justify-between pt-2 border-t border-white/15 text-[11px]">
+                    <div className="flex items-center gap-1.5 text-slate-200">
+                      <Info className="w-3.5 h-3.5 text-amber-300" />
+                      <span>Domestic Verified Towers &amp; Estates</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTourCategory('commercial_plazas');
+                        onSelectCategoryFilter('commercial');
+                      }}
+                      className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
+                    >
+                      View Islamabad Plazas
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          ) : (
+            /* Clean View Minimal Card */
+            <motion.div
+              key="clean-view-hud"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="my-auto flex items-end justify-between"
+            >
+              <div className="p-4 rounded-2xl bg-slate-950/85 backdrop-blur-xl border border-white/25 max-w-md">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-300 block">
+                  {activeWaypoint.code}
+                </span>
+                <h2 className="text-xl font-black text-white mt-0.5">
+                  {activeWaypoint.headline}
+                </h2>
+                <p className="text-xs text-slate-200 mt-1">{activeWaypoint.subLabel}</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* =====================================================================
+            5. BOTTOM TIMELINE & SLIDE NAVIGATION CONTROLS
+           ===================================================================== */}
+        <div className="pt-4 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Waypoint Progress Scrubber */}
+          <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar py-1">
+            {cameraWaypoints.map((wp, idx) => {
+              const isCurrent = waypointIdx === idx;
+              return (
+                <button
+                  key={wp.id}
+                  type="button"
+                  onClick={() => {
+                    setIsVideoTourActive(false);
+                    setWaypointIdx(idx);
+                  }}
+                  className="group flex flex-col gap-1 text-left cursor-pointer shrink-0"
+                  title={`${wp.label} — ${wp.subLabel}`}
+                >
+                  <div className="flex items-center gap-1">
+                    <span
+                      className={`text-[9px] font-mono font-bold transition-colors ${
+                        isCurrent
+                          ? 'text-amber-300'
+                          : 'text-white/60 group-hover:text-white/90'
+                      }`}
+                    >
+                      {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold truncate max-w-[105px] transition-colors ${
+                        isCurrent ? 'text-white' : 'text-white/60 group-hover:text-white/90'
+                      }`}
+                    >
+                      {wp.label}
+                    </span>
+                  </div>
+                  <div className="w-16 sm:w-20 h-1 rounded-full bg-white/20 overflow-hidden">
+                    {isCurrent ? (
+                      <motion.div
+                        key={`progress-${wp.id}-${isPaused}`}
+                        initial={{ width: '0%' }}
+                        animate={{ width: '100%' }}
+                        transition={{
+                          duration: isPaused ? 0.2 : WAYPOINT_DURATION_MS / 1000,
+                          ease: 'linear'
+                        }}
+                        className="h-full bg-amber-400"
+                      />
+                    ) : (
+                      <div className="h-full w-0 group-hover:w-full bg-white/60 transition-all duration-300" />
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Previous / Pause / Next Controls */}
+          <div className="flex items-center gap-2 shrink-0 ml-auto">
+            {!showDirectorDeck && (
+              <button
+                type="button"
+                onClick={() => setShowDirectorDeck(true)}
+                className="px-3 py-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-amber-300 border border-white/20 text-[11px] font-bold flex items-center gap-1.5 cursor-pointer"
+              >
+                <ChevronDown className="w-3.5 h-3.5" />
+                <span>Show Portfolio Deck</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="p-2.5 rounded-lg bg-slate-900/80 hover:bg-amber-400 hover:text-slate-950 text-white border border-white/20 transition-all cursor-pointer"
+              title="Previous Slide"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsPaused(prev => !prev)}
+              className="px-3.5 py-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-white border border-white/20 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              {isPaused ? (
+                <>
+                  <Play className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Resume</span>
+                </>
+              ) : (
+                <>
+                  <Pause className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Pause</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleNext}
+              className="p-2.5 rounded-lg bg-slate-900/80 hover:bg-amber-400 hover:text-slate-950 text-white border border-white/20 transition-all cursor-pointer"
+              title="Next Slide"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;
