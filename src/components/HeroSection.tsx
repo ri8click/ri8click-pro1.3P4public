@@ -16,6 +16,7 @@ import {
   Maximize2,
   Minimize2,
   Eye,
+  EyeOff,
   Volume2,
   VolumeX,
   SlidersHorizontal,
@@ -27,7 +28,8 @@ import {
   CheckCircle2,
   ChevronUp,
   ChevronDown,
-  Info
+  Info,
+  FileText
 } from 'lucide-react';
 import { HeroSlide, PropertyCategory } from '../types';
 
@@ -80,50 +82,69 @@ interface CameraWaypoint {
 }
 
 // ============================================================================
-// 1. VERIFIED DOMESTIC COMMERCIAL TOWERS (TOWERS.PK/ISLAMABAD + ATTACHED ASSETS)
+// 1. VERIFIED DOMESTIC COMMERCIAL TOWERS (ATTACHMENTS 1 TO 7 + TOWERS.PK/ISLAMABAD)
 // ============================================================================
 
 export const ISLAMABAD_DOMESTIC_TOWERS_GALLERY = {
-  // Attached Reference Images: Citadel 7 (Blue Area, Jinnah Avenue, Islamabad)
-  citadel7_nightElevation: 'https://www.genspark.ai/api/files/s/5pSqZ7Q4',
-  citadel7_podiumLookup: 'https://www.genspark.ai/api/files/s/J81GM3Ue',
-  citadel7_daylightTower: 'https://www.genspark.ai/api/files/s/xME9HQHe',
-  citadel7_realSiteDrone: 'https://www.genspark.ai/api/files/s/lEF4t1rs',
+  // Attachment 1: Regent One & Regent Mall — Night Aerial View (DHA Phase 3 / Islamabad)
+  tower1_regentOneNightAerial: 'https://www.genspark.ai/api/files/s/CfYL2dM0',
+  // Attachment 2: Multi-Block High-Rise Commercial & Corporate Complex (Islamabad Expressway / GT Road)
+  tower2_parksideHighriseComplex: 'https://www.genspark.ai/api/files/s/NC4klaYu',
+  // Attachment 3: Classical Stone & Arched Podium Commercial Galleria (DHA / Gulberg Islamabad)
+  tower3_florenceGalleriaPodium: 'https://www.genspark.ai/api/files/s/5U1P9WPx',
+  // Attachment 4: Citadel 7 Corporate & Retail Tower — Twilight Elevation (Blue Area, Jinnah Avenue, Islamabad)
+  tower4_citadel7Twilight: 'https://www.genspark.ai/api/files/s/qpljElLm',
+  // Attachment 5: Citadel 7 Corporate Tower — Skyline View (Blue Area, Islamabad)
+  tower5_citadel7Skyline: 'https://www.genspark.ai/api/files/s/6C54AO5M',
+  // Attachment 6: High-Street Branded Retail & Corporate Plaza (Blue Area / Faisal Hills Islamabad)
+  tower6_brandedRetailPlaza: 'https://www.genspark.ai/api/files/s/l7r4er7D',
+  // Attachment 7: Regent One & Regent Mall — Daylight Aerial View (DHA Phase 3 / Islamabad)
+  tower7_regentOneDaylightAerial: 'https://www.genspark.ai/api/files/s/JBLytyZd',
 
-  // Attached Reference Images: J7 Emporium (Sector B-17 Multi Gardens, Islamabad)
-  j7Emporium_boulevardView: 'https://www.genspark.ai/api/files/s/oJkK6Tiq',
-  j7Emporium_skybridgeElevation: 'https://www.genspark.ai/api/files/s/q82Lhceq',
-  j7Emporium_cornerPerspective: 'https://www.genspark.ai/api/files/s/dy5c0Eqs',
-
-  // Attached Reference Image: Executive Glass Podium & Corporate Office Tower
-  executiveCommercialTower: 'https://www.genspark.ai/api/files/s/KOmaR4pY',
-
-  // Verified Towers.pk/Islamabad Domestic High-Rise Assets
-  towersPk_citadel7: 'https://towers.pk/wp-content/uploads/2023/11/citadel-7.webp',
-  towersPk_emporium: 'https://towers.pk/wp-content/uploads/2024/02/2021-06-18-02-02-33-5655-1623981753_960x718.5_91.webp',
-  towersPk_centaurus: 'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
-  towersPk_mallOfIslamabad: 'https://towers.pk/wp-content/uploads/2025/09/Mall-of-Islamabad-1.jpg',
-  towersPk_gigaMall: 'https://towers.pk/wp-content/uploads/2025/04/giga-mall-islamabad.jpg',
-  towersPk_skyparkOne: 'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
-  towersPk_ufoneTower: 'https://towers.pk/wp-content/uploads/2025/01/ufone-tower-islamabad-scaled.jpeg',
-  towersPk_iseTower: 'https://towers.pk/wp-content/uploads/2023/08/ise-tower-islamabad.jpg',
-  towersPk_navalAnchorage: 'https://towers.pk/wp-content/uploads/2026/07/Naval-anchorage-phase2-islamabad.png'
+  // Active Domestic High-Resolution Architectural Backups
+  backup_citadel7: 'https://www.genspark.ai/api/files/s/qpljElLm',
+  backup_regentOne: 'https://www.genspark.ai/api/files/s/JBLytyZd',
+  backup_retailPlaza: 'https://www.genspark.ai/api/files/s/l7r4er7D'
 };
+
+// ============================================================================
+// 2. CONTAINER & CAPSULE SMART HOUSES (ATTACHMENTS 8 TO 14 IN EXACT SEQUENCE)
+// ============================================================================
 
 export const MODULAR_CAPSULE_GALLERY = {
-  cap1_lakesidePanoramaPod:
-    'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=2400&q=95',
-  cap2_doubleDeckerV2124Pod:
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2400&q=95',
-  cap3_forestCabinPod:
-    'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=2400&q=95'
+  // Attachment 8 (1st Capsule in sequence): Q3 Pitched-Roof Modular Forest Cabin Pod
+  cap8_q3ForestCabinPod: 'https://www.genspark.ai/api/files/s/BbrzM6xL',
+  // Attachment 9 (2nd Capsule in sequence): K5 Waterfront Panoramic Space Capsule Pod
+  cap9_k5WaterfrontPod: 'https://www.genspark.ai/api/files/s/eaunJzIE',
+  // Attachment 10 (3rd Capsule in sequence): White Corrugated Container Villa with Rooftop Deck & Patio
+  cap10_rooftopDeckContainerVilla: 'https://www.genspark.ai/api/files/s/uxMV0Yd2',
+  // Attachment 11 (4th Capsule in sequence): Hexagonal-Lit Matte Black Designer Container Smart Home
+  cap11_hexLitBlackContainerPod: 'https://www.genspark.ai/api/files/s/MQ649Ero',
+  // Attachment 12 (5th Capsule in sequence): White Curved-Corner Glass Executive Container Studio
+  cap12_curvedCornerGlassContainer: 'https://www.genspark.ai/api/files/s/p5oZpRhm',
+  // Attachment 13 (6th Capsule in sequence): V2124 Double-Decker Two-Story Stacked Capsule Villa
+  cap13_v2124DoubleDeckerCapsule: 'https://www.genspark.ai/api/files/s/Yie7Mpli',
+  // Attachment 14 (7th Capsule in sequence): Lakeside Curved-Glass Observation Capsule Pod with Timber Deck
+  cap14_lakesideCurvedGlassCapsule: 'https://www.genspark.ai/api/files/s/Wt9erp87'
 };
 
+export const MODULAR_CAPSULE_SEQUENCE_LIST = [
+  MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
+  MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
+  MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
+  MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
+  MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
+  MODULAR_CAPSULE_GALLERY.cap13_v2124DoubleDeckerCapsule,
+  MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule
+];
+
 export const CONSTRUCTED_HOUSES_GALLERY = {
-  house1_whiteSupercarVilla: 'https://www.genspark.ai/api/files/s/YZr3409c',
-  house2_charcoalGarageVilla: 'https://www.genspark.ai/api/files/s/7QO0W212',
-  house3_stoneGlassMansion: 'https://www.genspark.ai/api/files/s/G0HfpG8n',
-  house4_whitePillaredEstate: 'https://www.genspark.ai/api/files/s/oARmbiwI'
+  house1_whiteVilla:
+    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2400&q=95',
+  house2_modernEstate:
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=95',
+  house3_stoneGlassMansion:
+    'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2400&q=95'
 };
 
 export const UPVC_AND_INTERIOR_GALLERY = {
@@ -131,22 +152,6 @@ export const UPVC_AND_INTERIOR_GALLERY = {
     'https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=2400&q=95',
   upvc2_woodSlatTvPartition:
     'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2400&q=95'
-};
-
-const UHD_ARCHITECTURAL_BACKUPS = {
-  commercialCitadel: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower,
-  commercialEmporium: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_boulevardView,
-  commercialExecutive: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.executiveCommercialTower,
-  commercialCentaurus: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_centaurus,
-  villaWhite:
-    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2400&q=95',
-  villaModern:
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=95',
-  villaTwilight:
-    'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2400&q=95',
-  capsuleLakeside: MODULAR_CAPSULE_GALLERY.cap1_lakesidePanoramaPod,
-  capsuleDoubleDecker: MODULAR_CAPSULE_GALLERY.cap2_doubleDeckerV2124Pod,
-  upvcCurtainWall: UPVC_AND_INTERIOR_GALLERY.upvc1_glassRoofConservatory
 };
 
 const SHOWROOM_VIDEOS = {
@@ -159,207 +164,513 @@ const SHOWROOM_VIDEOS = {
 };
 
 // ============================================================================
-// 2. MASTER WAYPOINTS COVERING ALL RI8CLICK CONSORTIUM PILLARS
+// 3. MASTER WAYPOINTS (DOMESTIC ISLAMABAD TOWERS + CAPSULES 8-14 IN SEQUENCE)
 // ============================================================================
 
 const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
-  // ---------------- PILLAR 1: COMMERCIAL PLAZAS (REAL DOMESTIC ISLAMABAD TOWERS) ----------------
+  // ---------------- PILLAR 1: COMMERCIAL PLAZAS (TOWERS.PK/ISLAMABAD + ATTACHMENTS 1–7) ----------------
   {
     id: 'comm-citadel-7-isb',
     tourCategory: 'commercial_plazas',
     propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD COMMERCIAL PLAZAS & TOWERS',
-    code: 'ISB 01 // CITADEL 7 BLUE AREA ISLAMABAD',
+    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK ISLAMABAD VERIFIED LANDMARK',
+    code: 'ISB 01 // CITADEL 7 CORPORATE TOWER — BLUE AREA',
     label: 'Citadel 7 Blue Area',
-    subLabel: '20-Storey CDA Approved Corporate & Retail Tower on Jinnah Avenue, Islamabad',
+    subLabel: '20-Storey CDA Approved Corporate & Retail Mall on Main Jinnah Avenue, Islamabad',
     headline: 'Citadel 7 Corporate & Retail Tower — Blue Area, Islamabad',
     description:
-      'Featured on Towers.pk/Islamabad: Citadel 7 by Chakor Ventures rises 20 storeys (345,000 Sq. Ft.) on Main Jinnah Avenue, Blue Area, Islamabad. Comprising 4 basement parking levels, a 5-floor luxury retail mall, and 14 floors of Margalla-facing corporate office suites.',
+      'Featured on Towers.pk/Islamabad: Citadel 7 by Chakor Ventures rises 20 storeys (272 ft / 345,000 Sq. Ft.) at Plot 7, Main Jinnah Avenue, Blue Area, Islamabad. Engineered with 4 basement parking levels, a 5-floor luxury retail mall, and 14 floors of Margalla-facing corporate offices.',
     valuation: 'PKR 1.85 Crore – 14.5 Crore',
     locationBadge: 'Plot 7, Jinnah Avenue, Blue Area, Islamabad',
     focalLength: '24MM ARCHITECTURAL',
-    altitude: '272 FT SKYLINE',
+    altitude: '272 FT / 20 FLOORS',
     fov: '85° WIDE',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_nightElevation,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_citadel7,
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
     galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_nightElevation,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_podiumLookup,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_realSiteDrone
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza
     ],
     videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
     motionOrigin: 'center center',
-    panX: ['-0.8%', '0.8%'],
-    panY: ['0%', '-0.8%'],
-    scaleRange: [1.01, 1.06],
-    specs: [
-      {
-        id: 'c7-spec-1',
-        title: '5-Storey Retail Mall & 14 Corporate Floors',
-        spec: '345,000 Sq. Ft. CDA-approved commercial skyscraper with double-glazed thermal facade.'
-      },
-      {
-        id: 'c7-spec-2',
-        title: 'Live On-Ground Construction Progress',
-        spec: 'Structural grey-frame and curtain-wall glazing actively progressing on Main Jinnah Avenue.'
-      }
-    ]
-  },
-  {
-    id: 'comm-citadel-7-site-isb',
-    tourCategory: 'commercial_plazas',
-    propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // VERIFIED DOMESTIC SITE PROGRESS',
-    code: 'ISB 02 // CITADEL 7 DRONE & PODIUM VIEW',
-    label: 'Citadel 7 Real Site & Podium',
-    subLabel: 'On-Ground Curtain Wall Glazing & Podium Retail Frontage on Jinnah Avenue',
-    headline: 'Real Domestic High-Rise Development — Jinnah Avenue Blue Area',
-    description:
-      'Authentic domestic commercial development in Islamabad with zero virtual placeholders. Direct frontage along the Metro Bus corridor and Jinnah Avenue, offering high-yield retail outlets, corporate floor plates, and 4-level underground parking.',
-    valuation: 'Shops from PKR 3.15 Cr • Offices from 2.45 Cr',
-    locationBadge: 'G-7 / F-7 Blue Area, Islamabad (Towers.pk Verified)',
-    focalLength: '28MM DRONE',
-    altitude: '20 STOREYS',
-    fov: '80° STANDARD',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_realSiteDrone,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_podiumLookup,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower,
-    galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_realSiteDrone,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_podiumLookup,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_daylightTower
-    ],
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['0.8%', '-0.8%'],
-    panY: ['-0.5%', '0.5%'],
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0%', '-0.6%'],
     scaleRange: [1.01, 1.05],
     specs: [
       {
-        id: 'c7s-spec-1',
-        title: 'Real Domestic Structure & Glazing',
-        spec: 'Full-height structural glass facade overlooking Margalla Hills and Blue Area.'
+        id: 'c7-spec-1',
+        title: '5-Storey Retail Podium & 14 Corporate Floors',
+        spec: 'CDA-approved Blue Area commercial high-rise with double-glazed acoustic curtain wall.'
       },
       {
-        id: 'c7s-spec-2',
-        title: 'High Rental Yield Corporate Hub',
-        spec: 'Positioned beside ISE Tower, Ufone Tower, and The Centaurus on Jinnah Avenue.'
+        id: 'c7-spec-2',
+        title: 'Prime Jinnah Avenue Frontage',
+        spec: 'Located in Islamabad financial hub alongside Centaurus Mall, Ufone Tower, and ISE Tower.'
       }
     ]
   },
   {
-    id: 'comm-j7-emporium-isb',
+    id: 'comm-regent-one-isb',
     tourCategory: 'commercial_plazas',
     propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // MULTI GARDENS B-17 & GT ROAD CORRIDOR',
-    code: 'ISB 03 // J7 EMPORIUM MALL & RESIDENCIA',
-    label: 'J7 Emporium Islamabad',
-    subLabel: '30-Storey Iconic Mega Mall, Skybridge Suites & Corporate Tower in Sector B-17',
-    headline: 'J7 Emporium Commercial Mall & High-Rise Tower — Islamabad',
+    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK ISLAMABAD COMMERCIAL & SUITES',
+    code: 'ISB 02 // REGENT ONE & REGENT MALL — DHA ISLAMABAD',
+    label: 'Regent One & Mall',
+    subLabel: 'Twin High-Rise Commercial Plaza, Rooftop Sky Lounge & Serviced Apartments in Islamabad',
+    headline: 'Regent One & Regent Mall — DHA Phase 3, Islamabad',
     description:
-      'Listed on Towers.pk/Islamabad: J7 Emporium in Sector B-17 Multi Gardens (adjacent to GT Road & M-1 C-18 Interchange) spans 46 Kanals with a sculpted commercial podium mall, skybridge corporate offices, and luxury serviced hotel suites.',
-    valuation: 'Commercial Shops & Suites from PKR 85 Lakh',
-    locationBadge: 'Sector B-17 Multi Gardens, Islamabad / Taxila Link',
-    focalLength: '20MM WIDE',
-    altitude: '30 STOREYS / 361 FT',
-    fov: '90° ARCHITECTURAL',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_boulevardView,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_cornerPerspective,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_emporium,
+      'Listed on Towers.pk/Islamabad: Regent One and Regent Mall deliver a modern twin-block domestic commercial plaza and luxury apartment complex in DHA Phase 3, Islamabad, featuring rooftop recreational gardens, swimming pool deck, and dedicated boulevard parking.',
+    valuation: 'Shops & Suites from PKR 1.45 Crore',
+    locationBadge: 'Main Boulevard, DHA Phase 3, Islamabad',
+    focalLength: '28MM DRONE',
+    altitude: 'ROOFTOP SKY DECK',
+    fov: '82° STANDARD',
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower7_regentOneDaylightAerial,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower1_regentOneNightAerial,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
     galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_boulevardView,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_skybridgeElevation,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_cornerPerspective
-    ],
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['-0.8%', '0.8%'],
-    panY: ['0%', '-0.5%'],
-    scaleRange: [1.01, 1.06],
-    specs: [
-      {
-        id: 'j7-spec-1',
-        title: 'Cantilevered Skybridge & Multi-Story Atrium',
-        spec: 'Distinctive angular podium mall hosting national retail brands, multiplex, and food court.'
-      },
-      {
-        id: 'j7-spec-2',
-        title: 'Strategic Islamabad–Taxila Gateway',
-        spec: 'Direct connectivity to Faisal Hills, Taxila GT Road, and M-1 Motorway.'
-      }
-    ]
-  },
-  {
-    id: 'comm-islamabad-skyline-plazas',
-    tourCategory: 'commercial_plazas',
-    propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD & FAISAL HILLS COMMERCIAL HUB',
-    code: 'ISB 04 // SKYPARK ONE, GIGA MALL & BLUE AREA PLAZAS',
-    label: 'Executive Commercial Tower',
-    subLabel: 'High-Footfall Retail Plazas, Corporate Suites & Towers.pk Verified Landmarks',
-    headline: 'Executive Commercial Plazas — Blue Area, Gulberg & Faisal Hills',
-    description:
-      'Ri8click Consortium markets and constructs high-ROI domestic commercial plazas across Islamabad (Blue Area, Gulberg Greens Skypark One, DHA Giga Mall corridor) and Faisal Hills Commercial Broadway—engineered with acoustic UPVC facades and capsule elevators.',
-    valuation: 'Plazas & Retail Units from PKR 1.50 Crore',
-    locationBadge: 'Islamabad Blue Area, Gulberg Greens & Faisal Hills',
-    focalLength: '24MM PRIME',
-    altitude: 'COMMERCIAL PODIUM',
-    fov: '84° WIDE',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.executiveCommercialTower,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_skyparkOne,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_centaurus,
-    galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.executiveCommercialTower,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_skyparkOne,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_gigaMall,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_mallOfIslamabad
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower7_regentOneDaylightAerial,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower1_regentOneNightAerial
     ],
     videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
     motionOrigin: 'center center',
     panX: ['0.6%', '-0.6%'],
+    panY: ['-0.4%', '0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'ro-spec-1',
+        title: 'Twin-Tower Commercial & Residential Hub',
+        spec: 'Direct boulevard access with ground/mezzanine retail showrooms and rooftop amenities.'
+      },
+      {
+        id: 'ro-spec-2',
+        title: 'Day & Night Architectural Illumination',
+        spec: 'Energy-efficient UPVC thermal glazing and dedicated underground resident parking.'
+      }
+    ]
+  },
+  {
+    id: 'comm-expressway-highrise-isb',
+    tourCategory: 'commercial_plazas',
+    propertyCategory: 'commercial',
+    divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD HIGH-RISE COMMERCIAL COMPLEX',
+    code: 'ISB 03 // SKYPARK & MULTI-TOWER COMMERCIAL ATRIUM',
+    label: 'Islamabad Multi-Tower Complex',
+    subLabel: '16-Storey Linked Commercial Podium, Corporate Offices & Margalla-Facing Suites',
+    headline: 'Multi-Tower Commercial & Corporate Complex — Islamabad',
+    description:
+      'Verified domestic high-rise architecture from Towers.pk/Islamabad featuring interconnected commercial atrium levels, landscaped green embankments, vertical retail zones, and panoramic Margalla Hills orientation.',
+    valuation: 'Commercial Units from PKR 1.25 Crore',
+    locationBadge: 'Gulberg Greens / Islamabad Expressway Corridor',
+    focalLength: '22MM WIDE',
+    altitude: '16 STOREYS / 225 FT',
+    fov: '88° ARCHITECTURAL',
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower2_parksideHighriseComplex,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower7_regentOneDaylightAerial,
+    galleryImages: [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower2_parksideHighriseComplex,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium
+    ],
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'eh-spec-1',
+        title: '4-Level Commercial Podium & Retail Mall',
+        spec: 'High-footfall retail atrium connecting three residential and corporate office towers.'
+      },
+      {
+        id: 'eh-spec-2',
+        title: 'Eco-Smart Domestic Engineering',
+        spec: 'Solar backup arrays, rainwater harvesting, and German UPVC soundproof fenestration.'
+      }
+    ]
+  },
+  {
+    id: 'comm-florence-galleria-isb',
+    tourCategory: 'commercial_plazas',
+    propertyCategory: 'commercial',
+    divisionTag: 'RI8CLICK CONSORTIUM // LUXURY BOUTIQUE MALL & GALLERIA',
+    code: 'ISB 04 // GRAND ARCHED PODIUM & COMMERCIAL GALLERIA',
+    label: 'Grand Commercial Galleria',
+    subLabel: 'Neoclassical Arched Retail Podium, Fine Dining Terrace & Hospitality Suites in Islamabad',
+    headline: 'Grand Arched Commercial Galleria & Executive Suites — Islamabad',
+    description:
+      'Domestic landmark plaza in Islamabad combining a double-height arched stone commercial podium with twin 10-storey luxury hospitality and corporate wings along the main expressway.',
+    valuation: 'Retail & Suites from PKR 1.60 Crore',
+    locationBadge: 'DHA Phase 2 / Islamabad Expressway',
+    focalLength: '24MM PRIME',
+    altitude: '12 STOREYS',
+    fov: '84° WIDE',
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower2_parksideHighriseComplex,
+    galleryImages: [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza
+    ],
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.5%', '-0.5%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'fg-spec-1',
+        title: 'Double-Height Arched Retail Frontage',
+        spec: 'Designed for flagship banks, designer brands, and fine-dining restaurants.'
+      },
+      {
+        id: 'fg-spec-2',
+        title: 'Landscaped Podium Roof Terrace',
+        spec: 'Open-air courtyard dining and skybridge connecting the upper residential wings.'
+      }
+    ]
+  },
+  {
+    id: 'comm-branded-retail-plaza-isb',
+    tourCategory: 'commercial_plazas',
+    propertyCategory: 'commercial',
+    divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD & FAISAL HILLS COMMERCIAL HUB',
+    code: 'ISB 05 // EXECUTIVE BRANDED RETAIL & CORPORATE PLAZA',
+    label: 'Executive Retail & Office Plaza',
+    subLabel: 'Double-Height Flagship Brand Showrooms & 6 Corporate Office Floors',
+    headline: 'Executive Retail & Corporate Office Tower — Islamabad',
+    description:
+      'High-visibility domestic commercial plaza hosting international and national retail flagship outlets on the lower podium with 6 storeys of curtain-wall corporate offices above.',
+    valuation: 'Shops from PKR 2.20 Cr • Offices from 1.15 Cr',
+    locationBadge: 'Blue Area, New Blue Area & Faisal Hills Commercial Broadway',
+    focalLength: '20MM ARCHITECTURAL',
+    altitude: '10 STOREYS',
+    fov: '90° WIDE',
+    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
+    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
+    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
+    galleryImages: [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower1_regentOneNightAerial
+    ],
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.5%', '0.5%'],
     panY: ['0%', '-0.5%'],
     scaleRange: [1.01, 1.05],
     specs: [
       {
-        id: 'isp-spec-1',
-        title: 'Towers.pk Islamabad Verified Portfolio',
-        spec: 'Includes Skypark One (Gulberg Greens), Mall of Islamabad (Blue Area), and Giga Mall (DHA).'
+        id: 'brp-spec-1',
+        title: 'Triple-Height Commercial Atrium',
+        spec: 'Dedicated display windows for anchor fashion brands, cafes, and corporate banks.'
       },
       {
-        id: 'isp-spec-2',
-        title: 'Ri8click Consortium Turnkey Engineering',
-        spec: 'German UPVC double-glazed curtain walls, HVAC climate control, and dedicated basement parking.'
+        id: 'brp-spec-2',
+        title: 'Ri8click Turnkey UPVC Glazing',
+        spec: 'Solar-reflective structural glass facade with high-speed capsule elevators.'
       }
     ]
   },
 
-  // ---------------- PILLAR 2: PROPERTIES (PLOTS & CONSTRUCTED HOUSES) ----------------
+  // ---------------- PILLAR 2: CONTAINER & CAPSULE SMART HOUSES (ATTACHMENTS 8 TO 14 IN SEQUENCE) ----------------
+  {
+    id: 'capsule-seq-8-q3',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (01 / 07)',
+    code: 'CAPSULE 01 (ATTACHMENT #8) // MODEL Q3 PITCHED-ROOF CABIN POD',
+    label: 'Q3 Modular Cabin Pod',
+    subLabel: 'Aerodynamic Pitched-Roof Smart Cabin with UPVC French Doors & Panoramic Window',
+    headline: 'Model Q3 Pitched-Roof Modular Smart Cabin House',
+    description:
+      'Attachment #8 in sequence: The Q3 prefabricated modular cabin pod combines a pitched alpine roof profile with curved aviation-grade aluminum panels, matte-black UPVC double-glazed French entry doors, and floor-to-ceiling forest-view glazing.',
+    valuation: 'PKR 48 Lakh – 68 Lakh',
+    locationBadge: 'Turnkey Delivery: Murree, Nathia Gali, Taxila & Islamabad Farms',
+    focalLength: '24MM PRIME',
+    altitude: 'FOREST DECK',
+    fov: '86° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0%', '-0.5%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap8-1',
+        title: 'Q3 Pitched-Roof All-Weather Shell',
+        spec: 'Engineered for snowfall and mountain rain with polyurethane thermal insulation.'
+      },
+      {
+        id: 'cap8-2',
+        title: 'Ri8click UPVC Double-Glazed Framing',
+        spec: 'Acoustic Low-E tempered glass windows and integrated composite entrance porch.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-9-k5',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (02 / 07)',
+    code: 'CAPSULE 02 (ATTACHMENT #9) // MODEL K5 PANORAMIC SPACE CAPSULE',
+    label: 'K5 Panoramic Space Capsule',
+    subLabel: '38-Foot Aerospace Aluminum Pod with Dual 270° Curved Glass Observation Wings',
+    headline: 'Model K5 Waterfront Panoramic Space Capsule House',
+    description:
+      'Attachment #9 in sequence: Flagship K5 space capsule featuring dual 270-degree curved tempered glass observation bays, central biometric security door with integrated steps, and open-air balcony deck.',
+    valuation: 'PKR 75 Lakh – 1.05 Crore',
+    locationBadge: 'Khanpur Dam, Rawal Lake, Farmhouses & Resorts',
+    focalLength: '20MM WIDE',
+    altitude: 'WATERFRONT LAWN',
+    fov: '92° EXPANSIVE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.6%', '-0.6%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap9-1',
+        title: 'Dual 270° Curved Observation Glass',
+        spec: 'Solar-tinted Low-E curved safety glass providing privacy and panoramic views.'
+      },
+      {
+        id: 'cap9-2',
+        title: 'Crane-Ready Steel Chassis',
+        spec: 'Installs on concrete piers in 4 hours without disturbing natural landscaping.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-10-container-deck',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (03 / 07)',
+    code: 'CAPSULE 03 (ATTACHMENT #10) // ROOFTOP DECK CONTAINER VILLA',
+    label: 'Rooftop Deck Container Villa',
+    subLabel: 'Luxury White Container Home with Wraparound Timber Patio & Upper Sky Lounge',
+    headline: 'Luxury Container Villa with Rooftop Terrace & Timber Deck',
+    description:
+      'Attachment #10 in sequence: Architectural shipping-container residence finished in crisp white thermal coating, featuring full-span sliding UPVC glass walls, a gourmet kitchen island, wraparound hardwood deck, and an upper-level railed rooftop lounge.',
+    valuation: 'PKR 52 Lakh – 78 Lakh',
+    locationBadge: 'Faisal Hills, Chak Shahzad & B-17 Farm Estates',
+    focalLength: '24MM ARCHITECTURAL',
+    altitude: '2-LEVEL DECK',
+    fov: '86° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0%', '-0.5%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap10-1',
+        title: 'Upper Rooftop Dining & Sky Terrace',
+        spec: 'Reinforced structural roof deck with steel cable railings and outdoor seating.'
+      },
+      {
+        id: 'cap10-2',
+        title: 'Full-Width Sliding UPVC Glass Wall',
+        spec: 'Seamlessly merges the indoor kitchen and lounge with the outdoor timber patio.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-11-hex-black',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (04 / 07)',
+    code: 'CAPSULE 04 (ATTACHMENT #11) // HEX-LIT DESIGNER CONTAINER POD',
+    label: 'Hex-Lit Designer Container Pod',
+    subLabel: 'Matte Charcoal Chamfered Container Studio with Warm Architectural Perimeter Lighting',
+    headline: 'Chamfered Matte-Black Designer Container Smart Pod',
+    description:
+      'Attachment #11 in sequence: Ultra-modern chamfered-frame container villa with recessed warm amber perimeter LED lighting, geometric laser-cut backlit feature walls, and frameless panoramic sliding glass.',
+    valuation: 'PKR 64 Lakh – 88 Lakh',
+    locationBadge: 'Executive Farmhouses, Glamping Resorts & Rooftops',
+    focalLength: '22MM WIDE',
+    altitude: 'GARDEN PAVILION',
+    fov: '88° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.5%', '-0.5%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap11-1',
+        title: 'Chamfered Portal Frame & Warm LED Halo',
+        spec: 'Architectural bevelled steel portal with weatherproof outdoor ambiance lighting.'
+      },
+      {
+        id: 'cap11-2',
+        title: 'Bespoke Hexagonal Backlit Interior',
+        spec: 'Turnkey designer lounge, acoustic ceiling slats, and smart climate automation.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-12-executive-studio',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (05 / 07)',
+    code: 'CAPSULE 05 (ATTACHMENT #12) // CURVED-CORNER EXECUTIVE STUDIO POD',
+    label: 'Curved-Corner Studio Container',
+    subLabel: 'Minimalist White Container Villa & Executive Office with Rounded UPVC Frames',
+    headline: 'Curved-Corner Glass Container Villa & Executive Studio',
+    description:
+      'Attachment #12 in sequence: Precision-crafted white corrugated container module featuring signature rounded-corner black aluminum/UPVC window frames, linear recessed ceiling lights, and a private executive workspace and lounge.',
+    valuation: 'PKR 46 Lakh – 65 Lakh',
+    locationBadge: 'Islamabad, Rawalpindi, Taxila & Lahore Delivery',
+    focalLength: '24MM PRIME',
+    altitude: 'PATIO LEVEL',
+    fov: '85° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap13_v2124DoubleDeckerCapsule,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.5%', '0.5%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap12-1',
+        title: 'Rounded-Corner Structural UPVC Glazing',
+        spec: 'Dual-aspect floor-to-ceiling glass walls with thermal-break aluminum profiles.'
+      },
+      {
+        id: 'cap12-2',
+        title: 'Dual-Use Residence or Corporate Pod',
+        spec: 'Ideal as a luxury guest suite, private garden office, or site sales gallery.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-13-v2124-duplex',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (06 / 07)',
+    code: 'CAPSULE 06 (ATTACHMENT #13) // V2124 DOUBLE-DECKER CAPSULE VILLA',
+    label: 'V2124 Double-Decker Villa',
+    subLabel: 'Two-Story Stacked Curved-Glass Capsule Villa with Upper Master Sky Suite',
+    headline: 'Model V2124 Double-Decker Stacked Capsule Villa',
+    description:
+      'Attachment #13 in sequence: Two-story stacked modular capsule villa offering an expansive ground-floor living and dining pavilion with sliding glass walls and an upper-deck V2124 panoramic master bedroom suite.',
+    valuation: 'PKR 1.35 Crore – 1.85 Crore',
+    locationBadge: 'Luxury Farmhouses, Hill Resorts & Urban Penthouses',
+    focalLength: '20MM ARCHITECTURAL',
+    altitude: '2-STORY DUPLEX',
+    fov: '90° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap13_v2124DoubleDeckerCapsule,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.6%', '-0.6%'],
+    panY: ['0.3%', '-0.3%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap13-1',
+        title: 'Upper-Deck V2124 Panoramic Master Suite',
+        spec: 'Second-story curved observation glass suite with warm architectural cove lighting.'
+      },
+      {
+        id: 'cap13-2',
+        title: 'Open-Plan Ground Lounge & Kitchen',
+        spec: 'Full-span sliding UPVC glass doors opening onto a raised composite timber deck.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-14-lakeside-pod',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (07 / 07)',
+    code: 'CAPSULE 07 (ATTACHMENT #14) // LAKESIDE CURVED-GLASS CAPSULE POD',
+    label: 'Lakeside Panorama Capsule',
+    subLabel: 'Curved-Glass Waterfront Capsule Home with Stepping-Stone Path & Patio Deck',
+    headline: 'Lakeside Curved-Glass Observation Capsule House',
+    description:
+      'Attachment #14 in sequence: Waterfront aerodynamic capsule residence featuring wrap-around curved observation glass, operable casement ventilation windows, fluorocarbon aluminum cladding, and a serene lakeside timber deck.',
+    valuation: 'PKR 68 Lakh – 96 Lakh',
+    locationBadge: 'Lakeside Estates, Resorts & Private Farmhouses',
+    focalLength: '18MM ULTRA-WIDE',
+    altitude: 'LAKESIDE DECK',
+    fov: '94° EXPANSIVE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap14-1',
+        title: 'Seamless Curved Low-E Observation Glass',
+        spec: 'Double-glazed thermal and acoustic curved glass with zero condensation.'
+      },
+      {
+        id: 'cap14-2',
+        title: 'Turnkey Waterfront & Resort Setup',
+        spec: 'Includes smart climate control, luxury bathroom, and prefabricated patio decking.'
+      }
+    ]
+  },
+
+  // ---------------- PILLAR 3: PROPERTIES (PLOTS & CONSTRUCTED HOUSES) ----------------
   {
     id: 'prop-wp-1',
     tourCategory: 'properties_plots_villas',
     propertyCategory: 'residential',
     divisionTag: 'RI8CLICK CONSORTIUM // PLOTS & CONSTRUCTED HOUSES',
-    code: 'PROP 01 // CONSTRUCTED VILLA & PLOTS',
+    code: 'PROP 01 // CONSTRUCTED VILLA & POSSESSION PLOTS',
     label: 'Cantilevered Designer Villa',
-    subLabel: '1-Kanal Constructed House & Possession Plots in Faisal Hills',
+    subLabel: '1-Kanal Constructed House & Possession Plots in Faisal Hills & Islamabad',
     headline: 'Constructed Signature Villas & Prime Residential Plots',
     description:
-      'Ri8click Consortium offers 100% watermark-verified Residential & Commercial Plots (5 Marla, 10 Marla, 1 & 2 Kanal) alongside architect-constructed luxury houses in Faisal Hills, Kohistan Enclave, Multi Gardens B-17, and DHA Islamabad.',
+      'Ri8click Consortium offers verified Residential & Commercial Plots (5 Marla, 10 Marla, 1 & 2 Kanal) alongside architect-constructed luxury houses in Faisal Hills, Kohistan Enclave, Multi Gardens B-17, and DHA Islamabad.',
     valuation: 'Plots from PKR 45L • Villas 6.85 Cr+',
     locationBadge: 'Faisal Hills Executive, Taxila & Islamabad',
     focalLength: '24MM PRIME',
     altitude: 'ELEVATION +4.2M',
     fov: '84° WIDE',
-    imageUrl: CONSTRUCTED_HOUSES_GALLERY.house1_whiteSupercarVilla,
-    secondaryImageUrl: CONSTRUCTED_HOUSES_GALLERY.house3_stoneGlassMansion,
-    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.villaWhite,
+    imageUrl: CONSTRUCTED_HOUSES_GALLERY.house1_whiteVilla,
+    secondaryImageUrl: CONSTRUCTED_HOUSES_GALLERY.house2_modernEstate,
+    fallbackUrl: CONSTRUCTED_HOUSES_GALLERY.house3_stoneGlassMansion,
     videoUrl: SHOWROOM_VIDEOS.villaDroneOrbit,
     motionOrigin: 'center center',
-    panX: ['0%', '-1.2%'],
-    panY: ['0%', '-0.8%'],
-    scaleRange: [1.01, 1.06],
+    panX: ['0%', '-0.8%'],
+    panY: ['0%', '-0.5%'],
+    scaleRange: [1.01, 1.05],
     specs: [
       {
         id: 'p1-1',
@@ -369,7 +680,7 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
       {
         id: 'p1-2',
         title: 'Ri8click Consortium UPVC Glazing',
-        spec: 'Double-glazed German profile UPVC windows & sliding doors.'
+        spec: 'Double-glazed German profile UPVC windows and sliding patio doors.'
       }
     ]
   },
@@ -390,99 +701,23 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     altitude: 'TERRACE +6.0M',
     fov: '90° WIDE',
     imageUrl: CONSTRUCTED_HOUSES_GALLERY.house3_stoneGlassMansion,
-    secondaryImageUrl: CONSTRUCTED_HOUSES_GALLERY.house2_charcoalGarageVilla,
-    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.villaTwilight,
+    secondaryImageUrl: CONSTRUCTED_HOUSES_GALLERY.house1_whiteVilla,
+    fallbackUrl: CONSTRUCTED_HOUSES_GALLERY.house2_modernEstate,
     videoUrl: SHOWROOM_VIDEOS.villaDroneOrbit,
     motionOrigin: 'left center',
-    panX: ['-1.0%', '1.0%'],
-    panY: ['0.4%', '-0.5%'],
-    scaleRange: [1.05, 1.01],
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0.3%', '-0.3%'],
+    scaleRange: [1.04, 1.01],
     specs: [
       {
         id: 'p2-1',
         title: '24-Foot Corner Glass Atrium',
-        spec: 'Seamless structural UPVC & silicone glazing overlooking Margalla Hills.'
+        spec: 'Seamless structural UPVC and silicone glazing overlooking Margalla Hills.'
       },
       {
         id: 'p2-2',
         title: 'Subterranean 3-Car Parking',
-        spec: 'Climate-controlled lower-ground parking & servant quarters.'
-      }
-    ]
-  },
-
-  // ---------------- PILLAR 3: CONTAINER & CAPSULE SMART HOUSES ----------------
-  {
-    id: 'capsule-wp-1',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES',
-    code: 'CAPSULE 01 // LAKESIDE CURVED GLASS POD',
-    label: 'Lakeside Panorama Capsule',
-    subLabel: '270° Curved Thermal Glass, UPVC Seals & Timber Patio Deck',
-    headline: 'Panoramic Curved-Glass Container Capsule House',
-    description:
-      'Engineered by Ri8click Consortium: aerodynamic space capsule house featuring 270-degree curved tempered Low-E observation glass, fluorocarbon aviation aluminum shell, smart IoT climate automation, and rapid crane installation.',
-    valuation: 'PKR 58 Lakh – 98 Lakh',
-    locationBadge: 'Turnkey Nationwide Delivery (Farms, Lakes & Hills)',
-    focalLength: '18MM ULTRA-WIDE',
-    altitude: 'WATERFRONT DECK',
-    fov: '96° EXPANSIVE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap1_lakesidePanoramaPod,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap2_doubleDeckerV2124Pod,
-    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.capsuleLakeside,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['-1.0%', '1.0%'],
-    panY: ['0%', '-0.6%'],
-    scaleRange: [1.01, 1.06],
-    specs: [
-      {
-        id: 'c1-1',
-        title: '270° Curved Low-E Observation Glass',
-        spec: 'Double-glazed thermal & acoustic curved glass with zero condensation.'
-      },
-      {
-        id: 'c1-2',
-        title: 'Smart Biometric Entry & UPVC Seal',
-        spec: 'Weatherproof marine-grade gasket sealing with keyless smart lock.'
-      }
-    ]
-  },
-  {
-    id: 'capsule-wp-2',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES',
-    code: 'CAPSULE 02 // V2124 DOUBLE-DECKER VILLA',
-    label: 'V2124 Double-Decker Pod',
-    subLabel: '2-Story Stacked Curved Glass Capsule Villa with Sky Suite',
-    headline: 'V2124 Double-Decker Stacked Capsule Villa',
-    description:
-      'Two-story stacked modular capsule architecture offering an expansive ground-floor living and dining pavilion with full-height sliding glass walls and an upper-deck panoramic master suite.',
-    valuation: 'PKR 1.35 Crore – 1.85 Crore',
-    locationBadge: 'Luxury Farmhouses, Resorts & Urban Rooftops',
-    focalLength: '20MM ARCHITECTURAL',
-    altitude: '2-STORY DUPLEX',
-    fov: '92° WIDE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap2_doubleDeckerV2124Pod,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap3_forestCabinPod,
-    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.capsuleDoubleDecker,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['-0.8%', '0.8%'],
-    panY: ['0.4%', '-0.4%'],
-    scaleRange: [1.01, 1.06],
-    specs: [
-      {
-        id: 'c2-1',
-        title: 'Upper-Deck V2124 Sky Suite',
-        spec: 'Second-story curved glass master bedroom with warm cove lighting.'
-      },
-      {
-        id: 'c2-2',
-        title: 'Open-Plan Ground Lounge & Kitchen',
-        spec: 'Full-span sliding UPVC/aluminum thermal glass doors opening to timber deck.'
+        spec: 'Climate-controlled lower-ground parking and servant quarters.'
       }
     ]
   },
@@ -498,7 +733,7 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     subLabel: 'German-Standard UPVC Doors, Windows, Skylights & Facades',
     headline: 'Ri8click Consortium UPVC Doors, Windows, Partitions & Panels',
     description:
-      'Manufactured by Ri8click Consortium: heavy-duty acoustic double/triple-glazed UPVC casement & sliding windows, patio doors, office glass partitions, and weatherproof architectural wall panels.',
+      'Manufactured by Ri8click Consortium: heavy-duty acoustic double/triple-glazed UPVC casement and sliding windows, patio doors, office glass partitions, and weatherproof architectural wall panels.',
     valuation: '10-Year Factory Warranty • Custom Fabrication',
     locationBadge: 'Ri8click Consortium UPVC Plant & Turnkey Division',
     focalLength: '18MM ULTRA-WIDE',
@@ -506,12 +741,12 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     fov: '96° EXPANSIVE',
     imageUrl: UPVC_AND_INTERIOR_GALLERY.upvc1_glassRoofConservatory,
     secondaryImageUrl: UPVC_AND_INTERIOR_GALLERY.upvc2_woodSlatTvPartition,
-    fallbackUrl: UHD_ARCHITECTURAL_BACKUPS.upvcCurtainWall,
+    fallbackUrl: CONSTRUCTED_HOUSES_GALLERY.house2_modernEstate,
     videoUrl: SHOWROOM_VIDEOS.luxuryInteriorWalk,
     motionOrigin: 'center center',
-    panX: ['0%', '-1.0%'],
-    panY: ['-0.5%', '0.5%'],
-    scaleRange: [1.01, 1.06],
+    panX: ['0%', '-0.8%'],
+    panY: ['-0.4%', '0.4%'],
+    scaleRange: [1.01, 1.05],
     specs: [
       {
         id: 'u1-1',
@@ -529,7 +764,7 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
 
 type AtmosphereGrade = 'crystal_daylight' | 'solar_vivid' | 'showroom_hdr';
 
-const WAYPOINT_DURATION_MS = 6000;
+const WAYPOINT_DURATION_MS = 6500;
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   slides,
@@ -551,24 +786,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [isCinemaTheaterMode, setIsCinemaTheaterMode] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
-  // Optical clarity grade
+  // Optical clarity grade (Professional clean look — no gaming glow circles)
   const [atmosphere, setAtmosphere] = useState<AtmosphereGrade>('crystal_daylight');
-  const [isUltraSharp, setIsUltraSharp] = useState(true);
 
-  // Bars & Ribbons HIDDEN BY DEFAULT as requested ("Remove by default display of Bars All Consortium portfolio and 3D showroom tour")
+  // UI Visibility States:
+  // Option to remove left-side text description while keeping "Portfolio Deck" visible
+  const [showLeftDescription, setShowLeftDescription] = useState(true);
+  const [showDirectorDeck, setShowDirectorDeck] = useState(true);
+  const [showSpecCards, setShowSpecCards] = useState(true);
   const [showCategoryBar, setShowCategoryBar] = useState(false);
   const [showConsortiumRibbon, setShowConsortiumRibbon] = useState(false);
   const [showShowroomTourBar, setShowShowroomTourBar] = useState(false);
-  const [showDirectorDeck, setShowDirectorDeck] = useState(true);
-  const [showSpecCards, setShowSpecCards] = useState(true);
   const [isHudMenuOpen, setIsHudMenuOpen] = useState(false);
 
   const [videoFailed, setVideoFailed] = useState(false);
   const [failedUrls, setFailedUrls] = useState<Record<string, boolean>>({});
+  const [customActiveImageOverride, setCustomActiveImageOverride] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Sanitize any legacy "Group of Companies" text from CMS slides into "Ri8click Consortium"
   const sanitizeConsortiumText = (text?: string) => {
     if (!text) return '';
     return text
@@ -579,31 +815,30 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       .replace(/Consortium\s+Group/gi, 'Ri8click Consortium');
   };
 
-  // Convert CMS commercial slides into domestic Islamabad waypoints with multi-tier fallback protection
+  // Convert CMS commercial slides into domestic Islamabad waypoints using attached reference images 1-7
   const cmsCommercialWaypoints: CameraWaypoint[] = useMemo(() => {
-    const domesticFallbacks = [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.citadel7_nightElevation,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.j7Emporium_boulevardView,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_centaurus,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_skyparkOne
+    const domesticTowerAttachments = [
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower1_regentOneNightAerial,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower2_parksideHighriseComplex,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
+      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower7_regentOneDaylightAerial
     ];
 
     return activeSlides
       .filter(s => s.samplePropertyData?.category === 'commercial')
       .map((s, idx) => {
-        const fallbackImg = domesticFallbacks[idx % domesticFallbacks.length];
-        // Replace any broken or virtual/foreign URLs with verified domestic Islamabad tower images
-        const cleanPrimaryImg =
-          s.imageUrl && !s.imageUrl.includes('unsplash.com')
-            ? s.imageUrl
-            : fallbackImg;
+        const domesticImg = domesticTowerAttachments[idx % domesticTowerAttachments.length];
+        const secondaryImg = domesticTowerAttachments[(idx + 1) % domesticTowerAttachments.length];
 
         return {
           id: `cms-wp-${s.id}`,
           tourCategory: 'commercial_plazas' as TourDeckCategory,
           propertyCategory: 'commercial' as PropertyCategory,
           divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD COMMERCIAL PLAZAS',
-          code: `ISB 0${idx + 5} // ${sanitizeConsortiumText(s.categoryTag || 'COMMERCIAL PLAZA').toUpperCase()}`,
+          code: `ISB 0${idx + 6} // ${sanitizeConsortiumText(s.categoryTag || 'COMMERCIAL PLAZA').toUpperCase()}`,
           label: sanitizeConsortiumText(s.title).split(' ').slice(0, 3).join(' '),
           subLabel: sanitizeConsortiumText(
             s.subtitle || 'High-Rise Commercial Plaza, Retail Shops & Corporate Suites'
@@ -615,14 +850,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           focalLength: '24MM ARCHITECTURAL',
           altitude: 'SKYLINE +18M',
           fov: '86° WIDE',
-          imageUrl: cleanPrimaryImg,
-          secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.towersPk_centaurus,
-          fallbackUrl: fallbackImg,
+          imageUrl: domesticImg,
+          secondaryImageUrl: secondaryImg,
+          fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
+          galleryImages: domesticTowerAttachments,
           videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
           motionOrigin: 'center center',
-          panX: ['-0.8%', '0.8%'] as [string, string],
-          panY: ['0%', '-0.6%'] as [string, string],
-          scaleRange: [1.01, 1.06] as [number, number],
+          panX: ['-0.6%', '0.6%'] as [string, string],
+          panY: ['0%', '-0.5%'] as [string, string],
+          scaleRange: [1.01, 1.05] as [number, number],
           specs: [
             {
               id: `cms-spec-${idx}-1`,
@@ -639,21 +875,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       });
   }, [activeSlides]);
 
-  // Filter waypoints based on selected category
+  // Filter waypoints based on selected category; preserve exact 8-to-14 sequence for capsule_containers
   const cameraWaypoints: CameraWaypoint[] = useMemo(() => {
     const combined = [...MASTER_VIRTUAL_TOUR_WAYPOINTS, ...cmsCommercialWaypoints];
     if (tourCategory === 'all_showroom') {
       const commList = combined.filter(w => w.tourCategory === 'commercial_plazas');
-      const propsList = combined.filter(w => w.tourCategory === 'properties_plots_villas');
       const capList = combined.filter(w => w.tourCategory === 'capsule_containers');
+      const propsList = combined.filter(w => w.tourCategory === 'properties_plots_villas');
       const upvcList = combined.filter(w => w.tourCategory === 'upvc_construction');
 
       const interleaved: CameraWaypoint[] = [];
-      const maxLen = Math.max(commList.length, propsList.length, capList.length, upvcList.length);
+      const maxLen = Math.max(commList.length, capList.length, propsList.length, upvcList.length);
       for (let i = 0; i < maxLen; i++) {
         if (commList[i]) interleaved.push(commList[i]);
-        if (propsList[i]) interleaved.push(propsList[i]);
         if (capList[i]) interleaved.push(capList[i]);
+        if (propsList[i]) interleaved.push(propsList[i]);
         if (upvcList[i]) interleaved.push(upvcList[i]);
       }
       return interleaved;
@@ -671,7 +907,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     return wp.fallbackUrl;
   };
 
-  const resolvedImageUrl = resolveImageWithFallback(activeWaypoint);
+  const resolvedImageUrl =
+    customActiveImageOverride && !failedUrls[customActiveImageOverride]
+      ? customActiveImageOverride
+      : resolveImageWithFallback(activeWaypoint);
 
   const handleImageError = (urlThatFailed: string) => {
     setFailedUrls(prev => {
@@ -699,7 +938,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   useEffect(() => {
     setWaypointIdx(0);
     setVideoFailed(false);
+    setCustomActiveImageOverride(null);
   }, [tourCategory]);
+
+  useEffect(() => {
+    setCustomActiveImageOverride(null);
+  }, [waypointIdx]);
 
   // Auto-cycle camera waypoints
   useEffect(() => {
@@ -746,15 +990,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       icon: <Building2 className="w-3.5 h-3.5" />
     },
     {
-      id: 'properties_plots_villas',
-      label: 'Properties (Plots & Houses)',
-      shortLabel: 'Plots & Houses',
-      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'properties_plots_villas')
-        .length,
-      filterCategory: 'residential',
-      icon: <Home className="w-3.5 h-3.5" />
-    },
-    {
       id: 'capsule_containers',
       label: 'Container & Capsule Houses',
       shortLabel: 'Capsule Houses',
@@ -762,6 +997,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         .length,
       filterCategory: 'modular',
       icon: <Box className="w-3.5 h-3.5" />
+    },
+    {
+      id: 'properties_plots_villas',
+      label: 'Properties (Plots & Houses)',
+      shortLabel: 'Plots & Houses',
+      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'properties_plots_villas')
+        .length,
+      filterCategory: 'residential',
+      icon: <Home className="w-3.5 h-3.5" />
     },
     {
       id: 'upvc_construction',
@@ -774,15 +1018,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     }
   ];
 
-  // Ri8click Consortium Business Pillars
   const consortiumPillars = [
     {
       id: 'commercial_plazas' as TourDeckCategory,
       category: 'commercial' as PropertyCategory,
       title: 'Islamabad Commercial Plazas',
-      detail: 'Citadel 7, J7 Emporium, Skypark One & Blue Area Towers',
+      detail: 'Citadel 7, Regent One, Multi-Tower & Blue Area Plazas',
       icon: Building2,
       accent: 'text-emerald-300 border-emerald-400/30 bg-emerald-500/10'
+    },
+    {
+      id: 'capsule_containers' as TourDeckCategory,
+      category: 'modular' as PropertyCategory,
+      title: 'Container Capsule Houses',
+      detail: 'Q3, K5, V2124 Duplex & Curved Glass Container Pods',
+      icon: Box,
+      accent: 'text-amber-300 border-amber-400/30 bg-amber-500/10'
     },
     {
       id: 'properties_plots_villas' as TourDeckCategory,
@@ -791,14 +1042,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       detail: '5M, 10M, 1-2 Kanal Plots & Constructed Villas',
       icon: Home,
       accent: 'text-sky-300 border-sky-400/30 bg-sky-500/10'
-    },
-    {
-      id: 'capsule_containers' as TourDeckCategory,
-      category: 'modular' as PropertyCategory,
-      title: 'Container Capsule Houses',
-      detail: 'Curved Glass Pods & Rooftop Container Villas',
-      icon: Box,
-      accent: 'text-amber-300 border-amber-400/30 bg-amber-500/10'
     },
     {
       id: 'upvc_construction' as TourDeckCategory,
@@ -810,19 +1053,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     }
   ];
 
-  // Clean professional optical grades (no gaming glow)
+  // Clean professional optical grades (zero gaming glow)
   const atmosphereStyle: React.CSSProperties = useMemo(() => {
     const baseFilter =
       atmosphere === 'crystal_daylight'
-        ? 'brightness(1.06) contrast(1.08) saturate(1.08)'
+        ? 'brightness(1.04) contrast(1.06) saturate(1.06)'
         : atmosphere === 'solar_vivid'
-        ? 'brightness(1.10) contrast(1.10) saturate(1.14)'
-        : 'brightness(1.04) contrast(1.12) saturate(1.10)';
+        ? 'brightness(1.08) contrast(1.08) saturate(1.12)'
+        : 'brightness(1.03) contrast(1.10) saturate(1.08)';
 
     return {
       filter: baseFilter
     };
-  }, [atmosphere, isUltraSharp]);
+  }, [atmosphere]);
 
   const ToggleSwitch = ({
     label,
@@ -862,12 +1105,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     <section className="relative w-full overflow-hidden bg-slate-950 text-white select-none border-b border-slate-800">
       {/* =====================================================================
           1. PROFESSIONAL ARCHITECTURAL STAGE & IMAGE / VIDEO CANVAS
-             (Removed gaming glow circles, crosshair radar pins & neon blooms)
+             (No gaming glow circles, no radar crosshairs, no watermark badge)
          ===================================================================== */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
-        {/* Subtle Static Underlay so transitions never flash dark */}
+        {/* Subtle static underlay so transitions never flash dark */}
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-35 blur-md scale-105 transition-all duration-700"
+          className="absolute inset-0 bg-cover bg-center opacity-30 blur-sm scale-105 transition-all duration-700"
           style={{ backgroundImage: `url(${resolvedImageUrl})` }}
         />
 
@@ -938,19 +1181,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Clean Executive Gradient Scrims for Typography Legibility (No Neon Glow Circles) */}
+        {/* Clean Executive Gradient Scrims — Lighter when Left Description is hidden so full image shines */}
         <div
           className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${
-            isCinemaTheaterMode
-              ? 'bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/25'
-              : 'bg-gradient-to-r from-slate-950/85 via-slate-950/45 to-slate-950/15'
+            isCinemaTheaterMode || !showLeftDescription
+              ? 'bg-gradient-to-t from-slate-950/65 via-transparent to-slate-950/25'
+              : 'bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-transparent'
           }`}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-slate-950/25 pointer-events-none" />
       </div>
 
       {/* =====================================================================
-          2. OPTIONAL CATEGORY BAR (HIDDEN BY DEFAULT)
+          2. OPTIONAL CATEGORY BAR
          ===================================================================== */}
       <AnimatePresence>
         {showCategoryBar && !isCinemaTheaterMode && (
@@ -959,7 +1202,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="relative z-30 border-b border-white/15 bg-slate-950/80 backdrop-blur-md"
+            className="relative z-30 border-b border-white/15 bg-slate-950/70 backdrop-blur-md"
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-2.5">
               <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
@@ -1008,7 +1251,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </AnimatePresence>
 
       {/* =====================================================================
-          3. OPTIONAL "3D SHOWROOM TOUR" BAR (HIDDEN BY DEFAULT)
+          3. OPTIONAL CAMERA WAYPOINTS BAR
          ===================================================================== */}
       <AnimatePresence>
         {showShowroomTourBar && !isCinemaTheaterMode && (
@@ -1017,7 +1260,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.22 }}
-            className="relative z-20 border-b border-white/15 bg-slate-900/80 backdrop-blur-md"
+            className="relative z-20 border-b border-white/15 bg-slate-900/70 backdrop-blur-md"
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-3">
               <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
@@ -1077,25 +1320,52 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </AnimatePresence>
 
       {/* =====================================================================
-          4. MAIN FOREGROUND STAGE & EXECUTIVE SHOWCASE DECK
+          4. MAIN FOREGROUND STAGE & CRYSTAL TRANSPARENT PORTFOLIO DECK
          ===================================================================== */}
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-12 min-h-[540px] sm:min-h-[610px] flex flex-col justify-between">
         {/* Top Executive Header Utility Row */}
         <div className="flex flex-wrap items-center justify-between gap-2 pb-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-900/80 border border-white/15 text-xs font-semibold text-slate-200">
-            <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Ri8click Consortium • Verified Domestic Portfolio</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-semibold text-slate-100 shadow-sm">
+            <Building2 className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>Ri8click Consortium • Domestic Islamabad Towers & Modular Living</span>
           </div>
 
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex flex-wrap items-center gap-2 ml-auto">
+            {/* Direct Quick Button: Toggle Left-Side Text Description while keeping Portfolio Deck visible */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowLeftDescription(prev => !prev);
+                if (!showDirectorDeck) setShowDirectorDeck(true);
+              }}
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 border transition-all cursor-pointer backdrop-blur-xl ${
+                !showLeftDescription
+                  ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-sm'
+                  : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+              }`}
+              title="Toggle Left-Side Text Description while keeping Portfolio Deck visible"
+            >
+              {showLeftDescription ? (
+                <>
+                  <EyeOff className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Hide Description</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Show Description</span>
+                </>
+              )}
+            </button>
+
             {/* Video Tour Toggle */}
             <button
               type="button"
               onClick={() => setIsVideoTourActive(prev => !prev)}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 border transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 border transition-all cursor-pointer backdrop-blur-xl ${
                 isVideoTourActive
                   ? 'bg-amber-400 text-slate-950 border-amber-300'
-                  : 'bg-slate-900/75 text-slate-200 border-white/20 hover:bg-slate-800'
+                  : 'bg-white/10 text-slate-100 border-white/20 hover:bg-white/20'
               }`}
             >
               <Video className="w-3.5 h-3.5" />
@@ -1106,7 +1376,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <button
                 type="button"
                 onClick={() => setIsMuted(prev => !prev)}
-                className="p-1.5 rounded-lg bg-slate-900/75 hover:bg-slate-800 border border-white/20 text-white transition-colors cursor-pointer"
+                className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 text-white transition-colors cursor-pointer"
                 title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
               >
                 {isMuted ? (
@@ -1122,10 +1392,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <button
                 type="button"
                 onClick={() => setIsHudMenuOpen(prev => !prev)}
-                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-xl ${
                   isHudMenuOpen
                     ? 'bg-amber-400 text-slate-950 border-amber-300'
-                    : 'bg-slate-900/75 border-white/20 text-white hover:bg-slate-800'
+                    : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
                 }`}
               >
                 <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -1139,7 +1409,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.96 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 mt-2 w-80 rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-white/25 p-4 shadow-2xl z-50 space-y-2.5"
+                    className="absolute right-0 mt-2 w-80 rounded-2xl bg-slate-950/85 backdrop-blur-2xl border border-white/25 p-4 shadow-2xl z-50 space-y-2.5"
                   >
                     <div className="flex items-center justify-between pb-2 border-b border-white/15">
                       <span className="text-[11px] font-black uppercase tracking-wider text-amber-300">
@@ -1184,8 +1454,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
                     <div className="border-t border-white/15 pt-1.5 space-y-1">
                       <ToggleSwitch
-                        label="Portfolio Selector Panel"
-                        description="Right-hand project thumbnail navigator"
+                        label="Left-Side Text Description"
+                        description="Show/hide left narrative while keeping Portfolio Deck"
+                        checked={showLeftDescription}
+                        onChange={() => setShowLeftDescription(prev => !prev)}
+                      />
+                      <ToggleSwitch
+                        label="Portfolio Deck (Crystal Panel)"
+                        description="Right-hand transparent project navigator"
                         checked={showDirectorDeck}
                         onChange={() => setShowDirectorDeck(prev => !prev)}
                       />
@@ -1223,10 +1499,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               type="button"
               onClick={() => setIsCinemaTheaterMode(prev => !prev)}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-xl ${
                 isCinemaTheaterMode
                   ? 'bg-white text-slate-950 border-white'
-                  : 'bg-slate-900/75 border-white/20 text-white hover:bg-slate-800'
+                  : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
               }`}
               title="Toggle Clean Architectural View"
             >
@@ -1242,7 +1518,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
 
-        {/* OPTIONAL RI8CLICK CONSORTIUM PILLARS RIBBON (HIDDEN BY DEFAULT) */}
+        {/* OPTIONAL RI8CLICK CONSORTIUM PILLARS RIBBON */}
         <AnimatePresence>
           {showConsortiumRibbon && !isCinemaTheaterMode && (
             <motion.div
@@ -1251,20 +1527,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               exit={{ opacity: 0, y: -8 }}
               className="mb-4"
             >
-              <div className="p-3 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-white/20 shadow-xl">
+              <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-2xl border border-white/25 shadow-xl">
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-2 mb-2 border-b border-white/15">
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-0.5 rounded-md bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-wider">
                       Ri8click Consortium
                     </span>
                     <span className="text-[11px] sm:text-xs font-semibold text-white/95">
-                      Integrated Real Estate, Commercial Plazas, Turnkey Construction, Container Capsule Homes &amp; German UPVC
+                      Integrated Real Estate, Islamabad Plazas, Turnkey Construction, Capsule Homes &amp; German UPVC
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setShowConsortiumRibbon(false)}
-                    className="text-[10px] font-bold text-slate-300 hover:text-white flex items-center gap-1 cursor-pointer"
+                    className="text-[10px] font-bold text-slate-200 hover:text-white flex items-center gap-1 cursor-pointer"
                   >
                     <span>Hide Pillars</span>
                     <ChevronUp className="w-3 h-3" />
@@ -1285,8 +1561,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         }}
                         className={`group p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-2.5 ${
                           isActivePillar
-                            ? 'bg-white/15 border-amber-300'
-                            : 'bg-white/5 border-white/15 hover:bg-white/10'
+                            ? 'bg-white/20 border-amber-300'
+                            : 'bg-white/5 border-white/15 hover:bg-white/15'
                         }`}
                       >
                         <div className={`p-2 rounded-lg border shrink-0 ${pillar.accent}`}>
@@ -1309,7 +1585,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Center Main Content & Executive Portfolio Navigator */}
+        {/* Center Main Content & Crystal Transparent Portfolio Deck */}
         <AnimatePresence mode="wait">
           {!isCinemaTheaterMode ? (
             <motion.div
@@ -1320,206 +1596,222 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               transition={{ duration: 0.3 }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto py-3"
             >
-              {/* Left Column: Architectural Narrative & Actions */}
-              <div className={showDirectorDeck ? 'lg:col-span-7' : 'lg:col-span-11'}>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeWaypoint.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.35 }}
-                    className="space-y-3.5"
-                  >
-                    {/* Division & Location Badges */}
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-black tracking-wider uppercase bg-amber-400 text-slate-950 shadow-sm">
-                        <Sparkles className="w-3.5 h-3.5 fill-current" />
-                        <span>{activeWaypoint.divisionTag}</span>
-                      </span>
+              {/* Left Column: Architectural Narrative & Actions (Can be hidden while keeping Portfolio Deck) */}
+              {showLeftDescription && (
+                <div className={showDirectorDeck ? 'lg:col-span-7' : 'lg:col-span-11'}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeWaypoint.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.35 }}
+                      className="space-y-3.5"
+                    >
+                      {/* Division & Location Badges (Removed "Watermark Verified" badge as requested) */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-black tracking-wider uppercase bg-amber-400 text-slate-950 shadow-sm">
+                          <Sparkles className="w-3.5 h-3.5 fill-current" />
+                          <span>{activeWaypoint.divisionTag}</span>
+                        </span>
 
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold bg-slate-900/80 backdrop-blur-md text-white border border-white/20">
-                        <MapPin className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                        <span>{activeWaypoint.locationBadge}</span>
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold bg-white/10 backdrop-blur-xl text-white border border-white/25">
+                          <MapPin className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                          <span>{activeWaypoint.locationBadge}</span>
+                        </div>
                       </div>
 
-                      <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-emerald-950/80 text-emerald-200 border border-emerald-400/40">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                        <span>Watermark Verified</span>
-                      </div>
-                    </div>
+                      {/* Headline */}
+                      <h1 className="text-3xl sm:text-5xl lg:text-[44px] font-black tracking-tight text-white leading-[1.1] font-serif drop-shadow-sm">
+                        {activeWaypoint.headline}
+                      </h1>
 
-                    {/* Headline */}
-                    <h1 className="text-3xl sm:text-5xl lg:text-[46px] font-black tracking-tight text-white leading-[1.1] font-serif">
-                      {activeWaypoint.headline}
-                    </h1>
+                      {/* Description */}
+                      <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-medium drop-shadow-xs">
+                        {activeWaypoint.description}
+                      </p>
 
-                    {/* Description */}
-                    <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-medium">
-                      {activeWaypoint.description}
-                    </p>
-
-                    {/* Clean Architectural Specification Cards (Replaces Gaming Glow Hotspots) */}
-                    {showSpecCards && activeWaypoint.specs.length > 0 && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 max-w-2xl">
-                        {activeWaypoint.specs.map(item => (
-                          <div
-                            key={item.id}
-                            className="p-3 rounded-xl bg-slate-900/80 backdrop-blur-md border border-white/15 flex items-start gap-2.5"
-                          >
-                            <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                            <div>
-                              <div className="text-xs font-bold text-white">{item.title}</div>
-                              <div className="text-[11px] text-slate-300 leading-snug mt-0.5">
-                                {item.spec}
+                      {/* Clean Architectural Specification Cards */}
+                      {showSpecCards && activeWaypoint.specs.length > 0 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 max-w-2xl">
+                          {activeWaypoint.specs.map(item => (
+                            <div
+                              key={item.id}
+                              className="p-3 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-start gap-2.5"
+                            >
+                              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                              <div>
+                                <div className="text-xs font-bold text-white">{item.title}</div>
+                                <div className="text-[11px] text-slate-200 leading-snug mt-0.5">
+                                  {item.spec}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Valuation Pill & Multi-Angle Sub-Gallery (if available) */}
-                    <div className="flex flex-wrap items-center gap-3 pt-1">
-                      <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-slate-900/85 backdrop-blur-md border border-amber-400/50">
-                        <span className="text-[11px] uppercase tracking-wider text-amber-300 font-bold">
-                          Valuation / Price
-                        </span>
-                        <span className="text-base sm:text-lg font-black text-white">
-                          {activeWaypoint.valuation}
-                        </span>
-                      </div>
-
-                      {activeWaypoint.galleryImages && activeWaypoint.galleryImages.length > 1 && (
-                        <div className="flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-white/15">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300 px-1.5">
-                            Views:
-                          </span>
-                          {activeWaypoint.galleryImages.map((imgUrl, gIdx) => {
-                            if (failedUrls[imgUrl]) return null;
-                            return (
-                              <button
-                                key={gIdx}
-                                type="button"
-                                onClick={() => {
-                                  activeWaypoint.imageUrl = imgUrl;
-                                  setFailedUrls(prev => ({ ...prev }));
-                                }}
-                                className="w-9 h-7 rounded-md overflow-hidden border border-white/30 hover:border-amber-400 transition-all cursor-pointer shrink-0"
-                                title={`Switch to Tower View ${gIdx + 1}`}
-                              >
-                                <img
-                                  src={imgUrl}
-                                  alt={`View ${gIdx + 1}`}
-                                  onError={() => handleImageError(imgUrl)}
-                                  className="w-full h-full object-cover"
-                                />
-                              </button>
-                            );
-                          })}
+                          ))}
                         </div>
                       )}
-                    </div>
 
-                    {/* Primary Call-To-Action Buttons */}
-                    <div className="flex flex-wrap items-center gap-3 pt-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onOpen3DTour({
-                            id: activeWaypoint.id,
-                            title: activeWaypoint.headline,
-                            category: activeWaypoint.propertyCategory,
-                            priceFormatted: activeWaypoint.valuation,
-                            location: {
-                              city: 'Islamabad / Taxila',
-                              society: activeWaypoint.locationBadge,
-                              province: 'Islamabad Capital Territory'
-                            },
-                            images: activeWaypoint.galleryImages || [resolvedImageUrl],
-                            virtualTourVideoUrl: activeWaypoint.videoUrl,
-                            virtualTourVideoTitle: `${activeWaypoint.headline} - Ri8click Consortium Walkthrough`
-                          })
-                        }
-                        className="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all cursor-pointer"
-                      >
-                        <Compass className="w-4 h-4" />
-                        <span>Launch 360° Virtual Walkthrough</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
+                      {/* Valuation Pill & Multi-Angle Sub-Gallery */}
+                      <div className="flex flex-wrap items-center gap-3 pt-1">
+                        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-xl border border-amber-400/50">
+                          <span className="text-[11px] uppercase tracking-wider text-amber-300 font-bold">
+                            Valuation / Price
+                          </span>
+                          <span className="text-base sm:text-lg font-black text-white">
+                            {activeWaypoint.valuation}
+                          </span>
+                        </div>
 
-                      <button
-                        type="button"
-                        onClick={onExploreClick}
-                        className="px-5 py-3 rounded-xl bg-slate-900/80 hover:bg-white hover:text-slate-950 text-white border border-white/30 font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 backdrop-blur-md transition-all cursor-pointer"
-                      >
-                        <Eye className="w-4 h-4 text-amber-300" />
-                        <span>Explore Listings</span>
-                      </button>
+                        {activeWaypoint.galleryImages && activeWaypoint.galleryImages.length > 1 && (
+                          <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-xl p-1.5 rounded-xl border border-white/20">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-200 px-1.5">
+                              Views:
+                            </span>
+                            {activeWaypoint.galleryImages.map((imgUrl, gIdx) => {
+                              if (failedUrls[imgUrl]) return null;
+                              const isCurrentView = resolvedImageUrl === imgUrl;
+                              return (
+                                <button
+                                  key={gIdx}
+                                  type="button"
+                                  onClick={() => setCustomActiveImageOverride(imgUrl)}
+                                  className={`w-9 h-7 rounded-md overflow-hidden border transition-all cursor-pointer shrink-0 ${
+                                    isCurrentView
+                                      ? 'border-amber-400 ring-2 ring-amber-400/60'
+                                      : 'border-white/30 hover:border-amber-400'
+                                  }`}
+                                  title={`Switch to View ${gIdx + 1}`}
+                                >
+                                  <img
+                                    src={imgUrl}
+                                    alt={`View ${gIdx + 1}`}
+                                    onError={() => handleImageError(imgUrl)}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
 
-                      <button
-                        type="button"
-                        onClick={onContactAgentClick}
-                        className="px-4 py-3 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-400/50 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer"
-                      >
-                        <PhoneCall className="w-4 h-4" />
-                        <span>Ri8click Consortium Inquiry</span>
-                      </button>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                      {/* Primary Call-To-Action Buttons */}
+                      <div className="flex flex-wrap items-center gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onOpen3DTour({
+                              id: activeWaypoint.id,
+                              title: activeWaypoint.headline,
+                              category: activeWaypoint.propertyCategory,
+                              priceFormatted: activeWaypoint.valuation,
+                              location: {
+                                city: 'Islamabad / Taxila',
+                                society: activeWaypoint.locationBadge,
+                                province: 'Islamabad Capital Territory'
+                              },
+                              images: activeWaypoint.galleryImages || [resolvedImageUrl],
+                              virtualTourVideoUrl: activeWaypoint.videoUrl,
+                              virtualTourVideoTitle: `${activeWaypoint.headline} - Ri8click Consortium Walkthrough`
+                            })
+                          }
+                          className="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all cursor-pointer"
+                        >
+                          <Compass className="w-4 h-4" />
+                          <span>Launch 360° Virtual Walkthrough</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
 
-              {/* Right Column: EXECUTIVE PORTFOLIO NAVIGATOR */}
+                        <button
+                          type="button"
+                          onClick={onExploreClick}
+                          className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white hover:text-slate-950 text-white border border-white/30 font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 backdrop-blur-xl transition-all cursor-pointer"
+                        >
+                          <Eye className="w-4 h-4 text-amber-300" />
+                          <span>Explore Listings</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={onContactAgentClick}
+                          className="px-4 py-3 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-400/50 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer"
+                        >
+                          <PhoneCall className="w-4 h-4" />
+                          <span>Ri8click Consortium Inquiry</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Right Column: CRYSTAL TRANSPARENT PORTFOLIO DECK */}
               {showDirectorDeck && (
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="lg:col-span-5 bg-slate-950/85 backdrop-blur-xl rounded-2xl border border-white/20 p-4 sm:p-5 shadow-2xl space-y-3.5"
+                  className={`${
+                    showLeftDescription ? 'lg:col-span-5' : 'lg:col-span-6 lg:col-start-7'
+                  } bg-white/[0.08] backdrop-blur-2xl rounded-3xl border border-white/25 p-4 sm:p-5 shadow-[0_8px_32px_rgba(0,0,0,0.35)] ring-1 ring-white/15 space-y-3.5 transition-all`}
                 >
                   {/* Panel Header */}
-                  <div className="flex items-center justify-between gap-2 border-b border-white/15 pb-3">
+                  <div className="flex items-center justify-between gap-2 border-b border-white/20 pb-3">
                     <div>
-                      <div className="text-xs font-black uppercase tracking-wider text-white">
-                        Ri8click Consortium Showcase
+                      <div className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
+                        <span>Portfolio Deck</span>
+                        <span className="px-2 py-0.5 rounded-full bg-white/15 border border-white/25 text-[9px] text-amber-300 font-bold">
+                          Crystal View
+                        </span>
                       </div>
-                      <div className="text-[10px] text-amber-300 font-semibold">
-                        Islamabad Plazas • Plots &amp; Villas • Capsule Pods • UPVC
+                      <div className="text-[10px] text-amber-200 font-semibold mt-0.5">
+                        Islamabad Plazas (1–7) • Capsule Pods (8–14) • Villas
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
+                        onClick={() => setShowLeftDescription(prev => !prev)}
+                        className="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-[10px] font-bold text-white cursor-pointer transition-colors"
+                        title={
+                          showLeftDescription
+                            ? 'Hide Left Text Description'
+                            : 'Show Left Text Description'
+                        }
+                      >
+                        {showLeftDescription ? 'Hide Text' : 'Show Text'}
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setIsVideoTourActive(prev => !prev)}
                         className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider cursor-pointer transition-all border ${
                           isVideoTourActive
                             ? 'bg-amber-400 text-slate-950 border-amber-300'
-                            : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                            : 'bg-white/15 text-white border-white/20 hover:bg-white/25'
                         }`}
                       >
-                        {isVideoTourActive ? 'Show Photos' : 'Video Reel'}
+                        {isVideoTourActive ? 'Photos' : 'Video'}
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowDirectorDeck(false)}
-                        className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-[10px] font-bold text-slate-200 hover:text-white cursor-pointer"
-                        title="Minimize Panel"
+                        className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-[10px] font-bold text-slate-200 hover:text-white cursor-pointer"
+                        title="Minimize Portfolio Deck"
                       >
                         Hide
                       </button>
                     </div>
                   </div>
 
-                  {/* Category Tabs */}
-                  <div className="grid grid-cols-5 gap-1 bg-slate-900 p-1 rounded-xl border border-white/15">
+                  {/* Crystal Category Tabs */}
+                  <div className="grid grid-cols-5 gap-1 bg-slate-950/35 backdrop-blur-md p-1 rounded-xl border border-white/20">
                     {(
                       [
                         { id: 'all_showroom', label: 'All' },
                         { id: 'commercial_plazas', label: 'Plazas' },
-                        { id: 'properties_plots_villas', label: 'Plots/Villas' },
                         { id: 'capsule_containers', label: 'Capsules' },
+                        { id: 'properties_plots_villas', label: 'Plots/Villas' },
                         { id: 'upvc_construction', label: 'UPVC' }
                       ] as { id: TourDeckCategory; label: string }[]
                     ).map(tab => (
@@ -1530,7 +1822,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         className={`py-1.5 px-1.5 rounded-lg text-[9.5px] font-extrabold uppercase tracking-wider transition-all cursor-pointer truncate ${
                           tourCategory === tab.id
                             ? 'bg-amber-400 text-slate-950 shadow-sm'
-                            : 'text-slate-200 hover:text-white hover:bg-white/10'
+                            : 'text-white/90 hover:text-white hover:bg-white/15'
                         }`}
                       >
                         {tab.label}
@@ -1553,8 +1845,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           }}
                           className={`group relative rounded-xl overflow-hidden border text-left transition-all cursor-pointer h-20 ${
                             active
-                              ? 'border-amber-400 ring-2 ring-amber-400/50'
-                              : 'border-white/20 opacity-85 hover:opacity-100 hover:border-white/50'
+                              ? 'border-amber-400 ring-2 ring-amber-400/60 shadow-md'
+                              : 'border-white/25 opacity-90 hover:opacity-100 hover:border-white/60'
                           }`}
                         >
                           <img
@@ -1564,12 +1856,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                             onError={() => handleImageError(thumbSrc)}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
-                          <div className="absolute top-1 left-1.5 px-1.5 py-0.2 rounded bg-slate-950/80 text-[8px] font-mono font-bold text-amber-300 border border-white/15">
-                            0{idx + 1}
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-transparent" />
+                          <div className="absolute top-1 left-1.5 px-1.5 py-0.2 rounded bg-slate-950/70 backdrop-blur-xs text-[8px] font-mono font-bold text-amber-300 border border-white/20">
+                            {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                           </div>
                           <div className="absolute bottom-1 left-1.5 right-1.5">
-                            <div className="text-[10px] font-extrabold text-white truncate leading-tight">
+                            <div className="text-[10px] font-extrabold text-white truncate leading-tight drop-shadow-xs">
                               {wp.label}
                             </div>
                           </div>
@@ -1578,22 +1870,59 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     })}
                   </div>
 
-                  {/* Panel Footer */}
-                  <div className="flex items-center justify-between pt-2 border-t border-white/15 text-[11px]">
-                    <div className="flex items-center gap-1.5 text-slate-200">
-                      <Info className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Domestic Verified Towers &amp; Estates</span>
+                  {/* Compact Active Item Summary when Left Text Description is hidden */}
+                  {!showLeftDescription && (
+                    <div className="p-3 rounded-2xl bg-slate-950/40 backdrop-blur-md border border-white/20 flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-bold text-amber-300 uppercase tracking-wider truncate">
+                          {activeWaypoint.locationBadge}
+                        </div>
+                        <div className="text-xs font-extrabold text-white truncate">
+                          {activeWaypoint.headline}
+                        </div>
+                        <div className="text-[11px] font-bold text-emerald-300">
+                          {activeWaypoint.valuation}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={onExploreClick}
+                        className="px-3 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-[10px] font-black uppercase tracking-wider shrink-0 cursor-pointer"
+                      >
+                        Explore
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTourCategory('commercial_plazas');
-                        onSelectCategoryFilter('commercial');
-                      }}
-                      className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
-                    >
-                      View Islamabad Plazas
-                    </button>
+                  )}
+
+                  {/* Panel Footer */}
+                  <div className="flex items-center justify-between pt-2 border-t border-white/20 text-[11px]">
+                    <div className="flex items-center gap-1.5 text-white/90">
+                      <Info className="w-3.5 h-3.5 text-amber-300" />
+                      <span>Towers.pk Islamabad &amp; Capsule Pods</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTourCategory('commercial_plazas');
+                          onSelectCategoryFilter('commercial');
+                        }}
+                        className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
+                      >
+                        Plazas
+                      </button>
+                      <span className="text-white/40">•</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTourCategory('capsule_containers');
+                          onSelectCategoryFilter('modular');
+                        }}
+                        className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
+                      >
+                        Capsules
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -1607,23 +1936,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               exit={{ opacity: 0 }}
               className="my-auto flex items-end justify-between"
             >
-              <div className="p-4 rounded-2xl bg-slate-950/85 backdrop-blur-xl border border-white/25 max-w-md">
+              <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-2xl border border-white/25 max-w-md shadow-2xl">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-amber-300 block">
                   {activeWaypoint.code}
                 </span>
                 <h2 className="text-xl font-black text-white mt-0.5">
                   {activeWaypoint.headline}
                 </h2>
-                <p className="text-xs text-slate-200 mt-1">{activeWaypoint.subLabel}</p>
+                <p className="text-xs text-slate-100 mt-1">{activeWaypoint.subLabel}</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* =====================================================================
+        {/* ===================================================================
             5. BOTTOM TIMELINE & SLIDE NAVIGATION CONTROLS
-           ===================================================================== */}
-        <div className="pt-4 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-4">
+           =================================================================== */}
+        <div className="pt-4 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Waypoint Progress Scrubber */}
           <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar py-1">
             {cameraWaypoints.map((wp, idx) => {
@@ -1680,11 +2009,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           {/* Previous / Pause / Next Controls */}
           <div className="flex items-center gap-2 shrink-0 ml-auto">
+            {!showLeftDescription && (
+              <button
+                type="button"
+                onClick={() => setShowLeftDescription(true)}
+                className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white border border-white/25 text-[11px] font-bold flex items-center gap-1.5 cursor-pointer"
+              >
+                <FileText className="w-3.5 h-3.5 text-amber-300" />
+                <span>Show Description</span>
+              </button>
+            )}
+
             {!showDirectorDeck && (
               <button
                 type="button"
                 onClick={() => setShowDirectorDeck(true)}
-                className="px-3 py-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-amber-300 border border-white/20 text-[11px] font-bold flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-xl text-amber-300 border border-white/25 text-[11px] font-bold flex items-center gap-1.5 cursor-pointer"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
                 <span>Show Portfolio Deck</span>
@@ -1694,7 +2034,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               type="button"
               onClick={handlePrev}
-              className="p-2.5 rounded-lg bg-slate-900/80 hover:bg-amber-400 hover:text-slate-950 text-white border border-white/20 transition-all cursor-pointer"
+              className="p-2.5 rounded-xl bg-white/10 hover:bg-amber-400 hover:text-slate-950 backdrop-blur-xl text-white border border-white/25 transition-all cursor-pointer"
               title="Previous Slide"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -1703,7 +2043,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               type="button"
               onClick={() => setIsPaused(prev => !prev)}
-              className="px-3.5 py-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-white border border-white/20 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white border border-white/25 text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer"
             >
               {isPaused ? (
                 <>
@@ -1721,7 +2061,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               type="button"
               onClick={handleNext}
-              className="p-2.5 rounded-lg bg-slate-900/80 hover:bg-amber-400 hover:text-slate-950 text-white border border-white/20 transition-all cursor-pointer"
+              className="p-2.5 rounded-xl bg-white/10 hover:bg-amber-400 hover:text-slate-950 backdrop-blur-xl text-white border border-white/25 transition-all cursor-pointer"
               title="Next Slide"
             >
               <ChevronRight className="w-4 h-4" />
