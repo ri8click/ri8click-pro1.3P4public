@@ -4,6 +4,16 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
+//============ changes made on 21-10-26 ========
+//import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve(process.cwd(), ".envRE") });
+//dotenv.config();
+
+
+// END ====== 21-10-16 ======
+
 dotenv.config();
 
 const app = express();
