@@ -385,4 +385,4 @@ export const AuthLoginModal: React.FC<AuthLoginModalProps> = ({
   );
 };
 
-export default AuthLoginModal;
+export default AuthLoginModal; 
