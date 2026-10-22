@@ -8,7 +8,6 @@ import {
   Sparkles,
   MapPin,
   ArrowRight,
-  ShieldCheck,
   Play,
   Pause,
   Video,
@@ -96,11 +95,9 @@ interface CameraWaypoint {
 
 // ============================================================================
 // 1. VERIFIED ACTIVE HIGHRISE PROJECT IMAGES FROM TOWERS.PK/ISLAMABAD
-//    + ACTIVE ULTRA-HD ARCHITECTURAL BACKUPS
 // ============================================================================
 
 export const ISLAMABAD_HIGHRISE_PROJECTS_GALLERY = {
-  // Active verified high-resolution images from Towers.pk/Islamabad
   centaurusTower: 'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
   stateLifeTower: 'https://towers.pk/wp-content/uploads/2023/12/STATE-LIFE-TOWER-min.jpg',
   ufoneJinnahAvenue: 'https://towers.pk/wp-content/uploads/2023/06/Jinnah-Avenue-Islamabad.jpg',
@@ -115,7 +112,6 @@ export const ISLAMABAD_HIGHRISE_PROJECTS_GALLERY = {
   ogdclTower: 'https://towers.pk/wp-content/uploads/2024/04/Ogdclofficeislamabad.jpg',
   lignumTower: 'https://towers.pk/wp-content/uploads/2023/08/44649726-800x600-transformed-e1691749295923.jpeg',
 
-  // Guaranteed Active CDN Fallbacks (if a local ISP throttles any host)
   fallbackHighrise1:
     'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2400&q=95',
   fallbackHighrise2:
@@ -127,24 +123,34 @@ export const ISLAMABAD_HIGHRISE_PROJECTS_GALLERY = {
 };
 
 // ============================================================================
-// 2. ACTIVE CONTAINER & CAPSULE SMART HOUSES (REPLACED BROKEN LINKS WITH ACTIVE HD)
+// 2. CONTEMPORARY CAPSULE & CONTAINER SMART HOUSES (REFERENCE VISUALS + HD FALLBACKS)
 // ============================================================================
 
 export const MODULAR_CAPSULE_GALLERY = {
-  cap8_q3ForestCabinPod:
+  // 1. Q3 Pitched-Roof White Forest Cabin Pod
+  cap8_q3ForestCabinPod: 'https://www.genspark.ai/api/files/s/pSySUzgg',
+  // 2. L-Shaped Cutaway Modular Container Interior & Loft Layout
+  cap9_k5WaterfrontPod: 'https://www.genspark.ai/api/files/s/OypEiCb2',
+  // 3. White Container Villa with Wraparound Timber Deck & Rooftop Terrace
+  cap10_rooftopDeckContainerVilla: 'https://www.genspark.ai/api/files/s/3jIuxLrV',
+  // 4. Matte-Black Chamfered Hex-Lit Designer Container Pod
+  cap11_hexLitBlackContainerPod: 'https://www.genspark.ai/api/files/s/K4lfut6W',
+  // 5. Curved-Corner Glass Container Executive Studio & Garden Residence
+  cap12_curvedCornerGlassContainer: 'https://www.genspark.ai/api/files/s/bl8vngPB',
+  // 6. V2124 Double-Decker Stacked Panoramic Capsule Villa
+  cap13_v2124DoubleDeckerCapsule: 'https://www.genspark.ai/api/files/s/u84KzdvI',
+  // 7. Lakeside Curved-Glass Observation Capsule Pod with Patio Deck
+  cap14_lakesideCurvedGlassCapsule: 'https://www.genspark.ai/api/files/s/I6HwjuLB',
+
+  // High-availability architectural fallbacks
+  fallbackCapsule1:
     'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=2400&q=95',
-  cap9_k5WaterfrontPod:
-    'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=2400&q=95',
-  cap10_rooftopDeckContainerVilla:
+  fallbackCapsule2:
     'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2400&q=95',
-  cap11_hexLitBlackContainerPod:
+  fallbackCapsule3:
     'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=2400&q=95',
-  cap12_curvedCornerGlassContainer:
-    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2400&q=95',
-  cap13_v2124DoubleDeckerCapsule:
-    'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=2400&q=95',
-  cap14_lakesideCurvedGlassCapsule:
-    'https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=2400&q=95'
+  fallbackCapsule4:
+    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2400&q=95'
 };
 
 export const MODULAR_CAPSULE_SEQUENCE_LIST = [
@@ -167,10 +173,14 @@ export const CONSTRUCTED_HOUSES_GALLERY = {
 };
 
 export const UPVC_AND_INTERIOR_GALLERY = {
-  upvc1_glassRoofConservatory:
+  upvc1_slidingPatioDoors:
     'https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=2400&q=95',
-  upvc2_woodSlatTvPartition:
-    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2400&q=95'
+  upvc2_casementTiltTurnWindows:
+    'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=2400&q=95',
+  upvc3_acousticGlassPartitions:
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2400&q=95',
+  upvc4_conservatorySkylights:
+    'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=2400&q=95'
 };
 
 const SHOWROOM_VIDEOS = {
@@ -182,7 +192,6 @@ const SHOWROOM_VIDEOS = {
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
 };
 
-// Track previously broken URLs that were replaced with active Towers.pk / Unsplash media
 const INITIAL_REPLACED_BROKEN_LINKS: BrokenImageRecord[] = [
   {
     brokenUrl: 'https://www.genspark.ai/api/files/s/qpljElLm',
@@ -217,11 +226,279 @@ const INITIAL_REPLACED_BROKEN_LINKS: BrokenImageRecord[] = [
 ];
 
 // ============================================================================
-// 3. MASTER WAYPOINTS (TOWERS.PK/ISLAMABAD HIGHRISE PROJECTS + CAPSULES + VILLAS)
+// 3. MASTER WAYPOINTS (CAPSULES + HIGHRISES + VILLAS + UPVC MODELS)
 // ============================================================================
 
 const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
-  // ---------------- PILLAR 1: HIGHRISE PROJECTS (TOWERS.PK/ISLAMABAD VERIFIED DATA) ----------------
+  // ---------------- PILLAR 1: CONTAINER & CAPSULE SMART HOUSES (01 TO 07) ----------------
+  {
+    id: 'capsule-seq-8-q3',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (01 / 07)',
+    code: 'CAPSULE 01 // MODEL Q3 PITCHED-ROOF CABIN POD',
+    label: 'Q3 Modular Cabin Pod',
+    subLabel: 'Aerodynamic Pitched-Roof Smart Cabin with UPVC French Doors & Panoramic Window',
+    headline: 'Model Q3 Pitched-Roof Modular Smart Cabin House',
+    description:
+      'The Q3 prefabricated modular cabin pod combines a pitched alpine roof profile with curved aviation-grade aluminum panels, matte-black UPVC double-glazed French entry doors, and floor-to-ceiling forest-view glazing.',
+    valuation: 'PKR 48 Lakh – 68 Lakh',
+    locationBadge: 'Turnkey Delivery: Murree, Nathia Gali, Taxila & Islamabad Farms',
+    focalLength: '24MM PRIME',
+    altitude: 'FOREST DECK',
+    fov: '86° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.fallbackCapsule1,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0%', '-0.5%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap8-1',
+        title: 'Q3 Pitched-Roof All-Weather Shell',
+        spec: 'Engineered for snowfall and mountain rain with polyurethane thermal insulation.'
+      },
+      {
+        id: 'cap8-2',
+        title: 'Ri8click UPVC Double-Glazed Framing',
+        spec: 'Acoustic Low-E tempered glass windows and integrated composite entrance porch.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-9-k5',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (02 / 07)',
+    code: 'CAPSULE 02 // L-SHAPED LOFT CONTAINER INTERIOR',
+    label: 'L-Shaped Loft Container Layout',
+    subLabel: 'Dual-Module Cutaway Container Home with Elevated Timber Bedroom Loft & Full Kitchen',
+    headline: 'L-Shaped Dual-Container Smart Villa Interior & Mezzanine Loft',
+    description:
+      'Architectural cutaway showcase of our dual-unit L-shaped container residence featuring an elevated wooden mezzanine master bedroom with study desk underneath, full gourmet kitchen, dining zone, luxury glass-partitioned bathroom, and panoramic lounge.',
+    valuation: 'PKR 62 Lakh – 88 Lakh',
+    locationBadge: 'Custom Turnkey Layout • Farmhouses, Resorts & Urban Plots',
+    focalLength: '20MM WIDE',
+    altitude: 'ISOMETRIC CUTAWAY',
+    fov: '92° EXPANSIVE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.fallbackCapsule2,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.6%', '-0.6%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap9-1',
+        title: 'Mezzanine Bedroom Loft & Study Nook',
+        spec: 'Space-optimized timber loft bed with integrated home office and warm recessed LED lighting.'
+      },
+      {
+        id: 'cap9-2',
+        title: 'Complete Kitchen, Lounge & Wet/Dry Bath',
+        spec: 'Includes full cabinetry, 4-seat dining table, sofa lounge, and UPVC glass shower enclosure.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-10-container-deck',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (03 / 07)',
+    code: 'CAPSULE 03 // ROOFTOP DECK CONTAINER VILLA',
+    label: 'Rooftop Deck Container Villa',
+    subLabel: 'Luxury White Container Home with Wraparound Timber Patio & Upper Sky Lounge',
+    headline: 'Luxury Container Villa with Rooftop Terrace & Timber Deck',
+    description:
+      'Architectural shipping-container residence finished in crisp white thermal coating, featuring full-span sliding UPVC glass walls, a gourmet kitchen island, wraparound hardwood deck, and an upper-level railed rooftop lounge.',
+    valuation: 'PKR 52 Lakh – 78 Lakh',
+    locationBadge: 'Faisal Hills, Chak Shahzad & B-17 Farm Estates',
+    focalLength: '24MM ARCHITECTURAL',
+    altitude: '2-LEVEL DECK',
+    fov: '86° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.fallbackCapsule2,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0%', '-0.5%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap10-1',
+        title: 'Upper Rooftop Dining & Sky Terrace',
+        spec: 'Reinforced structural roof deck with steel cable railings and outdoor seating.'
+      },
+      {
+        id: 'cap10-2',
+        title: 'Full-Width Sliding UPVC Glass Wall',
+        spec: 'Seamlessly merges the indoor kitchen and lounge with the outdoor timber patio.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-11-hex-black',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (04 / 07)',
+    code: 'CAPSULE 04 // HEX-LIT DESIGNER CONTAINER POD',
+    label: 'Hex-Lit Designer Container Pod',
+    subLabel: 'Matte Charcoal Chamfered Container Studio with Warm Architectural Perimeter Lighting',
+    headline: 'Chamfered Matte-Black Designer Container Smart Pod',
+    description:
+      'Ultra-modern chamfered-frame container villa with recessed warm amber perimeter LED lighting, geometric laser-cut backlit feature walls, and frameless panoramic sliding glass.',
+    valuation: 'PKR 64 Lakh – 88 Lakh',
+    locationBadge: 'Executive Farmhouses, Glamping Resorts & Rooftops',
+    focalLength: '22MM WIDE',
+    altitude: 'GARDEN PAVILION',
+    fov: '88° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.fallbackCapsule3,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.5%', '-0.5%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap11-1',
+        title: 'Chamfered Portal Frame & Warm LED Halo',
+        spec: 'Architectural bevelled steel portal with weatherproof outdoor ambiance lighting.'
+      },
+      {
+        id: 'cap11-2',
+        title: 'Bespoke Hexagonal Backlit Interior',
+        spec: 'Turnkey designer lounge, acoustic ceiling slats, and smart climate automation.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-12-executive-studio',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (05 / 07)',
+    code: 'CAPSULE 05 // CURVED-CORNER EXECUTIVE STUDIO POD',
+    label: 'Curved-Corner Studio Container',
+    subLabel: 'Minimalist White Container Villa & Executive Office with Rounded UPVC Frames',
+    headline: 'Curved-Corner Glass Container Villa & Executive Studio',
+    description:
+      'Precision-crafted white corrugated container module featuring signature rounded-corner black aluminum/UPVC window frames, linear recessed ceiling lights, and a private executive workspace and lounge.',
+    valuation: 'PKR 46 Lakh – 65 Lakh',
+    locationBadge: 'Islamabad, Rawalpindi, Taxila & Lahore Delivery',
+    focalLength: '24MM PRIME',
+    altitude: 'PATIO LEVEL',
+    fov: '85° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap13_v2124DoubleDeckerCapsule,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.fallbackCapsule4,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.5%', '0.5%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap12-1',
+        title: 'Rounded-Corner Structural UPVC Glazing',
+        spec: 'Dual-aspect floor-to-ceiling glass walls with thermal-break aluminum profiles.'
+      },
+      {
+        id: 'cap12-2',
+        title: 'Dual-Use Residence or Corporate Pod',
+        spec: 'Ideal as a luxury guest suite, private garden office, or site sales gallery.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-13-v2124-duplex',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (06 / 07)',
+    code: 'CAPSULE 06 // V2124 DOUBLE-DECKER CAPSULE VILLA',
+    label: 'V2124 Double-Decker Villa',
+    subLabel: 'Two-Story Stacked Curved-Glass Capsule Villa with Upper Master Sky Suite',
+    headline: 'Model V2124 Double-Decker Stacked Capsule Villa',
+    description:
+      'Two-story stacked modular capsule villa offering an expansive ground-floor living and dining pavilion with sliding glass walls and an upper-deck V2124 panoramic master bedroom suite.',
+    valuation: 'PKR 1.35 Crore – 1.85 Crore',
+    locationBadge: 'Luxury Farmhouses, Hill Resorts & Urban Penthouses',
+    focalLength: '20MM ARCHITECTURAL',
+    altitude: '2-STORY DUPLEX',
+    fov: '90° WIDE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap13_v2124DoubleDeckerCapsule,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.fallbackCapsule3,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['0.6%', '-0.6%'],
+    panY: ['0.3%', '-0.3%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap13-1',
+        title: 'Upper-Deck V2124 Panoramic Master Suite',
+        spec: 'Second-story curved observation glass suite with warm architectural cove lighting.'
+      },
+      {
+        id: 'cap13-2',
+        title: 'Open-Plan Ground Lounge & Kitchen',
+        spec: 'Full-span sliding UPVC glass doors opening onto a raised composite timber deck.'
+      }
+    ]
+  },
+  {
+    id: 'capsule-seq-14-lakeside-pod',
+    tourCategory: 'capsule_containers',
+    propertyCategory: 'modular',
+    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (07 / 07)',
+    code: 'CAPSULE 07 // LAKESIDE CURVED-GLASS CAPSULE POD',
+    label: 'Lakeside Panorama Capsule',
+    subLabel: 'Curved-Glass Waterfront Capsule Home with Stepping-Stone Path & Patio Deck',
+    headline: 'Lakeside Curved-Glass Observation Capsule House',
+    description:
+      'Waterfront aerodynamic capsule residence featuring wrap-around curved observation glass, operable casement ventilation windows, fluorocarbon aluminum cladding, and a serene lakeside timber deck.',
+    valuation: 'PKR 68 Lakh – 96 Lakh',
+    locationBadge: 'Lakeside Estates, Resorts & Private Farmhouses',
+    focalLength: '18MM ULTRA-WIDE',
+    altitude: 'LAKESIDE DECK',
+    fov: '94° EXPANSIVE',
+    imageUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
+    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
+    fallbackUrl: MODULAR_CAPSULE_GALLERY.fallbackCapsule1,
+    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
+    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
+    motionOrigin: 'center center',
+    panX: ['-0.6%', '0.6%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'cap14-1',
+        title: 'Seamless Curved Low-E Observation Glass',
+        spec: 'Double-glazed thermal and acoustic curved glass with zero condensation.'
+      },
+      {
+        id: 'cap14-2',
+        title: 'Turnkey Waterfront & Resort Setup',
+        spec: 'Includes smart climate control, luxury bathroom, and prefabricated patio decking.'
+      }
+    ]
+  },
+
+  // ---------------- PILLAR 2: HIGHRISE PROJECTS (TOWERS.PK/ISLAMABAD VERIFIED DATA) ----------------
   {
     id: 'highrise-centaurus-citadel-isb',
     tourCategory: 'highrise_projects',
@@ -441,274 +718,6 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     ]
   },
 
-  // ---------------- PILLAR 2: CONTAINER & CAPSULE SMART HOUSES (SEQUENCE 1 TO 7) ----------------
-  {
-    id: 'capsule-seq-8-q3',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (01 / 07)',
-    code: 'CAPSULE 01 // MODEL Q3 PITCHED-ROOF CABIN POD',
-    label: 'Q3 Modular Cabin Pod',
-    subLabel: 'Aerodynamic Pitched-Roof Smart Cabin with UPVC French Doors & Panoramic Window',
-    headline: 'Model Q3 Pitched-Roof Modular Smart Cabin House',
-    description:
-      'The Q3 prefabricated modular cabin pod combines a pitched alpine roof profile with curved aviation-grade aluminum panels, matte-black UPVC double-glazed French entry doors, and floor-to-ceiling forest-view glazing.',
-    valuation: 'PKR 48 Lakh – 68 Lakh',
-    locationBadge: 'Turnkey Delivery: Murree, Nathia Gali, Taxila & Islamabad Farms',
-    focalLength: '24MM PRIME',
-    altitude: 'FOREST DECK',
-    fov: '86° WIDE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
-    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
-    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['-0.6%', '0.6%'],
-    panY: ['0%', '-0.5%'],
-    scaleRange: [1.01, 1.05],
-    specs: [
-      {
-        id: 'cap8-1',
-        title: 'Q3 Pitched-Roof All-Weather Shell',
-        spec: 'Engineered for snowfall and mountain rain with polyurethane thermal insulation.'
-      },
-      {
-        id: 'cap8-2',
-        title: 'Ri8click UPVC Double-Glazed Framing',
-        spec: 'Acoustic Low-E tempered glass windows and integrated composite entrance porch.'
-      }
-    ]
-  },
-  {
-    id: 'capsule-seq-9-k5',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (02 / 07)',
-    code: 'CAPSULE 02 // MODEL K5 PANORAMIC SPACE CAPSULE',
-    label: 'K5 Panoramic Space Capsule',
-    subLabel: '38-Foot Aerospace Aluminum Pod with Dual 270° Curved Glass Observation Wings',
-    headline: 'Model K5 Waterfront Panoramic Space Capsule House',
-    description:
-      'Flagship K5 space capsule featuring dual 270-degree curved tempered glass observation bays, central biometric security door with integrated steps, and open-air balcony deck.',
-    valuation: 'PKR 75 Lakh – 1.05 Crore',
-    locationBadge: 'Khanpur Dam, Rawal Lake, Farmhouses & Resorts',
-    focalLength: '20MM WIDE',
-    altitude: 'WATERFRONT LAWN',
-    fov: '92° EXPANSIVE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
-    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
-    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['0.6%', '-0.6%'],
-    panY: ['0%', '-0.4%'],
-    scaleRange: [1.01, 1.05],
-    specs: [
-      {
-        id: 'cap9-1',
-        title: 'Dual 270° Curved Observation Glass',
-        spec: 'Solar-tinted Low-E curved safety glass providing privacy and panoramic views.'
-      },
-      {
-        id: 'cap9-2',
-        title: 'Crane-Ready Steel Chassis',
-        spec: 'Installs on concrete piers in 4 hours without disturbing natural landscaping.'
-      }
-    ]
-  },
-  {
-    id: 'capsule-seq-10-container-deck',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (03 / 07)',
-    code: 'CAPSULE 03 // ROOFTOP DECK CONTAINER VILLA',
-    label: 'Rooftop Deck Container Villa',
-    subLabel: 'Luxury White Container Home with Wraparound Timber Patio & Upper Sky Lounge',
-    headline: 'Luxury Container Villa with Rooftop Terrace & Timber Deck',
-    description:
-      'Architectural shipping-container residence finished in crisp white thermal coating, featuring full-span sliding UPVC glass walls, a gourmet kitchen island, wraparound hardwood deck, and an upper-level railed rooftop lounge.',
-    valuation: 'PKR 52 Lakh – 78 Lakh',
-    locationBadge: 'Faisal Hills, Chak Shahzad & B-17 Farm Estates',
-    focalLength: '24MM ARCHITECTURAL',
-    altitude: '2-LEVEL DECK',
-    fov: '86° WIDE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
-    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
-    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['-0.6%', '0.6%'],
-    panY: ['0%', '-0.5%'],
-    scaleRange: [1.01, 1.05],
-    specs: [
-      {
-        id: 'cap10-1',
-        title: 'Upper Rooftop Dining & Sky Terrace',
-        spec: 'Reinforced structural roof deck with steel cable railings and outdoor seating.'
-      },
-      {
-        id: 'cap10-2',
-        title: 'Full-Width Sliding UPVC Glass Wall',
-        spec: 'Seamlessly merges the indoor kitchen and lounge with the outdoor timber patio.'
-      }
-    ]
-  },
-  {
-    id: 'capsule-seq-11-hex-black',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (04 / 07)',
-    code: 'CAPSULE 04 // HEX-LIT DESIGNER CONTAINER POD',
-    label: 'Hex-Lit Designer Container Pod',
-    subLabel: 'Matte Charcoal Chamfered Container Studio with Warm Architectural Perimeter Lighting',
-    headline: 'Chamfered Matte-Black Designer Container Smart Pod',
-    description:
-      'Ultra-modern chamfered-frame container villa with recessed warm amber perimeter LED lighting, geometric laser-cut backlit feature walls, and frameless panoramic sliding glass.',
-    valuation: 'PKR 64 Lakh – 88 Lakh',
-    locationBadge: 'Executive Farmhouses, Glamping Resorts & Rooftops',
-    focalLength: '22MM WIDE',
-    altitude: 'GARDEN PAVILION',
-    fov: '88° WIDE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
-    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap10_rooftopDeckContainerVilla,
-    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['0.5%', '-0.5%'],
-    panY: ['0%', '-0.4%'],
-    scaleRange: [1.01, 1.05],
-    specs: [
-      {
-        id: 'cap11-1',
-        title: 'Chamfered Portal Frame & Warm LED Halo',
-        spec: 'Architectural bevelled steel portal with weatherproof outdoor ambiance lighting.'
-      },
-      {
-        id: 'cap11-2',
-        title: 'Bespoke Hexagonal Backlit Interior',
-        spec: 'Turnkey designer lounge, acoustic ceiling slats, and smart climate automation.'
-      }
-    ]
-  },
-  {
-    id: 'capsule-seq-12-executive-studio',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (05 / 07)',
-    code: 'CAPSULE 05 // CURVED-CORNER EXECUTIVE STUDIO POD',
-    label: 'Curved-Corner Studio Container',
-    subLabel: 'Minimalist White Container Villa & Executive Office with Rounded UPVC Frames',
-    headline: 'Curved-Corner Glass Container Villa & Executive Studio',
-    description:
-      'Precision-crafted white corrugated container module featuring signature rounded-corner black aluminum/UPVC window frames, linear recessed ceiling lights, and a private executive workspace and lounge.',
-    valuation: 'PKR 46 Lakh – 65 Lakh',
-    locationBadge: 'Islamabad, Rawalpindi, Taxila & Lahore Delivery',
-    focalLength: '24MM PRIME',
-    altitude: 'PATIO LEVEL',
-    fov: '85° WIDE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap13_v2124DoubleDeckerCapsule,
-    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap11_hexLitBlackContainerPod,
-    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['-0.5%', '0.5%'],
-    panY: ['0%', '-0.4%'],
-    scaleRange: [1.01, 1.05],
-    specs: [
-      {
-        id: 'cap12-1',
-        title: 'Rounded-Corner Structural UPVC Glazing',
-        spec: 'Dual-aspect floor-to-ceiling glass walls with thermal-break aluminum profiles.'
-      },
-      {
-        id: 'cap12-2',
-        title: 'Dual-Use Residence or Corporate Pod',
-        spec: 'Ideal as a luxury guest suite, private garden office, or site sales gallery.'
-      }
-    ]
-  },
-  {
-    id: 'capsule-seq-13-v2124-duplex',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (06 / 07)',
-    code: 'CAPSULE 06 // V2124 DOUBLE-DECKER CAPSULE VILLA',
-    label: 'V2124 Double-Decker Villa',
-    subLabel: 'Two-Story Stacked Curved-Glass Capsule Villa with Upper Master Sky Suite',
-    headline: 'Model V2124 Double-Decker Stacked Capsule Villa',
-    description:
-      'Two-story stacked modular capsule villa offering an expansive ground-floor living and dining pavilion with sliding glass walls and an upper-deck V2124 panoramic master bedroom suite.',
-    valuation: 'PKR 1.35 Crore – 1.85 Crore',
-    locationBadge: 'Luxury Farmhouses, Hill Resorts & Urban Penthouses',
-    focalLength: '20MM ARCHITECTURAL',
-    altitude: '2-STORY DUPLEX',
-    fov: '90° WIDE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap13_v2124DoubleDeckerCapsule,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
-    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap12_curvedCornerGlassContainer,
-    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['0.6%', '-0.6%'],
-    panY: ['0.3%', '-0.3%'],
-    scaleRange: [1.01, 1.05],
-    specs: [
-      {
-        id: 'cap13-1',
-        title: 'Upper-Deck V2124 Panoramic Master Suite',
-        spec: 'Second-story curved observation glass suite with warm architectural cove lighting.'
-      },
-      {
-        id: 'cap13-2',
-        title: 'Open-Plan Ground Lounge & Kitchen',
-        spec: 'Full-span sliding UPVC glass doors opening onto a raised composite timber deck.'
-      }
-    ]
-  },
-  {
-    id: 'capsule-seq-14-lakeside-pod',
-    tourCategory: 'capsule_containers',
-    propertyCategory: 'modular',
-    divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (07 / 07)',
-    code: 'CAPSULE 07 // LAKESIDE CURVED-GLASS CAPSULE POD',
-    label: 'Lakeside Panorama Capsule',
-    subLabel: 'Curved-Glass Waterfront Capsule Home with Stepping-Stone Path & Patio Deck',
-    headline: 'Lakeside Curved-Glass Observation Capsule House',
-    description:
-      'Waterfront aerodynamic capsule residence featuring wrap-around curved observation glass, operable casement ventilation windows, fluorocarbon aluminum cladding, and a serene lakeside timber deck.',
-    valuation: 'PKR 68 Lakh – 96 Lakh',
-    locationBadge: 'Lakeside Estates, Resorts & Private Farmhouses',
-    focalLength: '18MM ULTRA-WIDE',
-    altitude: 'LAKESIDE DECK',
-    fov: '94° EXPANSIVE',
-    imageUrl: MODULAR_CAPSULE_GALLERY.cap14_lakesideCurvedGlassCapsule,
-    secondaryImageUrl: MODULAR_CAPSULE_GALLERY.cap8_q3ForestCabinPod,
-    fallbackUrl: MODULAR_CAPSULE_GALLERY.cap9_k5WaterfrontPod,
-    galleryImages: MODULAR_CAPSULE_SEQUENCE_LIST,
-    videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
-    motionOrigin: 'center center',
-    panX: ['-0.6%', '0.6%'],
-    panY: ['0%', '-0.4%'],
-    scaleRange: [1.01, 1.05],
-    specs: [
-      {
-        id: 'cap14-1',
-        title: 'Seamless Curved Low-E Observation Glass',
-        spec: 'Double-glazed thermal and acoustic curved glass with zero condensation.'
-      },
-      {
-        id: 'cap14-2',
-        title: 'Turnkey Waterfront & Resort Setup',
-        spec: 'Includes smart climate control, luxury bathroom, and prefabricated patio decking.'
-      }
-    ]
-  },
-
   // ---------------- PILLAR 3: PROPERTIES (PLOTS & CONSTRUCTED HOUSES) ----------------
   {
     id: 'prop-wp-1',
@@ -790,21 +799,27 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     id: 'upvc-wp-1',
     tourCategory: 'upvc_construction',
     propertyCategory: 'projects',
-    divisionTag: 'RI8CLICK CONSORTIUM // UPVC DOORS, WINDOWS & CONSTRUCTION',
-    code: 'UPVC 01 // DOORS, WINDOWS & GLASS CONSERVATORY',
-    label: 'UPVC Windows & Glass Systems',
-    subLabel: 'German-Standard UPVC Doors, Windows, Skylights & Facades',
-    headline: 'Ri8click Consortium UPVC Doors, Windows, Partitions & Panels',
+    divisionTag: 'RI8CLICK CONSORTIUM // UPVC DOORS, WINDOWS & PARTITIONS',
+    code: 'UPVC 01 // SLIDING PATIO, BI-FOLD & FRENCH DOOR SYSTEMS',
+    label: 'UPVC Sliding & Bi-Fold Doors',
+    subLabel: 'Heavy-Duty Lift-and-Slide Patio Doors, Bi-Fold Terrace Walls & Multi-Point French Doors',
+    headline: 'Ri8click UPVC Sliding Patio, Bi-Fold & French Door Models',
     description:
-      'Manufactured by Ri8click Consortium: heavy-duty acoustic double/triple-glazed UPVC casement and sliding windows, patio doors, office glass partitions, and weatherproof architectural wall panels.',
-    valuation: '10-Year Factory Warranty • Custom Fabrication',
-    locationBadge: 'Ri8click Consortium UPVC Plant & Turnkey Division',
+      'Precision-engineered German-profile UPVC door systems including panoramic Lift-and-Slide patio doors, 6-panel concertina Bi-Fold garden doors, and double-sash French entry doors with 5-point anti-burglary locking and galvanized steel reinforcement.',
+    valuation: 'PKR 1,850 – 3,400 / Sq. Ft. • 10-Year Warranty',
+    locationBadge: 'Ri8click UPVC Factory • Taxila, Islamabad & Rawalpindi',
     focalLength: '18MM ULTRA-WIDE',
-    altitude: 'CONSERVATORY',
+    altitude: 'DOOR SYSTEMS',
     fov: '96° EXPANSIVE',
-    imageUrl: UPVC_AND_INTERIOR_GALLERY.upvc1_glassRoofConservatory,
-    secondaryImageUrl: UPVC_AND_INTERIOR_GALLERY.upvc2_woodSlatTvPartition,
+    imageUrl: UPVC_AND_INTERIOR_GALLERY.upvc1_slidingPatioDoors,
+    secondaryImageUrl: UPVC_AND_INTERIOR_GALLERY.upvc2_casementTiltTurnWindows,
     fallbackUrl: CONSTRUCTED_HOUSES_GALLERY.house2_modernEstate,
+    galleryImages: [
+      UPVC_AND_INTERIOR_GALLERY.upvc1_slidingPatioDoors,
+      UPVC_AND_INTERIOR_GALLERY.upvc2_casementTiltTurnWindows,
+      UPVC_AND_INTERIOR_GALLERY.upvc3_acousticGlassPartitions,
+      UPVC_AND_INTERIOR_GALLERY.upvc4_conservatorySkylights
+    ],
     videoUrl: SHOWROOM_VIDEOS.luxuryInteriorWalk,
     motionOrigin: 'center center',
     panX: ['0%', '-0.8%'],
@@ -813,13 +828,56 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     specs: [
       {
         id: 'u1-1',
-        title: 'Thermal-Break Glazed Roof & Skylights',
-        spec: 'Argon-filled Low-E laminated glass blocking 96% UV radiation.'
+        title: 'Lift & Slide + Bi-Fold Panoramic Doors',
+        spec: 'Silent stainless-steel roller tracks supporting up to 300kg insulated double/triple glass sashes.'
       },
       {
         id: 'u1-2',
-        title: 'Acoustic UPVC Sliding & Casement Windows',
-        spec: 'Multi-chamber steel-reinforced UPVC profiles with 42dB sound reduction.'
+        title: 'Multi-Point Security & EPDM Weather Seals',
+        spec: '100% dustproof, monsoon waterproof, and UV-stabilized white, anthracite grey, and golden oak finishes.'
+      }
+    ]
+  },
+  {
+    id: 'upvc-wp-2',
+    tourCategory: 'upvc_construction',
+    propertyCategory: 'projects',
+    divisionTag: 'RI8CLICK CONSORTIUM // UPVC WINDOWS & ACOUSTIC PARTITIONS',
+    code: 'UPVC 02 // CASEMENT, TILT-TURN WINDOWS & GLASS PARTITIONS',
+    label: 'UPVC Windows & Partitions',
+    subLabel: 'Double/Triple-Glazed Casement, Tilt & Turn Windows, Bay Windows & Office Acoustic Partitions',
+    headline: 'German-Standard UPVC Window Models & Acoustic Glass Partitions',
+    description:
+      'Complete range of multi-chamber UPVC Tilt-and-Turn windows, casement windows, arched bay windows, and frameless/framed acoustic office and living room glass partitions providing up to 42dB sound insulation and 40% HVAC energy savings.',
+    valuation: 'PKR 1,450 – 2,950 / Sq. Ft. • Custom Fabrication',
+    locationBadge: 'Ri8click UPVC Manufacturing Plant & Turnkey Division',
+    focalLength: '22MM ARCHITECTURAL',
+    altitude: 'WINDOW & PARTITION LAB',
+    fov: '90° WIDE',
+    imageUrl: UPVC_AND_INTERIOR_GALLERY.upvc3_acousticGlassPartitions,
+    secondaryImageUrl: UPVC_AND_INTERIOR_GALLERY.upvc2_casementTiltTurnWindows,
+    fallbackUrl: UPVC_AND_INTERIOR_GALLERY.upvc1_slidingPatioDoors,
+    galleryImages: [
+      UPVC_AND_INTERIOR_GALLERY.upvc3_acousticGlassPartitions,
+      UPVC_AND_INTERIOR_GALLERY.upvc2_casementTiltTurnWindows,
+      UPVC_AND_INTERIOR_GALLERY.upvc1_slidingPatioDoors,
+      UPVC_AND_INTERIOR_GALLERY.upvc4_conservatorySkylights
+    ],
+    videoUrl: SHOWROOM_VIDEOS.luxuryInteriorWalk,
+    motionOrigin: 'center center',
+    panX: ['-0.5%', '0.5%'],
+    panY: ['0%', '-0.4%'],
+    scaleRange: [1.01, 1.05],
+    specs: [
+      {
+        id: 'u2-1',
+        title: '42dB Acoustic & Argon Low-E Double Glazing',
+        spec: 'Eliminates highway and urban noise while blocking 96% UV rays in extreme summer heat.'
+      },
+      {
+        id: 'u2-2',
+        title: 'Corporate & Residential Glass Partitions',
+        spec: 'Frameless tempered glass, wood-slat acoustic dividers, and sliding conference room partitions.'
       }
     ]
   }
@@ -869,7 +927,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   // Moveable "Portfolio Deck" Window States
   const heroStageRef = useRef<HTMLElement | null>(null);
-  const portfolioDeckDragControls = useDragControls();
+  const portfolioDeckDragControls = useuseDragControlsSafe();
   const [isDeckFloating, setIsDeckFloating] = useState(true);
   const [isDeckMinimized, setIsDeckMinimized] = useState(false);
   const [deckResetKey, setDeckResetKey] = useState(0);
@@ -879,6 +937,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [customActiveImageOverride, setCustomActiveImageOverride] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  function useuseDragControlsSafe() {
+    return useDragControls();
+  }
 
   // Sanitize legacy text & convert any "Commercial Plazas" / "Plaza" to "Highrise Projects"
   const sanitizeConsortiumText = (text?: string) => {
@@ -968,21 +1030,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const cameraWaypoints: CameraWaypoint[] = useMemo(() => {
     const combined = [...MASTER_VIRTUAL_TOUR_WAYPOINTS, ...cmsHighriseWaypoints];
     if (tourCategory === 'all_showroom') {
-      const highriseList = combined.filter(w => w.tourCategory === 'highrise_projects');
       const capList = combined.filter(w => w.tourCategory === 'capsule_containers');
+      const highriseList = combined.filter(w => w.tourCategory === 'highrise_projects');
       const propsList = combined.filter(w => w.tourCategory === 'properties_plots_villas');
       const upvcList = combined.filter(w => w.tourCategory === 'upvc_construction');
 
       const interleaved: CameraWaypoint[] = [];
       const maxLen = Math.max(
-        highriseList.length,
         capList.length,
+        highriseList.length,
         propsList.length,
         upvcList.length
       );
       for (let i = 0; i < maxLen; i++) {
-        if (highriseList[i]) interleaved.push(highriseList[i]);
         if (capList[i]) interleaved.push(capList[i]);
+        if (highriseList[i]) interleaved.push(highriseList[i]);
         if (propsList[i]) interleaved.push(propsList[i]);
         if (upvcList[i]) interleaved.push(upvcList[i]);
       }
@@ -1079,7 +1141,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     setDeckResetKey(prev => prev + 1);
   };
 
-  // Ri8click Consortium Categories ("Commercial Plazas" changed to "Highrise Projects")
+  // Ri8click Consortium Categories
   const tourCategories: {
     id: TourDeckCategory;
     label: string;
@@ -1097,6 +1159,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       icon: <Compass className="w-3.5 h-3.5" />
     },
     {
+      id: 'capsule_containers',
+      label: 'Container & Capsule Houses',
+      shortLabel: 'Capsule Houses',
+      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'capsule_containers')
+        .length,
+      filterCategory: 'modular',
+      icon: <Box className="w-3.5 h-3.5" />
+    },
+    {
       id: 'highrise_projects',
       label: 'Highrise Projects (Islamabad)',
       shortLabel: 'Highrise Projects',
@@ -1105,15 +1176,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         cmsHighriseWaypoints.length,
       filterCategory: 'commercial',
       icon: <Building2 className="w-3.5 h-3.5" />
-    },
-    {
-      id: 'capsule_containers',
-      label: 'Container & Capsule Houses',
-      shortLabel: 'Capsule Houses',
-      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'capsule_containers')
-        .length,
-      filterCategory: 'modular',
-      icon: <Box className="w-3.5 h-3.5" />
     },
     {
       id: 'properties_plots_villas',
@@ -1137,20 +1199,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   const consortiumPillars = [
     {
+      id: 'capsule_containers' as TourDeckCategory,
+      category: 'modular' as PropertyCategory,
+      title: 'Container Capsule Houses',
+      detail: 'Q3, L-Loft, V2124 Duplex & Curved Glass Container Pods',
+      icon: Box,
+      accent: 'text-amber-300 border-amber-400/30 bg-amber-500/10'
+    },
+    {
       id: 'highrise_projects' as TourDeckCategory,
       category: 'commercial' as PropertyCategory,
       title: 'Islamabad Highrise Projects',
       detail: 'The Centaurus, Giga Mall, Ufone Tower, ISE Tower II & State Life',
       icon: Building2,
       accent: 'text-emerald-300 border-emerald-400/30 bg-emerald-500/10'
-    },
-    {
-      id: 'capsule_containers' as TourDeckCategory,
-      category: 'modular' as PropertyCategory,
-      title: 'Container Capsule Houses',
-      detail: 'Q3, K5, V2124 Duplex & Curved Glass Container Pods',
-      icon: Box,
-      accent: 'text-amber-300 border-amber-400/30 bg-amber-500/10'
     },
     {
       id: 'properties_plots_villas' as TourDeckCategory,
@@ -1303,7 +1365,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div
           className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${
             isCinemaTheaterMode || !showLeftDescription
-              ? 'bg-gradient-to-t from-slate-950/65 via-transparent to-slate-950/25'
+              ? 'bg-gradient-to-t from-slate-950/70 via-slate-950/15 to-slate-950/30'
               : 'bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-transparent'
           }`}
         />
@@ -1381,24 +1443,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             className="relative z-20 border-b border-white/15 bg-slate-900/70 backdrop-blur-md"
           >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-                <button
-                  type="button"
-                  onClick={() => setIsVideoTourActive(prev => !prev)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shrink-0 border ${
-                    isVideoTourActive
-                      ? 'bg-amber-400 text-slate-950 border-amber-300'
-                      : 'bg-white/10 hover:bg-white/15 text-amber-200 border-white/20'
-                  }`}
-                >
-                  <Video className="w-3 h-3" />
-                  <span>{isVideoTourActive ? 'Video Active' : 'Play Video'}</span>
-                </button>
-
-                <div className="h-4 w-[1px] bg-white/20 mx-0.5 shrink-0" />
-
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
                 {cameraWaypoints.map((wp, idx) => {
-                  const isSelected = !isVideoTourActive && waypointIdx === idx;
+                  const isSelected = waypointIdx === idx;
                   return (
                     <button
                       key={wp.id}
@@ -1445,7 +1492,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-2 pb-2">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-semibold text-slate-100 shadow-sm">
             <Building2 className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Ri8click Consortium • Towers.pk Islamabad Highrise Projects & Modular Living</span>
+            <span>Ri8click Consortium • Contemporary Capsule Homes, Highrises & German UPVC</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 ml-auto">
@@ -1454,16 +1501,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               type="button"
               onClick={() => setShowBrokenLinkModal(prev => !prev)}
               className="px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 border border-emerald-400/40 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 transition-all cursor-pointer backdrop-blur-xl"
-              title="View Broken Image Link Replacements & Active Towers.pk Media Status"
+              title="View Broken Image Link Replacements & Active Media Status"
             >
               <RefreshCw className="w-3.5 h-3.5 text-emerald-300" />
               <span className="hidden sm:inline">Active Images</span>
               <span className="px-1.5 py-0.2 rounded bg-emerald-400/20 text-emerald-200 text-[9px] font-black">
-                {brokenLinksLog.length} Replaced
+                {brokenLinksLog.length} Verified
               </span>
             </button>
 
-            {/* Toggle Left-Side Text Description while keeping Portfolio Deck visible */}
+            {/* Toggle Left-Side Text Description while keeping minimal info & Portfolio Deck visible */}
             <button
               type="button"
               onClick={() => {
@@ -1475,17 +1522,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-sm'
                   : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
               }`}
-              title="Toggle Left-Side Text Description while keeping Portfolio Deck visible"
+              title="Toggle Full Description vs Minimal Banner Info"
             >
               {showLeftDescription ? (
                 <>
                   <EyeOff className="w-3.5 h-3.5 text-amber-300" />
-                  <span>Hide Description</span>
+                  <span>Hide Text</span>
                 </>
               ) : (
                 <>
                   <FileText className="w-3.5 h-3.5" />
-                  <span>Show Description</span>
+                  <span>Show Full Text</span>
                 </>
               )}
             </button>
@@ -1540,12 +1587,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     initial={{ opacity: 0, y: 8, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute right-0 mt-2 w-80 rounded-2xl bg-slate-950/90 backdrop-blur-2xl border border-white/25 p-4 shadow-2xl z-50 space-y-2.5"
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-72 rounded-2xl bg-slate-900/95 backdrop-blur-2xl border border-white/20 shadow-2xl p-3.5 z-50 space-y-2"
                   >
                     <div className="flex items-center justify-between pb-2 border-b border-white/15">
-                      <span className="text-[11px] font-black uppercase tracking-wider text-amber-300">
-                        Banner Display Controls
+                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-300">
+                        Banner & Deck Settings
                       </span>
                       <button
                         type="button"
@@ -1586,8 +1633,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
                     <div className="border-t border-white/15 pt-1.5 space-y-1">
                       <ToggleSwitch
-                        label="Left-Side Text Description"
-                        description="Show/hide left narrative while keeping Portfolio Deck"
+                        label="Full Left-Side Narrative"
+                        description="Switch between full narrative and minimal banner heading"
                         checked={showLeftDescription}
                         onChange={() => setShowLeftDescription(prev => !prev)}
                       />
@@ -1656,45 +1703,47 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
 
-        {/* BROKEN IMAGE LINKS & ACTIVE TOWERS.PK REPLACEMENT INSPECTOR MODAL */}
+        {/* BROKEN IMAGE LINK REPLACEMENT INSPECTOR MODAL */}
         <AnimatePresence>
           {showBrokenLinkModal && (
             <motion.div
-              initial={{ opacity: 0, y: -8 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="mb-4 p-4 rounded-2xl bg-slate-950/90 backdrop-blur-2xl border border-emerald-400/40 shadow-2xl z-40"
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-4 p-4 rounded-2xl bg-slate-900/95 backdrop-blur-2xl border border-emerald-400/40 shadow-2xl space-y-3 z-50"
             >
-              <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-3 border-b border-white/15">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xs font-black uppercase tracking-wider text-white">
-                    Broken Image Link Monitor & Active Towers.pk Replacements
+                  <span className="px-2.5 py-0.5 rounded-md bg-emerald-400 text-slate-950 text-[10px] font-black uppercase tracking-wider">
+                    Active Media Monitor
+                  </span>
+                  <span className="text-xs font-bold text-white">
+                    Verified Capsule & Highrise Assets ({brokenLinksLog.length} Legacy Links Upgraded)
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowBrokenLinkModal(false)}
-                  className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[10px] font-bold text-slate-200 cursor-pointer"
+                  className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-bold text-slate-200 cursor-pointer"
                 >
-                  Close Monitor
+                  Close
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-60 overflow-y-auto pr-1">
                 {brokenLinksLog.map((item, idx) => (
                   <div
-                    key={`${item.brokenUrl}-${idx}`}
-                    className="p-2.5 rounded-xl bg-white/5 border border-white/15 flex items-center gap-3"
+                    key={idx}
+                    className="p-2.5 rounded-xl bg-white/5 border border-white/15 flex items-center gap-2.5"
                   >
-                    <div className="relative w-14 h-12 rounded-lg overflow-hidden shrink-0 border border-emerald-400/50">
+                    <div className="w-14 h-12 rounded-lg overflow-hidden shrink-0 border border-emerald-400/40 bg-slate-950 relative">
                       <img
                         src={item.replacedWithUrl}
                         alt={item.waypointLabel}
                         className="w-full h-full object-cover"
                       />
-                      <span className="absolute bottom-0 inset-x-0 bg-emerald-500/90 text-slate-950 text-[8px] font-black text-center uppercase">
-                        Active
+                      <span className="absolute bottom-0.5 right-0.5 px-1 rounded bg-emerald-500 text-slate-950 text-[8px] font-black">
+                        LIVE
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
@@ -1732,7 +1781,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       Ri8click Consortium
                     </span>
                     <span className="text-[11px] sm:text-xs font-semibold text-white/95">
-                      Integrated Real Estate, Islamabad Highrise Projects, Turnkey Construction, Capsule Homes &amp; German UPVC
+                      Integrated Real Estate, Capsule Smart Homes, Islamabad Highrises &amp; German UPVC
                     </span>
                   </div>
                   <button
@@ -1794,8 +1843,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               transition={{ duration: 0.3 }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto py-3 relative"
             >
-              {/* Left Column: Architectural Narrative & Actions */}
-              {showLeftDescription && (
+              {/* Left Column: Full Narrative OR Minimal Heading & Image Info when "Hide Text" is active */}
+              {showLeftDescription ? (
                 <div className={showDirectorDeck ? 'lg:col-span-7' : 'lg:col-span-11'}>
                   <AnimatePresence mode="wait">
                     <motion.div
@@ -1938,7 +1987,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white hover:text-slate-950 text-white border border-white/30 font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 backdrop-blur-xl transition-all cursor-pointer"
                         >
                           <Eye className="w-4 h-4 text-amber-300" />
-                          <span>Explore Highrise &amp; Listings</span>
+                          <span>Explore Portfolio &amp; Listings</span>
                         </button>
 
                         <button
@@ -1949,6 +1998,62 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           <PhoneCall className="w-4 h-4" />
                           <span>Ri8click Consortium Inquiry</span>
                         </button>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              ) : (
+                /* Minimal Heading & Image Info Card when "Hide Text" is clicked from Portfolio Deck (Requirement #15) */
+                <div className={showDirectorDeck ? 'lg:col-span-6 self-end' : 'lg:col-span-8 self-end'}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`minimal-banner-info-${activeWaypoint.id}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.25 }}
+                      className="p-4 sm:p-5 rounded-2xl bg-slate-950/55 backdrop-blur-xl border border-white/20 shadow-2xl max-w-xl space-y-2"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-wider">
+                          <Camera className="w-3 h-3" />
+                          <span>{activeWaypoint.code}</span>
+                        </span>
+                        <span className="text-[11px] font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-400/30 px-2.5 py-0.5 rounded-md">
+                          {activeWaypoint.valuation}
+                        </span>
+                      </div>
+
+                      <h2 className="text-lg sm:text-2xl font-black text-white leading-snug font-serif drop-shadow-xs">
+                        {activeWaypoint.headline}
+                      </h2>
+
+                      <p className="text-xs text-slate-200 line-clamp-2 leading-relaxed">
+                        {activeWaypoint.subLabel}
+                      </p>
+
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1.5 border-t border-white/15 text-[11px] text-slate-300">
+                        <span className="inline-flex items-center gap-1 truncate">
+                          <MapPin className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                          <span className="truncate">{activeWaypoint.locationBadge}</span>
+                        </span>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setShowLeftDescription(true)}
+                            className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] border border-white/20 cursor-pointer transition-colors"
+                          >
+                            Show Full Details
+                          </button>
+                          <button
+                            type="button"
+                            onClick={onExploreClick}
+                            className="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-[10px] uppercase tracking-wider cursor-pointer transition-colors"
+                          >
+                            Explore
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
                   </AnimatePresence>
@@ -1969,7 +2074,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   exit={{ opacity: 0, x: 20 }}
                   style={{ touchAction: 'none' }}
                   className={`${
-                    showLeftDescription ? 'lg:col-span-5' : 'lg:col-span-6 lg:col-start-7'
+                    showLeftDescription ? 'lg:col-span-5' : 'lg:col-span-6'
                   } z-40 bg-slate-950/55 backdrop-blur-2xl rounded-3xl border border-white/30 p-4 sm:p-5 shadow-[0_12px_42px_rgba(0,0,0,0.55)] ring-1 ring-white/20 space-y-3.5`}
                 >
                   {/* Moveable Window Drag Handle Bar */}
@@ -1996,7 +2101,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           </span>
                         </div>
                         <div className="text-[10px] text-amber-200 font-semibold mt-0.5">
-                          Highrise Projects (Towers.pk) • Capsule Pods • Villas
+                          Capsule Pods • Highrise Projects • UPVC • Villas
                         </div>
                       </div>
                     </div>
@@ -2018,11 +2123,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <button
                         type="button"
                         onClick={() => setShowLeftDescription(prev => !prev)}
-                        className="px-2 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-[10px] font-bold text-white cursor-pointer transition-colors"
+                        className={`px-2 py-1 rounded-lg border text-[10px] font-bold cursor-pointer transition-colors ${
+                          !showLeftDescription
+                            ? 'bg-amber-400 text-slate-950 border-amber-300'
+                            : 'bg-white/15 hover:bg-white/25 border-white/20 text-white'
+                        }`}
                         title={
                           showLeftDescription
-                            ? 'Hide Left Text Description'
-                            : 'Show Left Text Description'
+                            ? 'Hide Full Text & Keep Minimal Banner Info'
+                            : 'Show Full Text Description'
                         }
                       >
                         {showLeftDescription ? 'Hide Text' : 'Show Text'}
@@ -2063,13 +2172,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
                   {!isDeckMinimized && (
                     <>
-                      {/* Crystal Category Tabs ("Plazas" changed to "Highrise Projects") */}
+                      {/* Crystal Category Tabs */}
                       <div className="grid grid-cols-5 gap-1 bg-slate-950/45 backdrop-blur-md p-1 rounded-xl border border-white/20">
                         {(
                           [
                             { id: 'all_showroom', label: 'All' },
-                            { id: 'highrise_projects', label: 'Highrise Projects' },
                             { id: 'capsule_containers', label: 'Capsules' },
+                            { id: 'highrise_projects', label: 'Highrise' },
                             { id: 'properties_plots_villas', label: 'Plots/Villas' },
                             { id: 'upvc_construction', label: 'UPVC' }
                           ] as { id: TourDeckCategory; label: string }[]
@@ -2130,7 +2239,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         })}
                       </div>
 
-                      {/* Compact Active Item Summary when Left Text Description is hidden */}
+                      {/* Compact Active Item Summary inside Deck when Left Text Description is hidden */}
                       {!showLeftDescription && (
                         <div className="p-3 rounded-2xl bg-slate-950/50 backdrop-blur-md border border-white/20 flex items-center justify-between gap-3">
                           <div className="min-w-0">
@@ -2158,20 +2267,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <div className="flex items-center justify-between pt-2 border-t border-white/20 text-[11px]">
                         <div className="flex items-center gap-1.5 text-white/90">
                           <Info className="w-3.5 h-3.5 text-amber-300" />
-                          <span>Towers.pk Islamabad &amp; Capsule Pods</span>
+                          <span>Capsule Pods, Highrises &amp; UPVC</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setTourCategory('highrise_projects');
-                              onSelectCategoryFilter('commercial');
-                            }}
-                            className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
-                          >
-                            Highrise Projects
-                          </button>
-                          <span className="text-white/40">•</span>
                           <button
                             type="button"
                             onClick={() => {
@@ -2181,6 +2279,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                             className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
                           >
                             Capsules
+                          </button>
+                          <span className="text-white/40">•</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTourCategory('upvc_construction');
+                              onSelectCategoryFilter('projects');
+                            }}
+                            className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
+                          >
+                            UPVC Models
                           </button>
                         </div>
                       </div>
@@ -2278,7 +2387,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white border border-white/25 text-[11px] font-bold flex items-center gap-1.5 cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5 text-amber-300" />
-                <span>Show Description</span>
+                <span>Show Full Text</span>
               </button>
             )}
 
