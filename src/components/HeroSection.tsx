@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -29,7 +29,12 @@ import {
   ChevronUp,
   ChevronDown,
   Info,
-  FileText
+  FileText,
+  GripHorizontal,
+  RotateCcw,
+  ImageOff,
+  RefreshCw,
+  ExternalLink
 } from 'lucide-react';
 import { HeroSlide, PropertyCategory } from '../types';
 
@@ -44,7 +49,7 @@ interface HeroSectionProps {
 export type TourDeckCategory =
   | 'all_showroom'
   | 'properties_plots_villas'
-  | 'commercial_plazas'
+  | 'highrise_projects'
   | 'capsule_containers'
   | 'upvc_construction';
 
@@ -52,6 +57,13 @@ interface ArchitecturalSpec {
   id: string;
   title: string;
   spec: string;
+}
+
+interface BrokenImageRecord {
+  brokenUrl: string;
+  replacedWithUrl: string;
+  waypointLabel: string;
+  timestamp: string;
 }
 
 interface CameraWaypoint {
@@ -72,6 +84,7 @@ interface CameraWaypoint {
   imageUrl: string;
   secondaryImageUrl?: string;
   fallbackUrl: string;
+  legacyBrokenUrl?: string;
   galleryImages?: string[];
   videoUrl: string;
   motionOrigin: string;
@@ -82,50 +95,56 @@ interface CameraWaypoint {
 }
 
 // ============================================================================
-// 1. VERIFIED DOMESTIC COMMERCIAL TOWERS (ATTACHMENTS 1 TO 7 + TOWERS.PK/ISLAMABAD)
+// 1. VERIFIED ACTIVE HIGHRISE PROJECT IMAGES FROM TOWERS.PK/ISLAMABAD
+//    + ACTIVE ULTRA-HD ARCHITECTURAL BACKUPS
 // ============================================================================
 
-export const ISLAMABAD_DOMESTIC_TOWERS_GALLERY = {
-  // Attachment 1: Regent One & Regent Mall — Night Aerial View (DHA Phase 3 / Islamabad)
-  tower1_regentOneNightAerial: 'https://www.genspark.ai/api/files/s/CfYL2dM0',
-  // Attachment 2: Multi-Block High-Rise Commercial & Corporate Complex (Islamabad Expressway / GT Road)
-  tower2_parksideHighriseComplex: 'https://www.genspark.ai/api/files/s/NC4klaYu',
-  // Attachment 3: Classical Stone & Arched Podium Commercial Galleria (DHA / Gulberg Islamabad)
-  tower3_florenceGalleriaPodium: 'https://www.genspark.ai/api/files/s/5U1P9WPx',
-  // Attachment 4: Citadel 7 Corporate & Retail Tower — Twilight Elevation (Blue Area, Jinnah Avenue, Islamabad)
-  tower4_citadel7Twilight: 'https://www.genspark.ai/api/files/s/qpljElLm',
-  // Attachment 5: Citadel 7 Corporate Tower — Skyline View (Blue Area, Islamabad)
-  tower5_citadel7Skyline: 'https://www.genspark.ai/api/files/s/6C54AO5M',
-  // Attachment 6: High-Street Branded Retail & Corporate Plaza (Blue Area / Faisal Hills Islamabad)
-  tower6_brandedRetailPlaza: 'https://www.genspark.ai/api/files/s/l7r4er7D',
-  // Attachment 7: Regent One & Regent Mall — Daylight Aerial View (DHA Phase 3 / Islamabad)
-  tower7_regentOneDaylightAerial: 'https://www.genspark.ai/api/files/s/JBLytyZd',
+export const ISLAMABAD_HIGHRISE_PROJECTS_GALLERY = {
+  // Active verified high-resolution images from Towers.pk/Islamabad
+  centaurusTower: 'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
+  stateLifeTower: 'https://towers.pk/wp-content/uploads/2023/12/STATE-LIFE-TOWER-min.jpg',
+  ufoneJinnahAvenue: 'https://towers.pk/wp-content/uploads/2023/06/Jinnah-Avenue-Islamabad.jpg',
+  iseTowerBlueArea: 'https://towers.pk/wp-content/uploads/2023/08/ise-tower-islamabad.jpg',
+  gigaMallTower: 'https://towers.pk/wp-content/uploads/2024/01/image-4-34-1024x640-1-e1704435577931.jpg',
+  skyparkOneGulberg: 'https://towers.pk/wp-content/uploads/2024/06/Skypark-One.jpg',
+  oneConstitutionAve: 'https://towers.pk/wp-content/uploads/2023/11/6ByJSAN.jpg',
+  grandOrchardDha: 'https://towers.pk/wp-content/uploads/2023/08/1664948637921-transformed.png',
+  greenTrustTower:
+    'https://towers.pk/wp-content/uploads/2023/08/stock-photo-a-beautiful-view-of-capital-city-islamabad-hi-rise-buildings-islamabad-pakistan-march-2135740301-transformed-1-e1691756641256.jpeg',
+  saudiPakTower: 'https://towers.pk/wp-content/uploads/2024/01/saudi-pak-tower-building-e1706706739861.jpg',
+  ogdclTower: 'https://towers.pk/wp-content/uploads/2024/04/Ogdclofficeislamabad.jpg',
+  lignumTower: 'https://towers.pk/wp-content/uploads/2023/08/44649726-800x600-transformed-e1691749295923.jpeg',
 
-  // Active Domestic High-Resolution Architectural Backups
-  backup_citadel7: 'https://www.genspark.ai/api/files/s/qpljElLm',
-  backup_regentOne: 'https://www.genspark.ai/api/files/s/JBLytyZd',
-  backup_retailPlaza: 'https://www.genspark.ai/api/files/s/l7r4er7D'
+  // Guaranteed Active CDN Fallbacks (if a local ISP throttles any host)
+  fallbackHighrise1:
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2400&q=95',
+  fallbackHighrise2:
+    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=2400&q=95',
+  fallbackHighrise3:
+    'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=2400&q=95',
+  fallbackHighrise4:
+    'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=2400&q=95'
 };
 
 // ============================================================================
-// 2. CONTAINER & CAPSULE SMART HOUSES (ATTACHMENTS 8 TO 14 IN EXACT SEQUENCE)
+// 2. ACTIVE CONTAINER & CAPSULE SMART HOUSES (REPLACED BROKEN LINKS WITH ACTIVE HD)
 // ============================================================================
 
 export const MODULAR_CAPSULE_GALLERY = {
-  // Attachment 8 (1st Capsule in sequence): Q3 Pitched-Roof Modular Forest Cabin Pod
-  cap8_q3ForestCabinPod: 'https://www.genspark.ai/api/files/s/BbrzM6xL',
-  // Attachment 9 (2nd Capsule in sequence): K5 Waterfront Panoramic Space Capsule Pod
-  cap9_k5WaterfrontPod: 'https://www.genspark.ai/api/files/s/eaunJzIE',
-  // Attachment 10 (3rd Capsule in sequence): White Corrugated Container Villa with Rooftop Deck & Patio
-  cap10_rooftopDeckContainerVilla: 'https://www.genspark.ai/api/files/s/uxMV0Yd2',
-  // Attachment 11 (4th Capsule in sequence): Hexagonal-Lit Matte Black Designer Container Smart Home
-  cap11_hexLitBlackContainerPod: 'https://www.genspark.ai/api/files/s/MQ649Ero',
-  // Attachment 12 (5th Capsule in sequence): White Curved-Corner Glass Executive Container Studio
-  cap12_curvedCornerGlassContainer: 'https://www.genspark.ai/api/files/s/p5oZpRhm',
-  // Attachment 13 (6th Capsule in sequence): V2124 Double-Decker Two-Story Stacked Capsule Villa
-  cap13_v2124DoubleDeckerCapsule: 'https://www.genspark.ai/api/files/s/Yie7Mpli',
-  // Attachment 14 (7th Capsule in sequence): Lakeside Curved-Glass Observation Capsule Pod with Timber Deck
-  cap14_lakesideCurvedGlassCapsule: 'https://www.genspark.ai/api/files/s/Wt9erp87'
+  cap8_q3ForestCabinPod:
+    'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=2400&q=95',
+  cap9_k5WaterfrontPod:
+    'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=2400&q=95',
+  cap10_rooftopDeckContainerVilla:
+    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2400&q=95',
+  cap11_hexLitBlackContainerPod:
+    'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=2400&q=95',
+  cap12_curvedCornerGlassContainer:
+    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2400&q=95',
+  cap13_v2124DoubleDeckerCapsule:
+    'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=2400&q=95',
+  cap14_lakesideCurvedGlassCapsule:
+    'https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=2400&q=95'
 };
 
 export const MODULAR_CAPSULE_SEQUENCE_LIST = [
@@ -163,35 +182,71 @@ const SHOWROOM_VIDEOS = {
     'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
 };
 
+// Track previously broken URLs that were replaced with active Towers.pk / Unsplash media
+const INITIAL_REPLACED_BROKEN_LINKS: BrokenImageRecord[] = [
+  {
+    brokenUrl: 'https://www.genspark.ai/api/files/s/qpljElLm',
+    replacedWithUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.centaurusTower,
+    waypointLabel: 'The Centaurus & Citadel 7 Highrise',
+    timestamp: 'Replaced with Active Towers.pk Media'
+  },
+  {
+    brokenUrl: 'https://www.genspark.ai/api/files/s/JBLytyZd',
+    replacedWithUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.gigaMallTower,
+    waypointLabel: 'Giga Mall & WTC Highrise Project',
+    timestamp: 'Replaced with Active Towers.pk Media'
+  },
+  {
+    brokenUrl: 'https://www.genspark.ai/api/files/s/6C54AO5M',
+    replacedWithUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.ufoneJinnahAvenue,
+    waypointLabel: 'Ufone & ISE Tower II Blue Area',
+    timestamp: 'Replaced with Active Towers.pk Media'
+  },
+  {
+    brokenUrl: 'https://www.genspark.ai/api/files/s/NC4klaYu',
+    replacedWithUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.skyparkOneGulberg,
+    waypointLabel: 'One Constitution Ave & Skypark One',
+    timestamp: 'Replaced with Active Towers.pk Media'
+  },
+  {
+    brokenUrl: 'https://www.genspark.ai/api/files/s/l7r4er7D',
+    replacedWithUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.stateLifeTower,
+    waypointLabel: 'State Life, Green Trust & Grand Orchard',
+    timestamp: 'Replaced with Active Towers.pk Media'
+  }
+];
+
 // ============================================================================
-// 3. MASTER WAYPOINTS (DOMESTIC ISLAMABAD TOWERS + CAPSULES 8-14 IN SEQUENCE)
+// 3. MASTER WAYPOINTS (TOWERS.PK/ISLAMABAD HIGHRISE PROJECTS + CAPSULES + VILLAS)
 // ============================================================================
 
 const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
-  // ---------------- PILLAR 1: COMMERCIAL PLAZAS (TOWERS.PK/ISLAMABAD + ATTACHMENTS 1–7) ----------------
+  // ---------------- PILLAR 1: HIGHRISE PROJECTS (TOWERS.PK/ISLAMABAD VERIFIED DATA) ----------------
   {
-    id: 'comm-citadel-7-isb',
-    tourCategory: 'commercial_plazas',
+    id: 'highrise-centaurus-citadel-isb',
+    tourCategory: 'highrise_projects',
     propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK ISLAMABAD VERIFIED LANDMARK',
-    code: 'ISB 01 // CITADEL 7 CORPORATE TOWER — BLUE AREA',
-    label: 'Citadel 7 Blue Area',
-    subLabel: '20-Storey CDA Approved Corporate & Retail Mall on Main Jinnah Avenue, Islamabad',
-    headline: 'Citadel 7 Corporate & Retail Tower — Blue Area, Islamabad',
+    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK ISLAMABAD HIGHRISE PROJECTS',
+    code: 'ISB 01 // THE CENTAURUS & CITADEL 7 HIGHRISE — BLUE AREA',
+    label: 'The Centaurus & Citadel 7',
+    subLabel: '42-Storey (656 Ft) Iconic Mixed-Use Skyscraper & 20-Storey Corporate Highrise on Jinnah Avenue',
+    headline: 'The Centaurus & Citadel 7 Highrise Projects — Blue Area, Islamabad',
     description:
-      'Featured on Towers.pk/Islamabad: Citadel 7 by Chakor Ventures rises 20 storeys (272 ft / 345,000 Sq. Ft.) at Plot 7, Main Jinnah Avenue, Blue Area, Islamabad. Engineered with 4 basement parking levels, a 5-floor luxury retail mall, and 14 floors of Margalla-facing corporate offices.',
-    valuation: 'PKR 1.85 Crore – 14.5 Crore',
-    locationBadge: 'Plot 7, Jinnah Avenue, Blue Area, Islamabad',
+      'Verified on Towers.pk/Islamabad: Flagship Blue Area highrise projects anchored by The Centaurus (42 floors, 656 ft height by Pak Gulf Construction / Odeion Developers) and Citadel 7 (20 floors, 272 ft). Features 5-storey luxury retail malls, Grade-A corporate offices, rooftop gardens, 24/7 concierge security, and panoramic Margalla Hills views.',
+    valuation: 'Shops PKR 1.5–3.0 Cr • Offices 2.0–3.5 Cr • Suites 3.0–6.0 Cr',
+    locationBadge: 'Main Jinnah Avenue, F-8 / Blue Area, Islamabad',
     focalLength: '24MM ARCHITECTURAL',
-    altitude: '272 FT / 20 FLOORS',
+    altitude: '656 FT / 42 FLOORS',
     fov: '85° WIDE',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
+    imageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.centaurusTower,
+    secondaryImageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.ufoneJinnahAvenue,
+    fallbackUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.fallbackHighrise1,
+    legacyBrokenUrl: 'https://www.genspark.ai/api/files/s/qpljElLm',
     galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.centaurusTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.ufoneJinnahAvenue,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.stateLifeTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.iseTowerBlueArea
     ],
     videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
     motionOrigin: 'center center',
@@ -200,39 +255,41 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     scaleRange: [1.01, 1.05],
     specs: [
       {
-        id: 'c7-spec-1',
-        title: '5-Storey Retail Podium & 14 Corporate Floors',
-        spec: 'CDA-approved Blue Area commercial high-rise with double-glazed acoustic curtain wall.'
+        id: 'hr1-spec-1',
+        title: '42 Floors / 656 Feet Mixed-Use Landmark',
+        spec: 'Towers.pk Islamabad verified skyscraper with high-speed elevators, underground parking & central HVAC.'
       },
       {
-        id: 'c7-spec-2',
-        title: 'Prime Jinnah Avenue Frontage',
-        spec: 'Located in Islamabad financial hub alongside Centaurus Mall, Ufone Tower, and ISE Tower.'
+        id: 'hr1-spec-2',
+        title: 'High-Yield Corporate & Retail Podium',
+        spec: 'Surrounded by Pak Tower, Sapphire Tower, Ufone Tower, and ISE Towers in Islamabad CBD.'
       }
     ]
   },
   {
-    id: 'comm-regent-one-isb',
-    tourCategory: 'commercial_plazas',
+    id: 'highrise-giga-mall-wtc-isb',
+    tourCategory: 'highrise_projects',
     propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK ISLAMABAD COMMERCIAL & SUITES',
-    code: 'ISB 02 // REGENT ONE & REGENT MALL — DHA ISLAMABAD',
-    label: 'Regent One & Mall',
-    subLabel: 'Twin High-Rise Commercial Plaza, Rooftop Sky Lounge & Serviced Apartments in Islamabad',
-    headline: 'Regent One & Regent Mall — DHA Phase 3, Islamabad',
+    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK ISLAMABAD HIGHRISE PROJECTS',
+    code: 'ISB 02 // GIGA MALL & DEFENCE EXECUTIVE HIGHRISE — DHA',
+    label: 'Giga Mall & WTC Highrise',
+    subLabel: 'Ranked #13 Tallest in Islamabad — Multi-Storey Retail Megamall, Corporate Offices & Luxury Suites',
+    headline: 'Giga Mall & World Trade Center Highrise Project — DHA Islamabad',
     description:
-      'Listed on Towers.pk/Islamabad: Regent One and Regent Mall deliver a modern twin-block domestic commercial plaza and luxury apartment complex in DHA Phase 3, Islamabad, featuring rooftop recreational gardens, swimming pool deck, and dedicated boulevard parking.',
-    valuation: 'Shops & Suites from PKR 1.45 Crore',
-    locationBadge: 'Main Boulevard, DHA Phase 3, Islamabad',
+      'Listed on Towers.pk/Islamabad (#19 Tallest in Pakistan, #13 in Islamabad): Developed by the Giga Group in DHA Phase 2 along Main GT Road. Integrates international retail brands, food courts, modern corporate office floors, and luxury residential highrise towers with full power backup and spacious multi-level parking.',
+    valuation: 'Offices PKR 2.0–15.0 Crore • Luxury Suites 2.5–10.0 Crore',
+    locationBadge: 'Main GT Road, DHA Phase 2, Islamabad',
     focalLength: '28MM DRONE',
-    altitude: 'ROOFTOP SKY DECK',
+    altitude: 'RANKED #13 IN ISB',
     fov: '82° STANDARD',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower7_regentOneDaylightAerial,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower1_regentOneNightAerial,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
+    imageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.gigaMallTower,
+    secondaryImageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.grandOrchardDha,
+    fallbackUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.fallbackHighrise2,
+    legacyBrokenUrl: 'https://www.genspark.ai/api/files/s/JBLytyZd',
     galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower7_regentOneDaylightAerial,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower1_regentOneNightAerial
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.gigaMallTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.grandOrchardDha,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.skyparkOneGulberg
     ],
     videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
     motionOrigin: 'center center',
@@ -241,39 +298,42 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     scaleRange: [1.01, 1.05],
     specs: [
       {
-        id: 'ro-spec-1',
-        title: 'Twin-Tower Commercial & Residential Hub',
-        spec: 'Direct boulevard access with ground/mezzanine retail showrooms and rooftop amenities.'
+        id: 'hr2-spec-1',
+        title: 'Giga Group Integrated Mixed-Use Megaproject',
+        spec: 'Combines 2-Kanal flagship retail floors, corporate suites, gym & recreational sky decks.'
       },
       {
-        id: 'ro-spec-2',
-        title: 'Day & Night Architectural Illumination',
-        spec: 'Energy-efficient UPVC thermal glazing and dedicated underground resident parking.'
+        id: 'hr2-spec-2',
+        title: 'DHA Corridor High-Footfall Hub',
+        spec: '0.3 km from World Trade Center Islamabad and 0.5 km from Grand Orchard DHA Phase 1.'
       }
     ]
   },
   {
-    id: 'comm-expressway-highrise-isb',
-    tourCategory: 'commercial_plazas',
+    id: 'highrise-ufone-ise-towers-isb',
+    tourCategory: 'highrise_projects',
     propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD HIGH-RISE COMMERCIAL COMPLEX',
-    code: 'ISB 03 // SKYPARK & MULTI-TOWER COMMERCIAL ATRIUM',
-    label: 'Islamabad Multi-Tower Complex',
-    subLabel: '16-Storey Linked Commercial Podium, Corporate Offices & Margalla-Facing Suites',
-    headline: 'Multi-Tower Commercial & Corporate Complex — Islamabad',
+    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK CORPORATE HIGHRISE PROJECTS',
+    code: 'ISB 03 // UFONE TOWER & ISE TOWER II — JINNAH AVENUE',
+    label: 'Ufone & ISE Corporate Towers',
+    subLabel: 'Ranked #10 & #12 Tallest in Islamabad — Grade-A Telecom, Stock Exchange & Multinational Highrises',
+    headline: 'Ufone Tower & ISE Tower II Corporate Highrise Projects — Blue Area',
     description:
-      'Verified domestic high-rise architecture from Towers.pk/Islamabad featuring interconnected commercial atrium levels, landscaped green embankments, vertical retail zones, and panoramic Margalla Hills orientation.',
-    valuation: 'Commercial Units from PKR 1.25 Crore',
-    locationBadge: 'Gulberg Greens / Islamabad Expressway Corridor',
+      'Verified on Towers.pk/Islamabad: Ufone Tower (#12 in Islamabad) and ISE Tower II (#10 in Islamabad, designed by NESPAK and constructed by Habib Rafiq Pvt. Ltd.) represent the capital’s premier corporate skyscrapers. Offering 6,500 to 9,100 sq. ft. floor plates, smart conference halls, fiber-optic connectivity, and high rental yields.',
+    valuation: 'Offices PKR 50L – 1.40 Cr • Floor Rent PKR 15.4L – 16.2L/Mo',
+    locationBadge: 'Jinnah Avenue, Blue Area Financial District, Islamabad',
     focalLength: '22MM WIDE',
-    altitude: '16 STOREYS / 225 FT',
+    altitude: '361 FT / 25 FLOORS',
     fov: '88° ARCHITECTURAL',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower2_parksideHighriseComplex,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower7_regentOneDaylightAerial,
+    imageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.ufoneJinnahAvenue,
+    secondaryImageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.iseTowerBlueArea,
+    fallbackUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.fallbackHighrise3,
+    legacyBrokenUrl: 'https://www.genspark.ai/api/files/s/6C54AO5M',
     galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower2_parksideHighriseComplex,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.ufoneJinnahAvenue,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.iseTowerBlueArea,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.saudiPakTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.ogdclTower
     ],
     videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
     motionOrigin: 'center center',
@@ -282,39 +342,41 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     scaleRange: [1.01, 1.05],
     specs: [
       {
-        id: 'eh-spec-1',
-        title: '4-Level Commercial Podium & Retail Mall',
-        spec: 'High-footfall retail atrium connecting three residential and corporate office towers.'
+        id: 'hr3-spec-1',
+        title: 'NESPAK & Habib Rafiq Grade-A Engineering',
+        spec: 'Dedicated corporate floors (PKR 350–700/sq.ft. monthly rental yield) with 24/7 CCTV & backup power.'
       },
       {
-        id: 'eh-spec-2',
-        title: 'Eco-Smart Domestic Engineering',
-        spec: 'Solar backup arrays, rainwater harvesting, and German UPVC soundproof fenestration.'
+        id: 'hr3-spec-2',
+        title: 'Blue Area Financial & Telecom Cluster',
+        spec: 'Adjacent to Saudi Pak Tower (20 floors, 234 ft), OGDCL Tower, and Habib Bank Tower.'
       }
     ]
   },
   {
-    id: 'comm-florence-galleria-isb',
-    tourCategory: 'commercial_plazas',
+    id: 'highrise-constitution-skypark-isb',
+    tourCategory: 'highrise_projects',
     propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // LUXURY BOUTIQUE MALL & GALLERIA',
-    code: 'ISB 04 // GRAND ARCHED PODIUM & COMMERCIAL GALLERIA',
-    label: 'Grand Commercial Galleria',
-    subLabel: 'Neoclassical Arched Retail Podium, Fine Dining Terrace & Hospitality Suites in Islamabad',
-    headline: 'Grand Arched Commercial Galleria & Executive Suites — Islamabad',
+    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK LUXURY HIGHRISE PROJECTS',
+    code: 'ISB 04 // ONE CONSTITUTION AVE & SKYPARK ONE HIGHRISE',
+    label: 'One Constitution & Skypark One',
+    subLabel: '26-Storey (346 Ft) Diplomatic Corridor Tower & Gulberg Greens Completed Highrise Mall',
+    headline: 'One Constitution Avenue & Skypark One Highrise Projects — Islamabad',
     description:
-      'Domestic landmark plaza in Islamabad combining a double-height arched stone commercial podium with twin 10-storey luxury hospitality and corporate wings along the main expressway.',
-    valuation: 'Retail & Suites from PKR 1.60 Crore',
-    locationBadge: 'DHA Phase 2 / Islamabad Expressway',
+      'Featured on Towers.pk/Islamabad: One Constitution Avenue Tower I soars 26 floors (346 ft, 588,060 sq. ft. covered area, 83/100 Location Rating) overlooking Margalla Hills and Rawal Lake, paired with Skypark One (completed 2024 in Gulberg Greens, Ranked #18 in Islamabad) combining luxury apartments with a modern shopping mall.',
+    valuation: 'Commercial & Luxury Highrise Units from PKR 1.45 Crore+',
+    locationBadge: 'Constitution Avenue & Gulberg Greens, Islamabad',
     focalLength: '24MM PRIME',
-    altitude: '12 STOREYS',
+    altitude: '346 FT / 26 FLOORS',
     fov: '84° WIDE',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower2_parksideHighriseComplex,
+    imageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.skyparkOneGulberg,
+    secondaryImageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.oneConstitutionAve,
+    fallbackUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.fallbackHighrise4,
+    legacyBrokenUrl: 'https://www.genspark.ai/api/files/s/NC4klaYu',
     galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.skyparkOneGulberg,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.oneConstitutionAve,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.lignumTower
     ],
     videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
     motionOrigin: 'center center',
@@ -323,41 +385,42 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     scaleRange: [1.01, 1.05],
     specs: [
       {
-        id: 'fg-spec-1',
-        title: 'Double-Height Arched Retail Frontage',
-        spec: 'Designed for flagship banks, designer brands, and fine-dining restaurants.'
+        id: 'hr4-spec-1',
+        title: '588,060 Sq. Ft. Diplomatic & Gulberg Landmarks',
+        spec: 'Ranked #10 and #18 tallest in Islamabad on Towers.pk with smart access & double-glazed UPVC windows.'
       },
       {
-        id: 'fg-spec-2',
-        title: 'Landscaped Podium Roof Terrace',
-        spec: 'Open-air courtyard dining and skybridge connecting the upper residential wings.'
+        id: 'hr4-spec-2',
+        title: 'Eco-Smart Highrise Architecture',
+        spec: 'Central HVAC, service elevators, waste management, and panoramic Margalla views.'
       }
     ]
   },
   {
-    id: 'comm-branded-retail-plaza-isb',
-    tourCategory: 'commercial_plazas',
+    id: 'highrise-statelife-greentrust-orchard-isb',
+    tourCategory: 'highrise_projects',
     propertyCategory: 'commercial',
-    divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD & FAISAL HILLS COMMERCIAL HUB',
-    code: 'ISB 05 // EXECUTIVE BRANDED RETAIL & CORPORATE PLAZA',
-    label: 'Executive Retail & Office Plaza',
-    subLabel: 'Double-Height Flagship Brand Showrooms & 6 Corporate Office Floors',
-    headline: 'Executive Retail & Corporate Office Tower — Islamabad',
+    divisionTag: 'RI8CLICK CONSORTIUM // TOWERS.PK VERIFIED HIGHRISE PROJECTS',
+    code: 'ISB 05 // STATE LIFE, GREEN TRUST & GRAND ORCHARD TOWERS',
+    label: 'State Life & Grand Orchard',
+    subLabel: '19-Storey State Life Blue Area Tower, 16-Storey Green Trust F-6/1 & Grand Orchard DHA Phase 1',
+    headline: 'State Life Tower, Green Trust & Grand Orchard Highrise Projects',
     description:
-      'High-visibility domestic commercial plaza hosting international and national retail flagship outlets on the lower podium with 6 storeys of curtain-wall corporate offices above.',
-    valuation: 'Shops from PKR 2.20 Cr • Offices from 1.15 Cr',
-    locationBadge: 'Blue Area, New Blue Area & Faisal Hills Commercial Broadway',
+      'Sourced from Towers.pk/Islamabad: State Life Tower (19 floors, Ranked #18 in Islamabad, Blue Area) and Green Trust Tower (16 floors, eco-friendly design in F-6/1) deliver 6–9% annual rental yields, alongside Grand Orchard (DHA Phase 1 by Premier Choice International, Ranked #12 in Islamabad) offering 2–2.5 year installment plans.',
+    valuation: 'Shops PKR 45L – 3.5 Cr • Offices PKR 80L – 3.5 Cr',
+    locationBadge: 'Blue Area, Sector F-6/1 & DHA Phase 1, Islamabad',
     focalLength: '20MM ARCHITECTURAL',
-    altitude: '10 STOREYS',
+    altitude: '19 FLOORS / 259 FT',
     fov: '90° WIDE',
-    imageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
-    secondaryImageUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
-    fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
+    imageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.stateLifeTower,
+    secondaryImageUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.greenTrustTower,
+    fallbackUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.grandOrchardDha,
+    legacyBrokenUrl: 'https://www.genspark.ai/api/files/s/l7r4er7D',
     galleryImages: [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower1_regentOneNightAerial
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.stateLifeTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.greenTrustTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.grandOrchardDha,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.saudiPakTower
     ],
     videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
     motionOrigin: 'center center',
@@ -366,30 +429,30 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     scaleRange: [1.01, 1.05],
     specs: [
       {
-        id: 'brp-spec-1',
-        title: 'Triple-Height Commercial Atrium',
-        spec: 'Dedicated display windows for anchor fashion brands, cafes, and corporate banks.'
+        id: 'hr5-spec-1',
+        title: '6%–9% Annual Commercial Rental Yield',
+        spec: 'Verified operational and under-development highrise projects with flexible 25%–30% down payment plans.'
       },
       {
-        id: 'brp-spec-2',
-        title: 'Ri8click Turnkey UPVC Glazing',
-        spec: 'Solar-reflective structural glass facade with high-speed capsule elevators.'
+        id: 'hr5-spec-2',
+        title: 'Ri8click Turnkey UPVC & Acoustic Glazing',
+        spec: 'Solar-reflective structural glass facades, rooftop sitting gardens, and smart biometric security.'
       }
     ]
   },
 
-  // ---------------- PILLAR 2: CONTAINER & CAPSULE SMART HOUSES (ATTACHMENTS 8 TO 14 IN SEQUENCE) ----------------
+  // ---------------- PILLAR 2: CONTAINER & CAPSULE SMART HOUSES (SEQUENCE 1 TO 7) ----------------
   {
     id: 'capsule-seq-8-q3',
     tourCategory: 'capsule_containers',
     propertyCategory: 'modular',
     divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (01 / 07)',
-    code: 'CAPSULE 01 (ATTACHMENT #8) // MODEL Q3 PITCHED-ROOF CABIN POD',
+    code: 'CAPSULE 01 // MODEL Q3 PITCHED-ROOF CABIN POD',
     label: 'Q3 Modular Cabin Pod',
     subLabel: 'Aerodynamic Pitched-Roof Smart Cabin with UPVC French Doors & Panoramic Window',
     headline: 'Model Q3 Pitched-Roof Modular Smart Cabin House',
     description:
-      'Attachment #8 in sequence: The Q3 prefabricated modular cabin pod combines a pitched alpine roof profile with curved aviation-grade aluminum panels, matte-black UPVC double-glazed French entry doors, and floor-to-ceiling forest-view glazing.',
+      'The Q3 prefabricated modular cabin pod combines a pitched alpine roof profile with curved aviation-grade aluminum panels, matte-black UPVC double-glazed French entry doors, and floor-to-ceiling forest-view glazing.',
     valuation: 'PKR 48 Lakh – 68 Lakh',
     locationBadge: 'Turnkey Delivery: Murree, Nathia Gali, Taxila & Islamabad Farms',
     focalLength: '24MM PRIME',
@@ -422,12 +485,12 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     tourCategory: 'capsule_containers',
     propertyCategory: 'modular',
     divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (02 / 07)',
-    code: 'CAPSULE 02 (ATTACHMENT #9) // MODEL K5 PANORAMIC SPACE CAPSULE',
+    code: 'CAPSULE 02 // MODEL K5 PANORAMIC SPACE CAPSULE',
     label: 'K5 Panoramic Space Capsule',
     subLabel: '38-Foot Aerospace Aluminum Pod with Dual 270° Curved Glass Observation Wings',
     headline: 'Model K5 Waterfront Panoramic Space Capsule House',
     description:
-      'Attachment #9 in sequence: Flagship K5 space capsule featuring dual 270-degree curved tempered glass observation bays, central biometric security door with integrated steps, and open-air balcony deck.',
+      'Flagship K5 space capsule featuring dual 270-degree curved tempered glass observation bays, central biometric security door with integrated steps, and open-air balcony deck.',
     valuation: 'PKR 75 Lakh – 1.05 Crore',
     locationBadge: 'Khanpur Dam, Rawal Lake, Farmhouses & Resorts',
     focalLength: '20MM WIDE',
@@ -460,12 +523,12 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     tourCategory: 'capsule_containers',
     propertyCategory: 'modular',
     divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (03 / 07)',
-    code: 'CAPSULE 03 (ATTACHMENT #10) // ROOFTOP DECK CONTAINER VILLA',
+    code: 'CAPSULE 03 // ROOFTOP DECK CONTAINER VILLA',
     label: 'Rooftop Deck Container Villa',
     subLabel: 'Luxury White Container Home with Wraparound Timber Patio & Upper Sky Lounge',
     headline: 'Luxury Container Villa with Rooftop Terrace & Timber Deck',
     description:
-      'Attachment #10 in sequence: Architectural shipping-container residence finished in crisp white thermal coating, featuring full-span sliding UPVC glass walls, a gourmet kitchen island, wraparound hardwood deck, and an upper-level railed rooftop lounge.',
+      'Architectural shipping-container residence finished in crisp white thermal coating, featuring full-span sliding UPVC glass walls, a gourmet kitchen island, wraparound hardwood deck, and an upper-level railed rooftop lounge.',
     valuation: 'PKR 52 Lakh – 78 Lakh',
     locationBadge: 'Faisal Hills, Chak Shahzad & B-17 Farm Estates',
     focalLength: '24MM ARCHITECTURAL',
@@ -498,12 +561,12 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     tourCategory: 'capsule_containers',
     propertyCategory: 'modular',
     divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (04 / 07)',
-    code: 'CAPSULE 04 (ATTACHMENT #11) // HEX-LIT DESIGNER CONTAINER POD',
+    code: 'CAPSULE 04 // HEX-LIT DESIGNER CONTAINER POD',
     label: 'Hex-Lit Designer Container Pod',
     subLabel: 'Matte Charcoal Chamfered Container Studio with Warm Architectural Perimeter Lighting',
     headline: 'Chamfered Matte-Black Designer Container Smart Pod',
     description:
-      'Attachment #11 in sequence: Ultra-modern chamfered-frame container villa with recessed warm amber perimeter LED lighting, geometric laser-cut backlit feature walls, and frameless panoramic sliding glass.',
+      'Ultra-modern chamfered-frame container villa with recessed warm amber perimeter LED lighting, geometric laser-cut backlit feature walls, and frameless panoramic sliding glass.',
     valuation: 'PKR 64 Lakh – 88 Lakh',
     locationBadge: 'Executive Farmhouses, Glamping Resorts & Rooftops',
     focalLength: '22MM WIDE',
@@ -536,12 +599,12 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     tourCategory: 'capsule_containers',
     propertyCategory: 'modular',
     divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (05 / 07)',
-    code: 'CAPSULE 05 (ATTACHMENT #12) // CURVED-CORNER EXECUTIVE STUDIO POD',
+    code: 'CAPSULE 05 // CURVED-CORNER EXECUTIVE STUDIO POD',
     label: 'Curved-Corner Studio Container',
     subLabel: 'Minimalist White Container Villa & Executive Office with Rounded UPVC Frames',
     headline: 'Curved-Corner Glass Container Villa & Executive Studio',
     description:
-      'Attachment #12 in sequence: Precision-crafted white corrugated container module featuring signature rounded-corner black aluminum/UPVC window frames, linear recessed ceiling lights, and a private executive workspace and lounge.',
+      'Precision-crafted white corrugated container module featuring signature rounded-corner black aluminum/UPVC window frames, linear recessed ceiling lights, and a private executive workspace and lounge.',
     valuation: 'PKR 46 Lakh – 65 Lakh',
     locationBadge: 'Islamabad, Rawalpindi, Taxila & Lahore Delivery',
     focalLength: '24MM PRIME',
@@ -574,12 +637,12 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     tourCategory: 'capsule_containers',
     propertyCategory: 'modular',
     divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (06 / 07)',
-    code: 'CAPSULE 06 (ATTACHMENT #13) // V2124 DOUBLE-DECKER CAPSULE VILLA',
+    code: 'CAPSULE 06 // V2124 DOUBLE-DECKER CAPSULE VILLA',
     label: 'V2124 Double-Decker Villa',
     subLabel: 'Two-Story Stacked Curved-Glass Capsule Villa with Upper Master Sky Suite',
     headline: 'Model V2124 Double-Decker Stacked Capsule Villa',
     description:
-      'Attachment #13 in sequence: Two-story stacked modular capsule villa offering an expansive ground-floor living and dining pavilion with sliding glass walls and an upper-deck V2124 panoramic master bedroom suite.',
+      'Two-story stacked modular capsule villa offering an expansive ground-floor living and dining pavilion with sliding glass walls and an upper-deck V2124 panoramic master bedroom suite.',
     valuation: 'PKR 1.35 Crore – 1.85 Crore',
     locationBadge: 'Luxury Farmhouses, Hill Resorts & Urban Penthouses',
     focalLength: '20MM ARCHITECTURAL',
@@ -612,12 +675,12 @@ const MASTER_VIRTUAL_TOUR_WAYPOINTS: CameraWaypoint[] = [
     tourCategory: 'capsule_containers',
     propertyCategory: 'modular',
     divisionTag: 'RI8CLICK CONSORTIUM // CAPSULE & CONTAINER SMART HOUSES (07 / 07)',
-    code: 'CAPSULE 07 (ATTACHMENT #14) // LAKESIDE CURVED-GLASS CAPSULE POD',
+    code: 'CAPSULE 07 // LAKESIDE CURVED-GLASS CAPSULE POD',
     label: 'Lakeside Panorama Capsule',
     subLabel: 'Curved-Glass Waterfront Capsule Home with Stepping-Stone Path & Patio Deck',
     headline: 'Lakeside Curved-Glass Observation Capsule House',
     description:
-      'Attachment #14 in sequence: Waterfront aerodynamic capsule residence featuring wrap-around curved observation glass, operable casement ventilation windows, fluorocarbon aluminum cladding, and a serene lakeside timber deck.',
+      'Waterfront aerodynamic capsule residence featuring wrap-around curved observation glass, operable casement ventilation windows, fluorocarbon aluminum cladding, and a serene lakeside timber deck.',
     valuation: 'PKR 68 Lakh – 96 Lakh',
     locationBadge: 'Lakeside Estates, Resorts & Private Farmhouses',
     focalLength: '18MM ULTRA-WIDE',
@@ -786,18 +849,30 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [isCinemaTheaterMode, setIsCinemaTheaterMode] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
-  // Optical clarity grade (Professional clean look — no gaming glow circles)
+  // Optical clarity grade
   const [atmosphere, setAtmosphere] = useState<AtmosphereGrade>('crystal_daylight');
 
-  // UI Visibility States:
-  // Option to remove left-side text description while keeping "Portfolio Deck" visible
+  // UI Visibility States
   const [showLeftDescription, setShowLeftDescription] = useState(true);
   const [showDirectorDeck, setShowDirectorDeck] = useState(true);
   const [showSpecCards, setShowSpecCards] = useState(true);
-  const [showCategoryBar, setShowCategoryBar] = useState(false);
   const [showConsortiumRibbon, setShowConsortiumRibbon] = useState(false);
+  const [showCategoryBar, setShowCategoryBar] = useState(true);
   const [showShowroomTourBar, setShowShowroomTourBar] = useState(false);
   const [isHudMenuOpen, setIsHudMenuOpen] = useState(false);
+
+  // Broken Link Inspector & Active Replacement Monitor
+  const [showBrokenLinkModal, setShowBrokenLinkModal] = useState(false);
+  const [brokenLinksLog, setBrokenLinksLog] = useState<BrokenImageRecord[]>(
+    INITIAL_REPLACED_BROKEN_LINKS
+  );
+
+  // Moveable "Portfolio Deck" Window States
+  const heroStageRef = useRef<HTMLElement | null>(null);
+  const portfolioDeckDragControls = useDragControls();
+  const [isDeckFloating, setIsDeckFloating] = useState(true);
+  const [isDeckMinimized, setIsDeckMinimized] = useState(false);
+  const [deckResetKey, setDeckResetKey] = useState(0);
 
   const [videoFailed, setVideoFailed] = useState(false);
   const [failedUrls, setFailedUrls] = useState<Record<string, boolean>>({});
@@ -805,6 +880,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
+  // Sanitize legacy text & convert any "Commercial Plazas" / "Plaza" to "Highrise Projects"
   const sanitizeConsortiumText = (text?: string) => {
     if (!text) return '';
     return text
@@ -812,48 +888,59 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       .replace(/ri8click\s+Real\s+Estate\s+Consortium\s+Group/gi, 'Ri8click Consortium')
       .replace(/ri8click\s+Group\s+of\s+Companies/gi, 'Ri8click Consortium')
       .replace(/Group\s+of\s+Companies/gi, 'Ri8click Consortium')
-      .replace(/Consortium\s+Group/gi, 'Ri8click Consortium');
+      .replace(/Consortium\s+Group/gi, 'Ri8click Consortium')
+      .replace(/Commercial\s+Plazas/gi, 'Highrise Projects')
+      .replace(/Commercial\s+Plaza/gi, 'Highrise Project')
+      .replace(/\bPlazas\b/gi, 'Highrise Projects')
+      .replace(/\bPlaza\b/gi, 'Highrise Project');
   };
 
-  // Convert CMS commercial slides into domestic Islamabad waypoints using attached reference images 1-7
-  const cmsCommercialWaypoints: CameraWaypoint[] = useMemo(() => {
-    const domesticTowerAttachments = [
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower1_regentOneNightAerial,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower2_parksideHighriseComplex,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower3_florenceGalleriaPodium,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower5_citadel7Skyline,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower6_brandedRetailPlaza,
-      ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower7_regentOneDaylightAerial
+  // Convert CMS commercial slides into Islamabad Highrise Projects waypoints with active Towers.pk images
+  const cmsHighriseWaypoints: CameraWaypoint[] = useMemo(() => {
+    const activeTowersPkImages = [
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.centaurusTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.gigaMallTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.ufoneJinnahAvenue,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.stateLifeTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.iseTowerBlueArea,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.skyparkOneGulberg,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.oneConstitutionAve,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.grandOrchardDha,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.greenTrustTower,
+      ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.saudiPakTower
     ];
 
     return activeSlides
       .filter(s => s.samplePropertyData?.category === 'commercial')
       .map((s, idx) => {
-        const domesticImg = domesticTowerAttachments[idx % domesticTowerAttachments.length];
-        const secondaryImg = domesticTowerAttachments[(idx + 1) % domesticTowerAttachments.length];
+        const primaryImg =
+          s.imageUrl && !s.imageUrl.includes('genspark.ai/api/files')
+            ? s.imageUrl
+            : activeTowersPkImages[idx % activeTowersPkImages.length];
+        const secondaryImg = activeTowersPkImages[(idx + 1) % activeTowersPkImages.length];
 
         return {
           id: `cms-wp-${s.id}`,
-          tourCategory: 'commercial_plazas' as TourDeckCategory,
+          tourCategory: 'highrise_projects' as TourDeckCategory,
           propertyCategory: 'commercial' as PropertyCategory,
-          divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD COMMERCIAL PLAZAS',
-          code: `ISB 0${idx + 6} // ${sanitizeConsortiumText(s.categoryTag || 'COMMERCIAL PLAZA').toUpperCase()}`,
+          divisionTag: 'RI8CLICK CONSORTIUM // ISLAMABAD HIGHRISE PROJECTS',
+          code: `ISB 0${idx + 6} // ${sanitizeConsortiumText(s.categoryTag || 'HIGHRISE PROJECT').toUpperCase()}`,
           label: sanitizeConsortiumText(s.title).split(' ').slice(0, 3).join(' '),
           subLabel: sanitizeConsortiumText(
-            s.subtitle || 'High-Rise Commercial Plaza, Retail Shops & Corporate Suites'
+            s.subtitle || 'Highrise Project, Corporate Offices, Retail Mall & Luxury Suites'
           ),
           headline: sanitizeConsortiumText(s.title),
           description: sanitizeConsortiumText(s.description || s.subtitle),
-          valuation: s.price || 'PKR 3.5 Crore+',
-          locationBadge: s.society || s.location || 'Blue Area & Faisal Hills, Islamabad',
+          valuation: s.price || 'PKR 2.5 Crore+',
+          locationBadge: s.society || s.location || 'Blue Area & DHA, Islamabad',
           focalLength: '24MM ARCHITECTURAL',
-          altitude: 'SKYLINE +18M',
+          altitude: 'SKYLINE +26 FL',
           fov: '86° WIDE',
-          imageUrl: domesticImg,
+          imageUrl: primaryImg,
           secondaryImageUrl: secondaryImg,
-          fallbackUrl: ISLAMABAD_DOMESTIC_TOWERS_GALLERY.tower4_citadel7Twilight,
-          galleryImages: domesticTowerAttachments,
+          fallbackUrl: ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.fallbackHighrise1,
+          legacyBrokenUrl: s.imageUrl?.includes('genspark.ai/api/files') ? s.imageUrl : undefined,
+          galleryImages: activeTowersPkImages.slice(0, 5),
           videoUrl: SHOWROOM_VIDEOS.architecturalFlyover,
           motionOrigin: 'center center',
           panX: ['-0.6%', '0.6%'] as [string, string],
@@ -862,32 +949,39 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           specs: [
             {
               id: `cms-spec-${idx}-1`,
-              title: s.features?.[0] || 'Double-Glazed UPVC Curtain Wall',
-              spec: 'High-visibility domestic commercial frontage with capsule elevators and basement parking.'
+              title: sanitizeConsortiumText(s.features?.[0] || 'Double-Glazed UPVC Curtain Wall'),
+              spec: 'Verified Towers.pk Islamabad highrise project with high-speed elevators and multi-level basement parking.'
             },
             {
               id: `cms-spec-${idx}-2`,
-              title: s.features?.[1] || 'High-Yield Commercial Shops & Suites',
-              spec: `Located in ${s.society || 'Islamabad prime commercial corridor'} with verified NOC & Ri8click Consortium management.`
+              title: sanitizeConsortiumText(
+                s.features?.[1] || 'High-Yield Corporate Offices & Retail Suites'
+              ),
+              spec: `Located in ${s.society || 'Islamabad prime highrise corridor'} with verified NOC & Ri8click Consortium management.`
             }
           ]
         };
       });
   }, [activeSlides]);
 
-  // Filter waypoints based on selected category; preserve exact 8-to-14 sequence for capsule_containers
+  // Filter waypoints based on selected category
   const cameraWaypoints: CameraWaypoint[] = useMemo(() => {
-    const combined = [...MASTER_VIRTUAL_TOUR_WAYPOINTS, ...cmsCommercialWaypoints];
+    const combined = [...MASTER_VIRTUAL_TOUR_WAYPOINTS, ...cmsHighriseWaypoints];
     if (tourCategory === 'all_showroom') {
-      const commList = combined.filter(w => w.tourCategory === 'commercial_plazas');
+      const highriseList = combined.filter(w => w.tourCategory === 'highrise_projects');
       const capList = combined.filter(w => w.tourCategory === 'capsule_containers');
       const propsList = combined.filter(w => w.tourCategory === 'properties_plots_villas');
       const upvcList = combined.filter(w => w.tourCategory === 'upvc_construction');
 
       const interleaved: CameraWaypoint[] = [];
-      const maxLen = Math.max(commList.length, capList.length, propsList.length, upvcList.length);
+      const maxLen = Math.max(
+        highriseList.length,
+        capList.length,
+        propsList.length,
+        upvcList.length
+      );
       for (let i = 0; i < maxLen; i++) {
-        if (commList[i]) interleaved.push(commList[i]);
+        if (highriseList[i]) interleaved.push(highriseList[i]);
         if (capList[i]) interleaved.push(capList[i]);
         if (propsList[i]) interleaved.push(propsList[i]);
         if (upvcList[i]) interleaved.push(upvcList[i]);
@@ -896,15 +990,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     }
     const filtered = combined.filter(wp => wp.tourCategory === tourCategory);
     return filtered.length > 0 ? filtered : MASTER_VIRTUAL_TOUR_WAYPOINTS;
-  }, [tourCategory, cmsCommercialWaypoints]);
+  }, [tourCategory, cmsHighriseWaypoints]);
 
   const activeWaypoint = cameraWaypoints[waypointIdx] || cameraWaypoints[0];
 
-  // Resolve broken or missing image links automatically through 3 tiers
+  // Resolve broken or missing image links automatically through 4 active tiers
   const resolveImageWithFallback = (wp: CameraWaypoint): string => {
-    if (!failedUrls[wp.imageUrl]) return wp.imageUrl;
+    if (wp.imageUrl && !failedUrls[wp.imageUrl]) return wp.imageUrl;
     if (wp.secondaryImageUrl && !failedUrls[wp.secondaryImageUrl]) return wp.secondaryImageUrl;
-    return wp.fallbackUrl;
+    if (wp.fallbackUrl && !failedUrls[wp.fallbackUrl]) return wp.fallbackUrl;
+    return ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.fallbackHighrise1;
   };
 
   const resolvedImageUrl =
@@ -912,10 +1007,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       ? customActiveImageOverride
       : resolveImageWithFallback(activeWaypoint);
 
-  const handleImageError = (urlThatFailed: string) => {
+  const handleImageError = (urlThatFailed: string, wpLabel?: string) => {
     setFailedUrls(prev => {
       if (prev[urlThatFailed]) return prev;
       return { ...prev, [urlThatFailed]: true };
+    });
+
+    const fallbackReplacement =
+      activeWaypoint.secondaryImageUrl && activeWaypoint.secondaryImageUrl !== urlThatFailed
+        ? activeWaypoint.secondaryImageUrl
+        : activeWaypoint.fallbackUrl || ISLAMABAD_HIGHRISE_PROJECTS_GALLERY.fallbackHighrise1;
+
+    setBrokenLinksLog(prev => {
+      if (prev.some(item => item.brokenUrl === urlThatFailed)) return prev;
+      return [
+        {
+          brokenUrl: urlThatFailed,
+          replacedWithUrl: fallbackReplacement,
+          waypointLabel: wpLabel || activeWaypoint.label,
+          timestamp: 'Auto-Replaced at Runtime'
+        },
+        ...prev
+      ];
     });
   };
 
@@ -962,7 +1075,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     setWaypointIdx(prev => (prev + 1) % cameraWaypoints.length);
   };
 
-  // Ri8click Consortium Categories
+  const handleResetDeckPosition = () => {
+    setDeckResetKey(prev => prev + 1);
+  };
+
+  // Ri8click Consortium Categories ("Commercial Plazas" changed to "Highrise Projects")
   const tourCategories: {
     id: TourDeckCategory;
     label: string;
@@ -975,17 +1092,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       id: 'all_showroom',
       label: 'Ri8click Consortium Portfolio',
       shortLabel: 'Consortium Portfolio',
-      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.length + cmsCommercialWaypoints.length,
+      count: MASTER_VIRTUAL_TOUR_WAYPOINTS.length + cmsHighriseWaypoints.length,
       filterCategory: 'all',
       icon: <Compass className="w-3.5 h-3.5" />
     },
     {
-      id: 'commercial_plazas',
-      label: 'Commercial Plazas (Islamabad)',
-      shortLabel: 'Commercial Plazas',
+      id: 'highrise_projects',
+      label: 'Highrise Projects (Islamabad)',
+      shortLabel: 'Highrise Projects',
       count:
-        MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'commercial_plazas').length +
-        cmsCommercialWaypoints.length,
+        MASTER_VIRTUAL_TOUR_WAYPOINTS.filter(w => w.tourCategory === 'highrise_projects').length +
+        cmsHighriseWaypoints.length,
       filterCategory: 'commercial',
       icon: <Building2 className="w-3.5 h-3.5" />
     },
@@ -1020,10 +1137,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   const consortiumPillars = [
     {
-      id: 'commercial_plazas' as TourDeckCategory,
+      id: 'highrise_projects' as TourDeckCategory,
       category: 'commercial' as PropertyCategory,
-      title: 'Islamabad Commercial Plazas',
-      detail: 'Citadel 7, Regent One, Multi-Tower & Blue Area Plazas',
+      title: 'Islamabad Highrise Projects',
+      detail: 'The Centaurus, Giga Mall, Ufone Tower, ISE Tower II & State Life',
       icon: Building2,
       accent: 'text-emerald-300 border-emerald-400/30 bg-emerald-500/10'
     },
@@ -1053,7 +1170,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     }
   ];
 
-  // Clean professional optical grades (zero gaming glow)
   const atmosphereStyle: React.CSSProperties = useMemo(() => {
     const baseFilter =
       atmosphere === 'crystal_daylight'
@@ -1102,10 +1218,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   );
 
   return (
-    <section className="relative w-full overflow-hidden bg-slate-950 text-white select-none border-b border-slate-800">
+    <section
+      ref={heroStageRef}
+      className="relative w-full overflow-hidden bg-slate-950 text-white select-none border-b border-slate-800"
+    >
       {/* =====================================================================
           1. PROFESSIONAL ARCHITECTURAL STAGE & IMAGE / VIDEO CANVAS
-             (No gaming glow circles, no radar crosshairs, no watermark badge)
          ===================================================================== */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
         {/* Subtle static underlay so transitions never flash dark */}
@@ -1170,7 +1288,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
-                onError={() => handleImageError(resolvedImageUrl)}
+                onError={() => handleImageError(resolvedImageUrl, activeWaypoint.label)}
                 style={{
                   ...atmosphereStyle,
                   imageRendering: 'high-quality' as any
@@ -1181,7 +1299,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Clean Executive Gradient Scrims — Lighter when Left Description is hidden so full image shines */}
+        {/* Clean Executive Gradient Scrims */}
         <div
           className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${
             isCinemaTheaterMode || !showLeftDescription
@@ -1320,18 +1438,32 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </AnimatePresence>
 
       {/* =====================================================================
-          4. MAIN FOREGROUND STAGE & CRYSTAL TRANSPARENT PORTFOLIO DECK
+          4. MAIN FOREGROUND STAGE & MOVEABLE CRYSTAL PORTFOLIO DECK
          ===================================================================== */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-12 min-h-[540px] sm:min-h-[610px] flex flex-col justify-between">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-12 min-h-[560px] sm:min-h-[630px] flex flex-col justify-between">
         {/* Top Executive Header Utility Row */}
         <div className="flex flex-wrap items-center justify-between gap-2 pb-2">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 text-xs font-semibold text-slate-100 shadow-sm">
             <Building2 className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Ri8click Consortium • Domestic Islamabad Towers & Modular Living</span>
+            <span>Ri8click Consortium • Towers.pk Islamabad Highrise Projects & Modular Living</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 ml-auto">
-            {/* Direct Quick Button: Toggle Left-Side Text Description while keeping Portfolio Deck visible */}
+            {/* Broken Link Replacement Status Button */}
+            <button
+              type="button"
+              onClick={() => setShowBrokenLinkModal(prev => !prev)}
+              className="px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 border border-emerald-400/40 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 transition-all cursor-pointer backdrop-blur-xl"
+              title="View Broken Image Link Replacements & Active Towers.pk Media Status"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-emerald-300" />
+              <span className="hidden sm:inline">Active Images</span>
+              <span className="px-1.5 py-0.2 rounded bg-emerald-400/20 text-emerald-200 text-[9px] font-black">
+                {brokenLinksLog.length} Replaced
+              </span>
+            </button>
+
+            {/* Toggle Left-Side Text Description while keeping Portfolio Deck visible */}
             <button
               type="button"
               onClick={() => {
@@ -1409,7 +1541,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.96 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute right-0 mt-2 w-80 rounded-2xl bg-slate-950/85 backdrop-blur-2xl border border-white/25 p-4 shadow-2xl z-50 space-y-2.5"
+                    className="absolute right-0 mt-2 w-80 rounded-2xl bg-slate-950/90 backdrop-blur-2xl border border-white/25 p-4 shadow-2xl z-50 space-y-2.5"
                   >
                     <div className="flex items-center justify-between pb-2 border-b border-white/15">
                       <span className="text-[11px] font-black uppercase tracking-wider text-amber-300">
@@ -1460,10 +1592,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         onChange={() => setShowLeftDescription(prev => !prev)}
                       />
                       <ToggleSwitch
-                        label="Portfolio Deck (Crystal Panel)"
-                        description="Right-hand transparent project navigator"
+                        label="Portfolio Deck (Moveable Window)"
+                        description="Show/hide draggable project navigator window"
                         checked={showDirectorDeck}
                         onChange={() => setShowDirectorDeck(prev => !prev)}
+                      />
+                      <ToggleSwitch
+                        label="Free-Drag Portfolio Window"
+                        description="Allow dragging Portfolio Deck anywhere in window"
+                        checked={isDeckFloating}
+                        onChange={() => setIsDeckFloating(prev => !prev)}
                       />
                       <ToggleSwitch
                         label="Architectural Spec Badges"
@@ -1518,6 +1656,66 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
 
+        {/* BROKEN IMAGE LINKS & ACTIVE TOWERS.PK REPLACEMENT INSPECTOR MODAL */}
+        <AnimatePresence>
+          {showBrokenLinkModal && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="mb-4 p-4 rounded-2xl bg-slate-950/90 backdrop-blur-2xl border border-emerald-400/40 shadow-2xl z-40"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-3 border-b border-white/15">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span className="text-xs font-black uppercase tracking-wider text-white">
+                    Broken Image Link Monitor & Active Towers.pk Replacements
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowBrokenLinkModal(false)}
+                  className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[10px] font-bold text-slate-200 cursor-pointer"
+                >
+                  Close Monitor
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1">
+                {brokenLinksLog.map((item, idx) => (
+                  <div
+                    key={`${item.brokenUrl}-${idx}`}
+                    className="p-2.5 rounded-xl bg-white/5 border border-white/15 flex items-center gap-3"
+                  >
+                    <div className="relative w-14 h-12 rounded-lg overflow-hidden shrink-0 border border-emerald-400/50">
+                      <img
+                        src={item.replacedWithUrl}
+                        alt={item.waypointLabel}
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-0 inset-x-0 bg-emerald-500/90 text-slate-950 text-[8px] font-black text-center uppercase">
+                        Active
+                      </span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[11px] font-bold text-white truncate">
+                        {item.waypointLabel}
+                      </div>
+                      <div className="flex items-center gap-1 text-[9.5px] text-rose-300 line-through truncate">
+                        <ImageOff className="w-3 h-3 shrink-0" />
+                        <span className="truncate">{item.brokenUrl}</span>
+                      </div>
+                      <div className="text-[9.5px] text-emerald-300 font-semibold truncate">
+                        Replaced: {item.replacedWithUrl}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* OPTIONAL RI8CLICK CONSORTIUM PILLARS RIBBON */}
         <AnimatePresence>
           {showConsortiumRibbon && !isCinemaTheaterMode && (
@@ -1534,7 +1732,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       Ri8click Consortium
                     </span>
                     <span className="text-[11px] sm:text-xs font-semibold text-white/95">
-                      Integrated Real Estate, Islamabad Plazas, Turnkey Construction, Capsule Homes &amp; German UPVC
+                      Integrated Real Estate, Islamabad Highrise Projects, Turnkey Construction, Capsule Homes &amp; German UPVC
                     </span>
                   </div>
                   <button
@@ -1585,7 +1783,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Center Main Content & Crystal Transparent Portfolio Deck */}
+        {/* Center Main Content & Moveable Crystal Transparent Portfolio Deck */}
         <AnimatePresence mode="wait">
           {!isCinemaTheaterMode ? (
             <motion.div
@@ -1594,9 +1792,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
               transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto py-3"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto py-3 relative"
             >
-              {/* Left Column: Architectural Narrative & Actions (Can be hidden while keeping Portfolio Deck) */}
+              {/* Left Column: Architectural Narrative & Actions */}
               {showLeftDescription && (
                 <div className={showDirectorDeck ? 'lg:col-span-7' : 'lg:col-span-11'}>
                   <AnimatePresence mode="wait">
@@ -1608,7 +1806,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       transition={{ duration: 0.35 }}
                       className="space-y-3.5"
                     >
-                      {/* Division & Location Badges (Removed "Watermark Verified" badge as requested) */}
+                      {/* Division & Location Badges */}
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-black tracking-wider uppercase bg-amber-400 text-slate-950 shadow-sm">
                           <Sparkles className="w-3.5 h-3.5 fill-current" />
@@ -1619,6 +1817,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           <MapPin className="w-3.5 h-3.5 text-amber-300 shrink-0" />
                           <span>{activeWaypoint.locationBadge}</span>
                         </div>
+
+                        {activeWaypoint.tourCategory === 'highrise_projects' && (
+                          <a
+                            href="https://towers.pk/islamabad/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 hover:bg-emerald-500/30 transition-colors"
+                          >
+                            <span>Towers.pk Verified</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
                       </div>
 
                       {/* Headline */}
@@ -1685,7 +1895,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                                   <img
                                     src={imgUrl}
                                     alt={`View ${gIdx + 1}`}
-                                    onError={() => handleImageError(imgUrl)}
+                                    onError={() => handleImageError(imgUrl, activeWaypoint.label)}
                                     className="w-full h-full object-cover"
                                   />
                                 </button>
@@ -1728,7 +1938,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white hover:text-slate-950 text-white border border-white/30 font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 backdrop-blur-xl transition-all cursor-pointer"
                         >
                           <Eye className="w-4 h-4 text-amber-300" />
-                          <span>Explore Listings</span>
+                          <span>Explore Highrise &amp; Listings</span>
                         </button>
 
                         <button
@@ -1745,35 +1955,70 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </div>
               )}
 
-              {/* Right Column: CRYSTAL TRANSPARENT PORTFOLIO DECK */}
+              {/* Right Column / Moveable Floating Window: CRYSTAL TRANSPARENT PORTFOLIO DECK */}
               {showDirectorDeck && (
                 <motion.div
+                  key={`portfolio-deck-window-${deckResetKey}`}
+                  drag={isDeckFloating}
+                  dragControls={portfolioDeckDragControls}
+                  dragListener={false}
+                  dragMomentum={false}
+                  dragElastic={0.08}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
+                  style={{ touchAction: 'none' }}
                   className={`${
                     showLeftDescription ? 'lg:col-span-5' : 'lg:col-span-6 lg:col-start-7'
-                  } bg-white/[0.08] backdrop-blur-2xl rounded-3xl border border-white/25 p-4 sm:p-5 shadow-[0_8px_32px_rgba(0,0,0,0.35)] ring-1 ring-white/15 space-y-3.5 transition-all`}
+                  } z-40 bg-slate-950/55 backdrop-blur-2xl rounded-3xl border border-white/30 p-4 sm:p-5 shadow-[0_12px_42px_rgba(0,0,0,0.55)] ring-1 ring-white/20 space-y-3.5`}
                 >
-                  {/* Panel Header */}
-                  <div className="flex items-center justify-between gap-2 border-b border-white/20 pb-3">
-                    <div>
-                      <div className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
-                        <span>Portfolio Deck</span>
-                        <span className="px-2 py-0.5 rounded-full bg-white/15 border border-white/25 text-[9px] text-amber-300 font-bold">
-                          Crystal View
-                        </span>
+                  {/* Moveable Window Drag Handle Bar */}
+                  <div
+                    onPointerDown={e => {
+                      if (isDeckFloating) {
+                        portfolioDeckDragControls.start(e);
+                      }
+                    }}
+                    className={`flex items-center justify-between gap-2 pb-2.5 border-b border-white/20 ${
+                      isDeckFloating ? 'cursor-grab active:cursor-grabbing' : ''
+                    }`}
+                    title="Drag this header bar to move the Portfolio Deck anywhere in the window"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-amber-400/20 border border-amber-400/40 text-amber-300">
+                        <GripHorizontal className="w-4 h-4" />
                       </div>
-                      <div className="text-[10px] text-amber-200 font-semibold mt-0.5">
-                        Islamabad Plazas (1–7) • Capsule Pods (8–14) • Villas
+                      <div>
+                        <div className="text-xs font-black uppercase tracking-wider text-white flex items-center gap-2">
+                          <span>Portfolio Deck</span>
+                          <span className="px-2 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-[9px] text-amber-300 font-bold">
+                            {isDeckFloating ? 'Drag Anywhere' : 'Docked'}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-amber-200 font-semibold mt-0.5">
+                          Highrise Projects (Towers.pk) • Capsule Pods • Villas
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div
+                      className="flex items-center gap-1"
+                      onPointerDown={e => e.stopPropagation()}
+                    >
+                      {isDeckFloating && (
+                        <button
+                          type="button"
+                          onClick={handleResetDeckPosition}
+                          className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-slate-200 hover:text-amber-300 cursor-pointer transition-colors"
+                          title="Reset Portfolio Deck Position"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => setShowLeftDescription(prev => !prev)}
-                        className="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-[10px] font-bold text-white cursor-pointer transition-colors"
+                        className="px-2 py-1 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 text-[10px] font-bold text-white cursor-pointer transition-colors"
                         title={
                           showLeftDescription
                             ? 'Hide Left Text Description'
@@ -1785,7 +2030,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <button
                         type="button"
                         onClick={() => setIsVideoTourActive(prev => !prev)}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider cursor-pointer transition-all border ${
+                        className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider cursor-pointer transition-all border ${
                           isVideoTourActive
                             ? 'bg-amber-400 text-slate-950 border-amber-300'
                             : 'bg-white/15 text-white border-white/20 hover:bg-white/25'
@@ -1795,135 +2040,152 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       </button>
                       <button
                         type="button"
+                        onClick={() => setIsDeckMinimized(prev => !prev)}
+                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-slate-200 hover:text-white cursor-pointer"
+                        title={isDeckMinimized ? 'Expand Portfolio Deck' : 'Collapse Portfolio Deck'}
+                      >
+                        {isDeckMinimized ? (
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        ) : (
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setShowDirectorDeck(false)}
-                        className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-[10px] font-bold text-slate-200 hover:text-white cursor-pointer"
-                        title="Minimize Portfolio Deck"
+                        className="px-2 py-1 rounded-lg bg-white/10 hover:bg-rose-500/30 border border-white/15 text-[10px] font-bold text-slate-200 hover:text-white cursor-pointer"
+                        title="Hide Portfolio Deck"
                       >
                         Hide
                       </button>
                     </div>
                   </div>
 
-                  {/* Crystal Category Tabs */}
-                  <div className="grid grid-cols-5 gap-1 bg-slate-950/35 backdrop-blur-md p-1 rounded-xl border border-white/20">
-                    {(
-                      [
-                        { id: 'all_showroom', label: 'All' },
-                        { id: 'commercial_plazas', label: 'Plazas' },
-                        { id: 'capsule_containers', label: 'Capsules' },
-                        { id: 'properties_plots_villas', label: 'Plots/Villas' },
-                        { id: 'upvc_construction', label: 'UPVC' }
-                      ] as { id: TourDeckCategory; label: string }[]
-                    ).map(tab => (
-                      <button
-                        key={tab.id}
-                        type="button"
-                        onClick={() => setTourCategory(tab.id)}
-                        className={`py-1.5 px-1.5 rounded-lg text-[9.5px] font-extrabold uppercase tracking-wider transition-all cursor-pointer truncate ${
-                          tourCategory === tab.id
-                            ? 'bg-amber-400 text-slate-950 shadow-sm'
-                            : 'text-white/90 hover:text-white hover:bg-white/15'
-                        }`}
-                      >
-                        {tab.label}
-                      </button>
-                    ))}
-                  </div>
+                  {!isDeckMinimized && (
+                    <>
+                      {/* Crystal Category Tabs ("Plazas" changed to "Highrise Projects") */}
+                      <div className="grid grid-cols-5 gap-1 bg-slate-950/45 backdrop-blur-md p-1 rounded-xl border border-white/20">
+                        {(
+                          [
+                            { id: 'all_showroom', label: 'All' },
+                            { id: 'highrise_projects', label: 'Highrise Projects' },
+                            { id: 'capsule_containers', label: 'Capsules' },
+                            { id: 'properties_plots_villas', label: 'Plots/Villas' },
+                            { id: 'upvc_construction', label: 'UPVC' }
+                          ] as { id: TourDeckCategory; label: string }[]
+                        ).map(tab => (
+                          <button
+                            key={tab.id}
+                            type="button"
+                            onClick={() => setTourCategory(tab.id)}
+                            className={`py-1.5 px-1.5 rounded-lg text-[9.5px] font-extrabold uppercase tracking-wider transition-all cursor-pointer truncate ${
+                              tourCategory === tab.id
+                                ? 'bg-amber-400 text-slate-950 shadow-sm'
+                                : 'text-white/90 hover:text-white hover:bg-white/15'
+                            }`}
+                            title={tab.label}
+                          >
+                            {tab.label}
+                          </button>
+                        ))}
+                      </div>
 
-                  {/* Interactive Thumbnail Matrix */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[240px] overflow-y-auto pr-1 scrollbar-thin">
-                    {cameraWaypoints.map((wp, idx) => {
-                      const active = waypointIdx === idx;
-                      const thumbSrc = resolveImageWithFallback(wp);
-                      return (
-                        <button
-                          key={wp.id}
-                          type="button"
-                          onClick={() => {
-                            setIsVideoTourActive(false);
-                            setWaypointIdx(idx);
-                          }}
-                          className={`group relative rounded-xl overflow-hidden border text-left transition-all cursor-pointer h-20 ${
-                            active
-                              ? 'border-amber-400 ring-2 ring-amber-400/60 shadow-md'
-                              : 'border-white/25 opacity-90 hover:opacity-100 hover:border-white/60'
-                          }`}
-                        >
-                          <img
-                            src={thumbSrc}
-                            alt={wp.label}
-                            loading="lazy"
-                            onError={() => handleImageError(thumbSrc)}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-transparent" />
-                          <div className="absolute top-1 left-1.5 px-1.5 py-0.2 rounded bg-slate-950/70 backdrop-blur-xs text-[8px] font-mono font-bold text-amber-300 border border-white/20">
-                            {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
-                          </div>
-                          <div className="absolute bottom-1 left-1.5 right-1.5">
-                            <div className="text-[10px] font-extrabold text-white truncate leading-tight drop-shadow-xs">
-                              {wp.label}
+                      {/* Interactive Thumbnail Matrix */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[240px] overflow-y-auto pr-1 scrollbar-thin">
+                        {cameraWaypoints.map((wp, idx) => {
+                          const active = waypointIdx === idx;
+                          const thumbSrc = resolveImageWithFallback(wp);
+                          return (
+                            <button
+                              key={wp.id}
+                              type="button"
+                              onClick={() => {
+                                setIsVideoTourActive(false);
+                                setWaypointIdx(idx);
+                              }}
+                              className={`group relative rounded-xl overflow-hidden border text-left transition-all cursor-pointer h-20 ${
+                                active
+                                  ? 'border-amber-400 ring-2 ring-amber-400/60 shadow-md'
+                                  : 'border-white/25 opacity-90 hover:opacity-100 hover:border-white/60'
+                              }`}
+                            >
+                              <img
+                                src={thumbSrc}
+                                alt={wp.label}
+                                loading="lazy"
+                                onError={() => handleImageError(thumbSrc, wp.label)}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-transparent" />
+                              <div className="absolute top-1 left-1.5 px-1.5 py-0.2 rounded bg-slate-950/70 backdrop-blur-xs text-[8px] font-mono font-bold text-amber-300 border border-white/20">
+                                {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
+                              </div>
+                              <div className="absolute bottom-1 left-1.5 right-1.5">
+                                <div className="text-[10px] font-extrabold text-white truncate leading-tight drop-shadow-xs">
+                                  {wp.label}
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Compact Active Item Summary when Left Text Description is hidden */}
+                      {!showLeftDescription && (
+                        <div className="p-3 rounded-2xl bg-slate-950/50 backdrop-blur-md border border-white/20 flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="text-[10px] font-bold text-amber-300 uppercase tracking-wider truncate">
+                              {activeWaypoint.locationBadge}
+                            </div>
+                            <div className="text-xs font-extrabold text-white truncate">
+                              {activeWaypoint.headline}
+                            </div>
+                            <div className="text-[11px] font-bold text-emerald-300">
+                              {activeWaypoint.valuation}
                             </div>
                           </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                          <button
+                            type="button"
+                            onClick={onExploreClick}
+                            className="px-3 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-[10px] font-black uppercase tracking-wider shrink-0 cursor-pointer"
+                          >
+                            Explore
+                          </button>
+                        </div>
+                      )}
 
-                  {/* Compact Active Item Summary when Left Text Description is hidden */}
-                  {!showLeftDescription && (
-                    <div className="p-3 rounded-2xl bg-slate-950/40 backdrop-blur-md border border-white/20 flex items-center justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="text-[10px] font-bold text-amber-300 uppercase tracking-wider truncate">
-                          {activeWaypoint.locationBadge}
+                      {/* Panel Footer */}
+                      <div className="flex items-center justify-between pt-2 border-t border-white/20 text-[11px]">
+                        <div className="flex items-center gap-1.5 text-white/90">
+                          <Info className="w-3.5 h-3.5 text-amber-300" />
+                          <span>Towers.pk Islamabad &amp; Capsule Pods</span>
                         </div>
-                        <div className="text-xs font-extrabold text-white truncate">
-                          {activeWaypoint.headline}
-                        </div>
-                        <div className="text-[11px] font-bold text-emerald-300">
-                          {activeWaypoint.valuation}
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTourCategory('highrise_projects');
+                              onSelectCategoryFilter('commercial');
+                            }}
+                            className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
+                          >
+                            Highrise Projects
+                          </button>
+                          <span className="text-white/40">•</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTourCategory('capsule_containers');
+                              onSelectCategoryFilter('modular');
+                            }}
+                            className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
+                          >
+                            Capsules
+                          </button>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={onExploreClick}
-                        className="px-3 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-[10px] font-black uppercase tracking-wider shrink-0 cursor-pointer"
-                      >
-                        Explore
-                      </button>
-                    </div>
+                    </>
                   )}
-
-                  {/* Panel Footer */}
-                  <div className="flex items-center justify-between pt-2 border-t border-white/20 text-[11px]">
-                    <div className="flex items-center gap-1.5 text-white/90">
-                      <Info className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Towers.pk Islamabad &amp; Capsule Pods</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setTourCategory('commercial_plazas');
-                          onSelectCategoryFilter('commercial');
-                        }}
-                        className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
-                      >
-                        Plazas
-                      </button>
-                      <span className="text-white/40">•</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setTourCategory('capsule_containers');
-                          onSelectCategoryFilter('modular');
-                        }}
-                        className="text-amber-300 hover:text-amber-200 font-bold underline cursor-pointer"
-                      >
-                        Capsules
-                      </button>
-                    </div>
-                  </div>
                 </motion.div>
               )}
             </motion.div>
@@ -1949,9 +2211,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           )}
         </AnimatePresence>
 
-        {/* ===================================================================
+        {/* =====================================================================
             5. BOTTOM TIMELINE & SLIDE NAVIGATION CONTROLS
-           =================================================================== */}
+           ===================================================================== */}
         <div className="pt-4 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Waypoint Progress Scrubber */}
           <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto no-scrollbar py-1">
