@@ -1041,6 +1041,32 @@ export const INITIAL_PROPERTIES: Property[] = [
   'https://www.genspark.ai/api/files/s/W2Z5zFao', // V2124 Double-Decker Capsule Villa
   'https://www.genspark.ai/api/files/s/JycQaAWz'  // Q3 Pitched-Roof Modular Capsule
     ],
+
+// Updated Modular & Capsule Smart Houses images in src/data/mockData.ts on 23-10-26:
+// prop-mod-1 (Ri8Click Space Capsule Smart Pod - Model X-100):
+images: [
+  'https://www.genspark.ai/api/files/s/I6HwjuLB', // Lakeside Curved-Glass Capsule Pod
+  'https://www.genspark.ai/api/files/s/u84KzdvI', // V2124 Double-Decker Capsule Villa
+  'https://www.genspark.ai/api/files/s/pSySUzgg'  // Q3 Pitched-Roof Modular Capsule
+],
+
+// prop-mod-3 (Ri8Click Curved Panoramic Capsule Cabin - Model E-70):
+images: [
+  'https://www.genspark.ai/api/files/s/3jIuxLrV', // Rooftop Deck Shipping Container Villa
+  'https://www.genspark.ai/api/files/s/pSySUzgg', // Q3 Alpine Capsule House
+  'https://www.genspark.ai/api/files/s/bl8vngPB'  // Curved-Corner Glass Studio Container
+],
+
+// prop-mod-2 (Ri8Click 2-Bed Modular Luxury Prefab Villa):
+images: [
+  'https://www.genspark.ai/api/files/s/u84KzdvI', // V2124 Double-Decker Stacked Capsule
+  'https://www.genspark.ai/api/files/s/OypEiCb2', // L-Shaped Loft Cutaway Interior
+  'https://www.genspark.ai/api/files/s/K4lfut6W'  // Hex-LED Smart Container House
+],
+
+
+
+    
 //    images: [
  //     'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=1200&q=85',
  //     'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=85',
