@@ -1843,166 +1843,91 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               transition={{ duration: 0.3 }}
               className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto py-3 relative"
             >
-              {/* Left Column: Full Narrative OR Minimal Heading & Image Info when "Hide Text" is active */}
+          //============
+                            {/* Left Column: Full Narrative OR Default Minimal Heading & Image Info ("Hide Text" state) */}
               {showLeftDescription ? (
                 <div className={showDirectorDeck ? 'lg:col-span-7' : 'lg:col-span-11'}>
+                  {/* Full Narrative View (shown when user clicks "Show Text") */}
+                  ...
+                </div>
+              ) : (
+                /* Default Page Load State ("Hide Text" active): Compact Minimal Heading & Image Info Badge */
+                <div className={showDirectorDeck ? 'lg:col-span-7 self-end' : 'lg:col-span-9 self-end'}>
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={activeWaypoint.id}
-                      initial={{ opacity: 0, y: 12 }}
+                      key={`minimal-banner-info-${activeWaypoint.id}`}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.35 }}
-                      className="space-y-3.5"
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.22 }}
+                      className="p-3.5 sm:p-4 rounded-2xl bg-slate-950/45 backdrop-blur-md border border-white/20 shadow-xl max-w-lg space-y-1.5"
                     >
-                      {/* Division & Location Badges */}
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-black tracking-wider uppercase bg-amber-400 text-slate-950 shadow-sm">
-                          <Sparkles className="w-3.5 h-3.5 fill-current" />
-                          <span>{activeWaypoint.divisionTag}</span>
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-400 text-slate-950 text-[9.5px] font-black uppercase tracking-wider">
+                          <Camera className="w-3 h-3" />
+                          <span>{activeWaypoint.code}</span>
                         </span>
-
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold bg-white/10 backdrop-blur-xl text-white border border-white/25">
-                          <MapPin className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                          <span>{activeWaypoint.locationBadge}</span>
-                        </div>
-
-                        {activeWaypoint.tourCategory === 'highrise_projects' && (
-                          <a
-                            href="https://towers.pk/islamabad/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 hover:bg-emerald-500/30 transition-colors"
-                          >
-                            <span>Towers.pk Verified</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        )}
+                        <span className="text-[10.5px] font-extrabold text-emerald-300 bg-slate-950/60 border border-emerald-400/30 px-2 py-0.5 rounded">
+                          {activeWaypoint.valuation}
+                        </span>
                       </div>
 
-                      {/* Headline */}
-                      <h1 className="text-3xl sm:text-5xl lg:text-[44px] font-black tracking-tight text-white leading-[1.1] font-serif drop-shadow-sm">
+                      <h1 className="text-base sm:text-xl font-black text-white leading-tight font-serif drop-shadow-xs">
                         {activeWaypoint.headline}
                       </h1>
 
-                      {/* Description */}
-                      <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-medium drop-shadow-xs">
-                        {activeWaypoint.description}
+                      <p className="text-[11px] text-slate-200 truncate">
+                        {activeWaypoint.subLabel}
                       </p>
 
-                      {/* Clean Architectural Specification Cards */}
-                      {showSpecCards && activeWaypoint.specs.length > 0 && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 max-w-2xl">
-                          {activeWaypoint.specs.map(item => (
-                            <div
-                              key={item.id}
-                              className="p-3 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-start gap-2.5"
-                            >
-                              <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                              <div>
-                                <div className="text-xs font-bold text-white">{item.title}</div>
-                                <div className="text-[11px] text-slate-200 leading-snug mt-0.5">
-                                  {item.spec}
-                                </div>
-                              </div>
-                            </div>
-                          ))}
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/15 text-[10.5px] text-slate-200">
+                        <span className="inline-flex items-center gap-1 truncate max-w-[220px] sm:max-w-[260px]">
+                          <MapPin className="w-3 h-3 text-amber-300 shrink-0" />
+                          <span className="truncate">{activeWaypoint.locationBadge}</span>
+                        </span>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setShowLeftDescription(true)}
+                            className="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white font-bold text-[10px] border border-white/20 cursor-pointer transition-colors"
+                          >
+                            Show Text
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onOpen3DTour({
+                                id: activeWaypoint.id,
+                                title: activeWaypoint.headline,
+                                category: activeWaypoint.propertyCategory,
+                                priceFormatted: activeWaypoint.valuation,
+                                location: {
+                                  city: 'Islamabad / Taxila',
+                                  society: activeWaypoint.locationBadge,
+                                  province: 'Islamabad Capital Territory'
+                                },
+                                images: activeWaypoint.galleryImages || [resolvedImageUrl],
+                                virtualTourVideoUrl: activeWaypoint.videoUrl,
+                                virtualTourVideoTitle: `${activeWaypoint.headline} - Ri8click Consortium Walkthrough`
+                              })
+                            }
+                            className="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-[10px] uppercase tracking-wider cursor-pointer transition-colors"
+                          >
+                            360° Tour
+                          </button>
                         </div>
-                      )}
-
-                      {/* Valuation Pill & Multi-Angle Sub-Gallery */}
-                      <div className="flex flex-wrap items-center gap-3 pt-1">
-                        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white/10 backdrop-blur-xl border border-amber-400/50">
-                          <span className="text-[11px] uppercase tracking-wider text-amber-300 font-bold">
-                            Valuation / Price
-                          </span>
-                          <span className="text-base sm:text-lg font-black text-white">
-                            {activeWaypoint.valuation}
-                          </span>
-                        </div>
-
-                        {activeWaypoint.galleryImages && activeWaypoint.galleryImages.length > 1 && (
-                          <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-xl p-1.5 rounded-xl border border-white/20">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-200 px-1.5">
-                              Views:
-                            </span>
-                            {activeWaypoint.galleryImages.map((imgUrl, gIdx) => {
-                              if (failedUrls[imgUrl]) return null;
-                              const isCurrentView = resolvedImageUrl === imgUrl;
-                              return (
-                                <button
-                                  key={gIdx}
-                                  type="button"
-                                  onClick={() => setCustomActiveImageOverride(imgUrl)}
-                                  className={`w-9 h-7 rounded-md overflow-hidden border transition-all cursor-pointer shrink-0 ${
-                                    isCurrentView
-                                      ? 'border-amber-400 ring-2 ring-amber-400/60'
-                                      : 'border-white/30 hover:border-amber-400'
-                                  }`}
-                                  title={`Switch to View ${gIdx + 1}`}
-                                >
-                                  <img
-                                    src={imgUrl}
-                                    alt={`View ${gIdx + 1}`}
-                                    onError={() => handleImageError(imgUrl, activeWaypoint.label)}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </button>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Primary Call-To-Action Buttons */}
-                      <div className="flex flex-wrap items-center gap-3 pt-2">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            onOpen3DTour({
-                              id: activeWaypoint.id,
-                              title: activeWaypoint.headline,
-                              category: activeWaypoint.propertyCategory,
-                              priceFormatted: activeWaypoint.valuation,
-                              location: {
-                                city: 'Islamabad / Taxila',
-                                society: activeWaypoint.locationBadge,
-                                province: 'Islamabad Capital Territory'
-                              },
-                              images: activeWaypoint.galleryImages || [resolvedImageUrl],
-                              virtualTourVideoUrl: activeWaypoint.videoUrl,
-                              virtualTourVideoTitle: `${activeWaypoint.headline} - Ri8click Consortium Walkthrough`
-                            })
-                          }
-                          className="px-5 py-3 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all cursor-pointer"
-                        >
-                          <Compass className="w-4 h-4" />
-                          <span>Launch 360° Virtual Walkthrough</span>
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={onExploreClick}
-                          className="px-5 py-3 rounded-xl bg-white/10 hover:bg-white hover:text-slate-950 text-white border border-white/30 font-extrabold text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 backdrop-blur-xl transition-all cursor-pointer"
-                        >
-                          <Eye className="w-4 h-4 text-amber-300" />
-                          <span>Explore Portfolio &amp; Listings</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={onContactAgentClick}
-                          className="px-4 py-3 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-400/50 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer"
-                        >
-                          <PhoneCall className="w-4 h-4" />
-                          <span>Ri8click Consortium Inquiry</span>
-                        </button>
                       </div>
                     </motion.div>
                   </AnimatePresence>
                 </div>
-              ) : (
+              )}
+
+              
+              
+              
+              //===========
+             // ) : (
                 /* Minimal Heading & Image Info Card when "Hide Text" is clicked from Portfolio Deck (Requirement #15) */
                 <div className={showDirectorDeck ? 'lg:col-span-6 self-end' : 'lg:col-span-8 self-end'}>
                   <AnimatePresence mode="wait">
