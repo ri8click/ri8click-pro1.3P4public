@@ -1,14 +1,3 @@
-  // UI Visibility States — Default page load state is set to "Hide Text" (showLeftDescription = false)
-  // so hero banner images are maximally visible with only minimal heading & image info displayed.
-  const [showLeftDescription, setShowLeftDescription] = useState(false);
-  const [showDirectorDeck, setShowDirectorDeck] = useState(true);
-  const [showSpecCards, setShowSpecCards] = useState(true);
-  const [showConsortiumRibbon, setShowConsortiumRibbon] = useState(false);
-  const [showCategoryBar, setShowCategoryBar] = useState(true);
-  const [showShowroomTourBar, setShowShowroomTourBar] = useState(false);
-  const [isHudMenuOpen, setIsHudMenuOpen] = useState(false);
-
-             
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import {
