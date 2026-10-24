@@ -911,7 +911,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [atmosphere, setAtmosphere] = useState<AtmosphereGrade>('crystal_daylight');
 
   // UI Visibility States
-  const [showLeftDescription, setShowLeftDescription] = useState(true);
+  const [showLeftDescription, setShowLeftDescription] = useState(false);
   const [showDirectorDeck, setShowDirectorDeck] = useState(true);
   const [showSpecCards, setShowSpecCards] = useState(true);
   const [showConsortiumRibbon, setShowConsortiumRibbon] = useState(false);
