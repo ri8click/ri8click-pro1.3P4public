@@ -7,15 +7,10 @@ import {
   EyeOff, 
   ArrowUp, 
   ArrowDown, 
-  Check, 
   X, 
-  Image as ImageIcon, 
   Sparkles, 
   MapPin, 
-  Tag, 
-  Layers,
-  Save,
-  RotateCcw
+  Save
 } from 'lucide-react';
 import { HeroSlide } from '../types';
 
@@ -24,46 +19,78 @@ interface AdminBannerManagerProps {
   onUpdateSlides: (slides: HeroSlide[]) => void;
 }
 
-const PRESET_IMAGES = [
+export const PRESET_IMAGES = [
   {
-    name: 'Faisal Hills 1-Kanal Villa (Taxila / Margalla)',
-    url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=85',
-    category: 'residential'
-  },
-  {
-    name: 'Islamabad Blue Area Corporate Tower / Skyline',
-    url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=85',
-    category: 'commercial'
-  },
-  {
-    name: 'Ri8Click Curved Panoramic Capsule Cabin',
-    url: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=2000&q=85',
+    name: 'Q3 Pitched-Roof Modular Forest Cabin Pod',
+    url: 'https://www.genspark.ai/api/files/s/pSySUzgg',
+    fallbackUrl: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=2000&q=85',
     category: 'modular'
   },
   {
-    name: 'Lahore DHA Phase 6 Commercial Boulevard',
-    url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=2000&q=85',
+    name: 'L-Shaped Dual-Container Loft & Interior Cutaway',
+    url: 'https://www.genspark.ai/api/files/s/OypEiCb2',
+    fallbackUrl: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=2000&q=85',
+    category: 'modular'
+  },
+  {
+    name: 'Rooftop Terrace Container Villa & Timber Deck',
+    url: 'https://www.genspark.ai/api/files/s/3jIuxLrV',
+    fallbackUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=85',
+    category: 'modular'
+  },
+  {
+    name: 'Hex-Lit Matte-Black Designer Container Pod',
+    url: 'https://www.genspark.ai/api/files/s/K4lfut6W',
+    fallbackUrl: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=2000&q=85',
+    category: 'modular'
+  },
+  {
+    name: 'Curved-Corner Glass Executive Container Studio',
+    url: 'https://www.genspark.ai/api/files/s/bl8vngPB',
+    fallbackUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2000&q=85',
+    category: 'modular'
+  },
+  {
+    name: 'V2124 Double-Decker Stacked Capsule Villa',
+    url: 'https://www.genspark.ai/api/files/s/u84KzdvI',
+    fallbackUrl: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=2000&q=85',
+    category: 'modular'
+  },
+  {
+    name: 'Lakeside Curved-Glass Observation Capsule Pod',
+    url: 'https://www.genspark.ai/api/files/s/I6HwjuLB',
+    fallbackUrl: 'https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=2000&q=85',
+    category: 'modular'
+  },
+  {
+    name: 'Faisal Hills 1-Kanal Villa (Taxila / Margalla)',
+    url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=85',
+    fallbackUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=85',
+    category: 'residential'
+  },
+  {
+    name: 'Islamabad Blue Area Highrise / The Centaurus',
+    url: 'https://towers.pk/wp-content/uploads/2023/11/Centaurus_Mall-1.webp',
+    fallbackUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=85',
     category: 'commercial'
+  },
+  {
+    name: 'Ri8click UPVC Sliding Patio Doors & Thermal Glazing',
+    url: 'https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=2000&q=85',
+    fallbackUrl: 'https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=2000&q=85',
+    category: 'projects'
   },
   {
     name: 'Multi Gardens B-17 Sector G Margalla Residence',
     url: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2000&q=85',
+    fallbackUrl: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2000&q=85',
     category: 'residential'
   },
   {
-    name: 'Faisal Town (F-18) Luxury Designer Villa',
-    url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=85',
-    category: 'residential'
-  },
-  {
-    name: 'Eighteen Islamabad Sky Penthouse & Golf Course',
-    url: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=2000&q=85',
-    category: 'residential'
-  },
-  {
-    name: 'Modern Space Box Modular Pod',
-    url: 'https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=2000&q=85',
-    category: 'modular'
+    name: 'Lahore DHA Phase 6 Commercial Boulevard Highrise',
+    url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=2000&q=85',
+    fallbackUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=2000&q=85',
+    category: 'commercial'
   }
 ];
 
@@ -73,22 +100,21 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
 }) => {
   const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
-  const [previewSlide, setPreviewSlide] = useState<HeroSlide | null>(null);
 
   // Form State for create/edit
   const [formData, setFormData] = useState<Partial<HeroSlide>>({
-    categoryTag: 'Featured Residential Villa',
-    badgeColor: 'bg-blue-600 text-white',
+    categoryTag: 'Contemporary Modular Capsule',
+    badgeColor: 'bg-indigo-600 text-white',
     title: '',
     subtitle: '',
     description: '',
-    price: 'PKR 5.5 Crore',
-    location: 'Taxila / Rawalpindi',
-    society: 'Faisal Hills',
+    price: 'PKR 68 Lakh',
+    location: 'Taxila / Islamabad',
+    society: 'Faisal Hills & Resort Estates',
     imageUrl: PRESET_IMAGES[0].url,
     tourRoomsCount: 4,
     isActive: true,
-    features: ['Modern Architecture', 'Ri8Click UPVC Windows', 'Solar Backup', 'Margalla View']
+    features: ['Aerospace Capsule Shell', 'Ri8Click UPVC Glazing', 'Smart IoT Controls', 'Turnkey Delivery']
   });
 
   const [featureInput, setFeatureInput] = useState<string>('');
@@ -96,22 +122,22 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
   const handleStartCreate = () => {
     setFormData({
       id: `slide-${Date.now()}`,
-      categoryTag: 'Featured Project',
-      badgeColor: 'bg-blue-600 text-white',
+      categoryTag: 'Contemporary Modular Capsule',
+      badgeColor: 'bg-indigo-600 text-white',
       title: '',
       subtitle: '',
       description: '',
-      price: 'PKR 6.5 Crore',
+      price: 'PKR 68 Lakh',
       location: 'Islamabad / Taxila',
       society: 'Faisal Hills (Executive Block)',
       imageUrl: PRESET_IMAGES[0].url,
       tourRoomsCount: 4,
       isActive: true,
       order: slides.length + 1,
-      features: ['5 En-suite Bedrooms', 'Ri8Click UPVC Windows', 'Solar Backup', 'Margalla View'],
+      features: ['Aerospace Capsule Shell', 'Ri8Click UPVC Windows', 'Solar Backup', 'Margalla View'],
       samplePropertyData: {
-        title: 'New Featured Property',
-        category: 'residential',
+        title: 'New Featured Capsule / Property',
+        category: 'modular',
         location: { city: 'Taxila', society: 'Faisal Hills', province: 'Punjab' }
       }
     });
@@ -149,10 +175,10 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
         order: slides.length + 1,
         features: formData.features && formData.features.length > 0 
           ? formData.features 
-          : ['Prime Location', 'High Return', 'Watermarked Listing'],
+          : ['Prime Location', 'Ri8Click UPVC Glazing', 'Watermarked Listing'],
         samplePropertyData: formData.samplePropertyData || {
           title: formData.title,
-          category: 'residential',
+          category: 'modular',
           location: { city: 'Taxila', society: 'Faisal Hills', province: 'Punjab' }
         }
       };
@@ -222,10 +248,10 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
         <div>
           <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-blue-600" />
-            <span>Top "Scrollytelling" Banner Manager</span>
+            <span>Hero Banner &amp; Capsule Showcase Slide Manager</span>
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Add, update, reorder and delete full-screen hero slides with authentic real Pakistani architecture (Islamabad, Lahore, Faisal Hills, B-17).
+            Add, update, reorder and delete full-screen hero slides featuring Contemporary Capsule &amp; Container Houses, Islamabad Highrises, UPVC Systems, and Luxury Villas.
           </p>
         </div>
 
@@ -269,7 +295,7 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                   required
                   value={formData.title || ''}
                   onChange={e => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Modern 1-Kanal Designer Villa in Faisal Hills"
+                  placeholder="e.g. Model V2124 Double-Decker Stacked Space Capsule Villa"
                   className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -281,7 +307,7 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                   type="text"
                   value={formData.subtitle || ''}
                   onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                  placeholder="e.g. Executive Margalla View Living with Smart Automation"
+                  placeholder="e.g. Futuristic Two-Story Capsule Home with 270° Curved UPVC Glazing"
                   className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -293,7 +319,7 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                   type="text"
                   value={formData.categoryTag || ''}
                   onChange={e => setFormData({ ...formData, categoryTag: e.target.value })}
-                  placeholder="e.g. Featured Residential Villa"
+                  placeholder="e.g. Contemporary Capsule House"
                   className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -306,10 +332,10 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                   onChange={e => setFormData({ ...formData, badgeColor: e.target.value })}
                   className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-white"
                 >
-                  <option value="bg-blue-600 text-white">Blue Accent (Residential / Luxury)</option>
-                  <option value="bg-emerald-600 text-white">Emerald Green (Commercial / High ROI)</option>
                   <option value="bg-indigo-600 text-white">Indigo / Purple (Modular / Capsules)</option>
-                  <option value="bg-amber-600 text-white">Amber Gold (Margalla Hillside)</option>
+                  <option value="bg-blue-600 text-white">Blue Accent (Residential / Luxury)</option>
+                  <option value="bg-emerald-600 text-white">Emerald Green (Highrise / High ROI)</option>
+                  <option value="bg-amber-600 text-white">Amber Gold (UPVC / Margalla Hillside)</option>
                   <option value="bg-rose-600 text-white">Rose Red (Exclusive Deal)</option>
                 </select>
               </div>
@@ -321,14 +347,14 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                   type="text"
                   value={formData.price || ''}
                   onChange={e => setFormData({ ...formData, price: e.target.value })}
-                  placeholder="e.g. PKR 6.85 Crore or PKR 85 Lakh"
+                  placeholder="e.g. PKR 68 Lakh or PKR 1.35 Crore"
                   className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               {/* Location & Society */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">Location & Society</label>
+                <label className="text-xs font-semibold text-slate-700">Location &amp; Society</label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     type="text"
@@ -362,7 +388,7 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
               {/* Image URL & Presets */}
               <div className="space-y-2 md:col-span-2">
                 <label className="text-xs font-semibold text-slate-700">
-                  High-Resolution Bright Architectural Image URL *
+                  High-Resolution Architectural / Capsule Image URL *
                 </label>
                 <input
                   type="url"
@@ -374,9 +400,9 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                 />
 
                 {/* Preset Quick Selectors */}
-                <div className="space-y-1 pt-1">
+                <div className="space-y-1.5 pt-1">
                   <span className="text-[11px] font-medium text-slate-500">
-                    Quick-Select Real Pakistani Landmark Photography:
+                    Quick-Select Contemporary Capsule Houses, UPVC &amp; Pakistani Landmark Photography:
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {PRESET_IMAGES.map((preset, idx) => (
@@ -393,6 +419,12 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                         <img 
                           src={preset.url} 
                           alt={preset.name} 
+                          onError={e => {
+                            const target = e.currentTarget;
+                            if (preset.fallbackUrl && target.src !== preset.fallbackUrl) {
+                              target.src = preset.fallbackUrl;
+                            }
+                          }}
                           className="w-full h-14 object-cover rounded brightness-105 contrast-[1.05]" 
                         />
                         <span className="text-[10px] font-medium text-slate-700 truncate">
@@ -412,7 +444,7 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                     type="text"
                     value={featureInput}
                     onChange={e => setFeatureInput(e.target.value)}
-                    placeholder="e.g. 5 En-suite Bedrooms or Ri8Click UPVC Windows"
+                    placeholder="e.g. 270° Curved UPVC Glass or Turnkey 7-Day Setup"
                     className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-hidden"
                   />
                   <button
@@ -491,6 +523,9 @@ export const AdminBannerManager: React.FC<AdminBannerManagerProps> = ({
                   <img
                     src={slide.imageUrl}
                     alt={slide.title}
+                    onError={e => {
+                      e.currentTarget.src = PRESET_IMAGES[0].fallbackUrl;
+                    }}
                     className="w-full h-full object-cover brightness-105 contrast-[1.04]"
                   />
                   <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-black/70 text-white">
