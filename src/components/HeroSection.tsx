@@ -8,6 +8,86 @@
   const [showShowroomTourBar, setShowShowroomTourBar] = useState(false);
   const [isHudMenuOpen, setIsHudMenuOpen] = useState(false);
 
+              {/* Left Column: Full Narrative OR Default Minimal Heading & Image Info ("Hide Text" state) */}
+              {showLeftDescription ? (
+                <div className={showDirectorDeck ? 'lg:col-span-7' : 'lg:col-span-11'}>
+                  {/* Full Narrative View (shown when user clicks "Show Text") */}
+                  ...
+                </div>
+              ) : (
+                /* Default Page Load State ("Hide Text" active): Compact Minimal Heading & Image Info Badge */
+                <div className={showDirectorDeck ? 'lg:col-span-7 self-end' : 'lg:col-span-9 self-end'}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`minimal-banner-info-${activeWaypoint.id}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 8 }}
+                      transition={{ duration: 0.22 }}
+                      className="p-3.5 sm:p-4 rounded-2xl bg-slate-950/45 backdrop-blur-md border border-white/20 shadow-xl max-w-lg space-y-1.5"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-amber-400 text-slate-950 text-[9.5px] font-black uppercase tracking-wider">
+                          <Camera className="w-3 h-3" />
+                          <span>{activeWaypoint.code}</span>
+                        </span>
+                        <span className="text-[10.5px] font-extrabold text-emerald-300 bg-slate-950/60 border border-emerald-400/30 px-2 py-0.5 rounded">
+                          {activeWaypoint.valuation}
+                        </span>
+                      </div>
+
+                      <h1 className="text-base sm:text-xl font-black text-white leading-tight font-serif drop-shadow-xs">
+                        {activeWaypoint.headline}
+                      </h1>
+
+                      <p className="text-[11px] text-slate-200 truncate">
+                        {activeWaypoint.subLabel}
+                      </p>
+
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/15 text-[10.5px] text-slate-200">
+                        <span className="inline-flex items-center gap-1 truncate max-w-[220px] sm:max-w-[260px]">
+                          <MapPin className="w-3 h-3 text-amber-300 shrink-0" />
+                          <span className="truncate">{activeWaypoint.locationBadge}</span>
+                        </span>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setShowLeftDescription(true)}
+                            className="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white font-bold text-[10px] border border-white/20 cursor-pointer transition-colors"
+                          >
+                            Show Text
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              onOpen3DTour({
+                                id: activeWaypoint.id,
+                                title: activeWaypoint.headline,
+                                category: activeWaypoint.propertyCategory,
+                                priceFormatted: activeWaypoint.valuation,
+                                location: {
+                                  city: 'Islamabad / Taxila',
+                                  society: activeWaypoint.locationBadge,
+                                  province: 'Islamabad Capital Territory'
+                                },
+                                images: activeWaypoint.galleryImages || [resolvedImageUrl],
+                                virtualTourVideoUrl: activeWaypoint.videoUrl,
+                                virtualTourVideoTitle: `${activeWaypoint.headline} - Ri8click Consortium Walkthrough`
+                              })
+                            }
+                            className="px-2.5 py-1 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-[10px] uppercase tracking-wider cursor-pointer transition-colors"
+                          >
+                            360° Tour
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              )}
+
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import {
