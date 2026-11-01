@@ -3,18 +3,10 @@ import {
   X, 
   Heart, 
   MapPin, 
-  BedDouble, 
-  Bath, 
-  Maximize, 
   Calendar, 
   Phone, 
   MessageSquare, 
   ShieldCheck, 
-  Tag, 
-  Building2, 
-  Layers, 
-  Compass, 
-  Video,
   CheckCircle2,
   Share2
 } from 'lucide-react';
@@ -37,136 +29,145 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
   onToggleSave,
   onScheduleTour
 }) => {
+  const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const [copiedShare, setCopiedShare] = useState(false);
+
   if (!property) return null;
 
-  const [activeImageIdx, setActiveImageIdx] = useState(0);
   const images = property.images && property.images.length > 0 
     ? property.images 
     : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'];
 
-  const currentImage = images[activeImageIdx] || images[0];
+  const currentImg = images[activeImageIdx] || images[0];
 
   const handleWhatsApp = () => {
-    const phone = property.agentWhatsApp || property.agentPhone || '923365666727';
-    const text = encodeURIComponent(`Assalam o Alaikum, I am inquiring about "${property.title}" (PKR ${property.priceFormatted}) on ri8click.`);
-    window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${text}`, '_blank');
+    const message = encodeURIComponent(
+      `Assalam-o-Alaikum ${property.agentName}, I am interested in your listing "${property.title}" (${property.priceFormatted}) located at ${property.location.society}, ${property.location.city} on ri8click.com. Please share details.`
+    );
+    window.open(`https://wa.me/${property.agentWhatsApp}?text=${message}`, '_blank');
   };
 
   const handleCall = () => {
-    window.open(`tel:${property.agentPhone || '+923365666727'}`, '_self');
+    window.open(`tel:${property.agentPhone}`, '_self');
   };
 
   const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: property.title,
-        text: `Check out ${property.title} in ${property.location.society}, ${property.location.city} on ri8click`,
-        url: window.location.href,
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Listing link copied to clipboard!');
-    }
+    navigator.clipboard?.writeText(window.location.href);
+    setCopiedShare(true);
+    setTimeout(() => setCopiedShare(false), 2500);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-slate-950/75 backdrop-blur-xs animate-in fade-in">
-      <div 
-        className="relative w-full max-w-5xl bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden my-auto max-h-[94vh] flex flex-col"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Modal Top Bar */}
-        <div className="bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between border-b border-slate-800 shrink-0">
-          <div className="flex items-center gap-2 text-xs text-slate-300 truncate">
-            <span className="font-bold text-white">ri8click Listing #{property.id.slice(0, 8)}</span>
-            <span>•</span>
-            <span className="text-amber-400 font-semibold">{property.location.society}, {property.location.city}</span>
+    <div className="fixed inset-0 z-[90] flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-slate-950/75 backdrop-blur-xs animate-in fade-in">
+      <div className="relative bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200">
+        
+        {/* Top Sticky Bar */}
+        <div className="sticky top-0 z-30 flex items-center justify-between px-5 py-3.5 bg-white/95 backdrop-blur-md border-b border-slate-200">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-blue-600 text-white shrink-0">
+              {property.type}
+            </span>
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate">
+              {property.title}
+            </h3>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
+              type="button"
               onClick={handleShare}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-              title="Share Listing"
+              className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-100 flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Share2 className="w-4 h-4" />
+              <Share2 className="w-3.5 h-3.5" />
+              <span>{copiedShare ? 'Link Copied!' : 'Share'}</span>
             </button>
+
             <button
+              type="button"
               onClick={() => onToggleSave(property.id)}
-              className={`p-1.5 rounded-lg transition-colors ${
-                isSaved ? 'text-rose-500 bg-rose-500/10' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+              className={`p-2 rounded-xl border transition-colors cursor-pointer ${
+                isSaved 
+                  ? 'bg-red-50 border-red-200 text-red-500' 
+                  : 'border-slate-200 text-slate-600 hover:bg-slate-100'
               }`}
-              title="Save"
+              title="Save Property"
             >
               <Heart className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
             </button>
+
             <button
+              type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-              title="Close"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Modal Scrollable Content */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-6">
+        {/* Main Body */}
+        <div className="p-5 sm:p-8 space-y-8">
           
-          {/* Main Photo Gallery Viewport */}
+          {/* Gallery Viewer with Watermark */}
           <div className="space-y-3">
-            <div className="relative aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden bg-slate-900 shadow-inner">
+            <div className="relative aspect-[16/9] max-h-[460px] w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200">
               <img
-                src={currentImage}
+                src={currentImg}
                 alt={property.title}
+                onError={e => {
+                  e.currentTarget.src =
+                    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80';
+                }}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
 
-              {/* Watermark Overlay */}
-              <WatermarkBadge position="bottom-right" size="md" showVerifiedText={true} />
+              {property.watermark && (
+                <>
+                  <WatermarkBadge position="center" size="lg" />
+                  <WatermarkBadge position="bottom-right" size="md" />
+                </>
+              )}
 
-              {/* Price & Tagline */}
-              <div className="absolute bottom-4 left-4 z-10 text-white space-y-0.5">
-                <div className="text-xs uppercase tracking-wider text-amber-300 font-semibold">
-                  {property.purpose === 'for_rent' ? 'For Rent' : 'Verified For Sale'}
+              <div className="absolute bottom-4 left-4 text-white">
+                <div className="text-xs uppercase tracking-wider text-amber-400 font-bold">
+                  {property.purpose === 'for_sale' ? 'Asking Valuation' : 'Monthly Rent'}
                 </div>
-                <div className="text-2xl sm:text-3xl font-black font-mono drop-shadow-md">
+                <div className="text-2xl sm:text-3xl font-extrabold">
                   {property.priceFormatted}
                 </div>
               </div>
             </div>
 
-            {/* Thumbnail Carousel */}
             {images.length > 1 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              <div className="flex items-center gap-2.5 overflow-x-auto pb-1">
                 {images.map((img, idx) => (
                   <button
+                    type="button"
                     key={idx}
                     onClick={() => setActiveImageIdx(idx)}
-                    className={`relative w-20 h-14 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
-                      activeImageIdx === idx ? 'border-blue-600 scale-105 shadow-sm' : 'border-slate-200 opacity-70 hover:opacity-100'
+                    className={`relative w-24 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                      activeImageIdx === idx ? 'border-blue-600 scale-105 shadow-sm' : 'border-transparent opacity-70 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Title, Address & Specifications */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* 2-Column Details + Agent Contact */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            {/* Left 2 Cols: Details, Amenities, Location Map */}
+            {/* Left 2 Cols: Specs & Description */}
             <div className="lg:col-span-2 space-y-6">
-              
               <div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 mb-1">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 mb-1">
                   <MapPin className="w-4 h-4" />
-                  <span>{property.location.address || `${property.location.society}, ${property.location.city}`}</span>
+                  <span>{property.location.address} ({property.location.society}, {property.location.city})</span>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 font-serif">
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
                   {property.title}
                 </h2>
                 {property.tagline && (
@@ -176,7 +177,6 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 )}
               </div>
 
-              {/* Specs Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
                 <div className="space-y-0.5">
                   <span className="text-slate-500 block text-[11px]">Area</span>
@@ -200,21 +200,19 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 )}
               </div>
 
-              {/* Comprehensive Description */}
               <div className="space-y-2">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                  Property Overview & Features
+                  Property Overview &amp; Features
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
                   {property.description}
                 </p>
               </div>
 
-              {/* Amenities & Highlights */}
               {property.features && property.features.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                    Amenities & Structural Highlights
+                    Amenities &amp; Structural Highlights
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {property.features.map((feat, idx) => (
@@ -227,7 +225,6 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                 </div>
               )}
 
-              {/* Location Map Section */}
               <div className="space-y-2 pt-2 border-t border-slate-200">
                 <LocationMapView
                   location={property.location}
@@ -236,7 +233,6 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
                   propertyType={property.type}
                 />
               </div>
-
             </div>
 
             {/* Right 1 Col: Agent Card & Contact Box */}
@@ -266,24 +262,27 @@ export const PropertyDetailModal: React.FC<PropertyDetailModalProps> = ({
 
                 <div className="space-y-2 pt-2">
                   <button
+                    type="button"
                     onClick={handleWhatsApp}
-                    className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <MessageSquare className="w-4 h-4" />
                     <span>Chat on WhatsApp</span>
                   </button>
 
                   <button
+                    type="button"
                     onClick={handleCall}
-                    className="w-full py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Phone className="w-4 h-4 text-blue-600" />
                     <span>Call: {property.agentPhone}</span>
                   </button>
 
                   <button
+                    type="button"
                     onClick={() => onScheduleTour(property)}
-                    className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Calendar className="w-4 h-4" />
                     <span>Schedule Free Site Tour</span>
