@@ -59,55 +59,36 @@ export interface Property {
   savesCount?: number;
   createdAt: string;
   status?: 'active' | 'pending' | 'sold';
-  virtualTourVideoUrl?: string; // Short movie clip for virtual tour (Super Admin privilege)
+  virtualTourVideoUrl?: string;
   virtualTourVideoTitle?: string;
-  hasVirtualTour?: boolean;
+}
+
+export interface CityInfo {
+  name: string;
+  societies: string[];
 }
 
 export interface ProvinceCityData {
   province: string;
-  cities: {
-    name: string;
-    societies: string[];
-  }[];
+  cities: CityInfo[];
 }
 
 export interface AgencyAccount {
   id: string;
   name: string;
-  companyName: string;
-  role: 'agency' | 'agent' | 'customer';
-  email: string;
+  ownerName: string;
+  logo: string;
   phone: string;
   whatsapp: string;
-  avatar: string;
-  verified: boolean;
-  rating: number;
-  totalPosts: number;
-  postLimit: number;
-  activeListings: number;
+  email: string;
   city: string;
-  primarySociety: string;
-  memberSince: string;
-  status: 'active' | 'suspended';
-  canManageAdvibe?: boolean;
-  address?: string;
-  bio?: string;
-}
-
-export interface AdStatusRequest {
-  id: string;
-  propertyId: string;
-  propertyTitle: string;
-  agencyId: string;
-  agencyName: string;
-  agentName: string;
-  requestedAction: 'enable' | 'disable';
-  reason: string;
-  status: 'pending' | 'approved' | 'rejected';
-  requestedAt: string;
-  reviewedAt?: string;
-  adminNote?: string;
+  officeAddress: string;
+  rating: number;
+  totalListings: number;
+  verified: boolean;
+  specialization: string[];
+  description: string;
+  canPublishAdvibe?: boolean;
 }
 
 export interface ConsortiumDivision {
@@ -126,38 +107,18 @@ export interface ConsortiumDivision {
   contactWhatsApp: string;
 }
 
-export interface SearchFilterState {
+export interface FilterState {
   searchQuery: string;
-  purpose: 'all' | 'for_sale' | 'for_rent';
-  category: PropertyCategory;
   province: string;
   city: string;
   society: string;
+  category: PropertyCategory;
+  purpose: 'all' | PropertyPurpose;
   propertyType: string;
-  minPrice?: number;
-  maxPrice?: number;
-  minBedrooms?: number | null;
-  areaUnit?: string;
-  sortBy?: 'featured' | 'price_asc' | 'price_desc' | 'newest';
-  agencyId?: string;
-}
-
-export interface TourBooking {
-  id: string;
-  propertyId: string;
-  propertyTitle: string;
-  propertyLocation: string;
-  clientName: string;
-  clientPhone: string;
-  clientEmail: string;
-  preferredDate: string;
-  preferredTime: string;
-  message: string;
-  agentName: string;
-  agentPhone: string;
-  agentWhatsApp: string;
-  status: 'pending' | 'confirmed' | 'completed';
-  createdAt: string;
+  minPrice: number;
+  maxPrice: number;
+  bedrooms: string;
+  sortBy: 'featured' | 'newest' | 'price_low' | 'price_high';
 }
 
 export interface HeroSlide {
@@ -171,6 +132,7 @@ export interface HeroSlide {
   location: string;
   society: string;
   imageUrl: string;
+  galleryImages?: string[];
   tourRoomsCount: number;
   isActive: boolean;
   order: number;
@@ -190,114 +152,94 @@ export interface BlogPost {
   id: string;
   title: string;
   slug: string;
-  category: 'Market Trends' | 'Project Updates' | 'Investment Guides' | 'Construction & UPVC' | 'Modular Housing' | 'Legal & NOC';
+  category: 'Market Trends' | 'Faisal Hills Updates' | 'Investment Guides' | 'Modular & Prefab Tech' | 'Construction & UPVC' | 'Legal & Tax';
   excerpt: string;
   content: string;
   coverImage: string;
   authorName: string;
-  authorAvatar: string;
   authorRole: string;
+  authorAvatar: string;
   publishedAt: string;
   readingTime: string;
   tags: string[];
   viewsCount: number;
-  isFeatured?: boolean;
+  isFeatured: boolean;
   status: 'published' | 'draft';
 }
 
 export interface SiteSectionPortion {
   id: string;
-  key: 
-    | 'top_announcement_bar'
-    | 'hero_slider' 
-    | 'search_bar' 
-    | 'properties_grid' 
-    | 'commercial_showcase' 
-    | 'modular_showcase' 
-    | 'agencies_network' 
-    | 'consortium_showcase' 
-    | 'news_blogs_section'
-    | 'cta_banner';
   name: string;
   title: string;
   subtitle: string;
-  isEnabled: boolean;
+  isVisible: boolean;
   order: number;
-  badge?: string;
-  description?: string;
+  badgeText?: string;
+  themeStyle?: 'light' | 'dark' | 'gradient' | 'accent';
 }
 
-// ==========================================
-// ADVIBE MODULE DATA TYPES & CONTRACTS
-// ==========================================
+// ============================================================================
+// ADVIBE — CINEMATIC MEGAPROJECT SHOWCASE & REAL ESTATE MARKETING ENGINE
+// ============================================================================
 
-export type AdVibeProjectType = 
-  | 'Housing Society' 
-  | 'High-Rise Tower' 
-  | 'Luxury Apartments' 
-  | 'Commercial Development' 
-  | 'Smart Villa Community' 
-  | 'Waterfront Enclave' 
-  | 'Mixed-Use Megaproject';
+export type AdVibeProjectType =
+  | 'Housing Society'
+  | 'Commercial Mall & Tower'
+  | 'Luxury Villa Enclave'
+  | 'Waterfront / Eco Resort'
+  | 'Mixed-Use Highrise'
+  | 'Modular Smart Community';
 
-export type AdVibeProjectStatus = 
-  | 'Upcoming' 
-  | 'Booking Open' 
-  | 'Under Construction' 
-  | 'Ready to Move' 
-  | 'Limited Units' 
-  | 'Sold Out';
+export type AdVibeProjectStatus =
+  | 'Pre-Launch'
+  | 'Booking Open'
+  | 'Under Construction'
+  | 'Ready for Possession'
+  | 'Completed';
 
-export type AdVibeSectionType = 
-  | 'hero' 
-  | 'intro' 
-  | 'highlights' 
-  | 'stats' 
-  | 'salient' 
-  | 'master_plan' 
-  | 'location' 
-  | 'amenities' 
-  | 'gallery' 
-  | 'videos' 
-  | 'virtual_tour' 
-  | 'units' 
-  | 'pricing' 
-  | 'developer' 
-  | 'enquiry' 
-  | 'cta' 
-  | 'disclaimer'
-  | 'custom_text'
-  | 'custom_image';
+export type AdVibeSectionType =
+  | 'hero'
+  | 'story'
+  | 'highlights'
+  | 'masterplan'
+  | 'units'
+  | 'amenities'
+  | 'gallery'
+  | 'videos'
+  | 'location'
+  | 'virtual_tour'
+  | 'payment_plan'
+  | 'developer'
+  | 'lead_form';
 
 export interface AdVibeTheme {
   primaryColor: string;
   accentColor: string;
-  bgStyle: 'dark' | 'light' | 'midnight' | 'slate' | 'luxury_black';
-  fontHeading: 'Playfair Display' | 'Plus Jakarta Sans' | 'Cormorant Garamond' | 'Outfit';
-  fontBody: 'Plus Jakarta Sans' | 'Inter' | 'Manrope';
-  buttonStyle: 'rounded-xl' | 'rounded-full' | 'rounded-md' | 'pill-glow';
-  overlayOpacity: number;
-  animationIntensity: 'subtle' | 'standard' | 'dynamic' | 'reduced';
+  darkBg: string;
+  fontHeading: string;
+  fontBody: string;
+  enableParallax: boolean;
+  enableSmoothScroll: boolean;
+  ambientAudioUrl?: string;
 }
 
 export interface AdVibeSEO {
   metaTitle: string;
   metaDescription: string;
   ogImage: string;
-  canonicalUrl?: string;
   keywords: string[];
 }
 
 export interface AdVibeDeveloper {
   name: string;
   logo: string;
+  establishedYear: number;
+  deliveredProjectsCount: number;
   description: string;
-  foundedYear?: number;
-  completedProjects?: number;
-  ongoingProjects?: number;
-  rating?: number;
+  headOffice: string;
   website?: string;
-  phone?: string;
+  phone: string;
+  whatsapp: string;
   email?: string;
 }
 
@@ -338,7 +280,7 @@ export interface AdVibeHotspot {
   status: 'Available' | 'Booking Fast' | 'Sold Out' | 'Under Development';
   totalPlots?: number;
   availablePlots?: number;
-  linkedPropertyId?: string; // connects directly to existing Property record
+  linkedPropertyId?: string;
 }
 
 export interface AdVibeMasterPlan {
@@ -458,9 +400,9 @@ export interface AdVibeProject {
     url: string;
     title?: string;
     instructions?: string;
-    autoRun?: boolean; // Auto-run 3D tour by default
-    rotationSpeed?: number; // 0.5 to 3
-    dayNightMode?: boolean; // Support day & night lighting toggle
+    autoRun?: boolean;
+    rotationSpeed?: number;
+    dayNightMode?: boolean;
     scenes?: {
       id: string;
       name: string;
@@ -470,18 +412,18 @@ export interface AdVibeProject {
       description?: string;
       hotspots?: {
         id: string;
-        x: number; // 0-100%
-        y: number; // 0-100%
+        x: number;
+        y: number;
         title: string;
         description?: string;
         actionUrl?: string;
       }[];
     }[];
   };
-  linkedPropertyIds: string[]; // references existing Property records
+  linkedPropertyIds: string[];
   pricingTiers: AdVibePricingPlan[];
   downloadableBrochureUrl?: string;
-  dealerId?: string; // agencyId or 'admin'
+  dealerId?: string;
   dealerName?: string;
   dealerPhone?: string;
   dealerWhatsApp?: string;
@@ -489,4 +431,3 @@ export interface AdVibeProject {
   updatedAt: string;
   viewsCount?: number;
 }
-
